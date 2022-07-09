@@ -34,6 +34,7 @@ namespace CVLib.Processor.Unit
         public VocObejctsDetector(string name = "VocObejctsDetector")
             : base(name)
         {
+            DrawInfo = false;
         }
 
         public string ModelWeights { set; get; } = "voc.weights";
@@ -78,7 +79,8 @@ namespace CVLib.Processor.Unit
                 CONFIDENCE,
                 THRESHOLD,
                 out var boxIndex);
-            var filter = detectObjectS.Select((a, i) => (a, i)).Where(p => boxIndex.Contains(p.i)).Select(p => p.a)
+            var filter = detectObjectS.Select((a, i) => (a, i))
+                .Where(p => boxIndex.Contains(p.i)).Select(p => p.a)
                 .ToList();
             return filter;
         }
@@ -99,12 +101,12 @@ namespace CVLib.Processor.Unit
 
             net.SetInput(inputBlob, "data");
             var blobName = new[] {"yolo_106", "yolo_94", "yolo_82"};
-            var mats = blobName.Select(net.Forward).ToList();
+            var mats = new Mat[] {new(), new(), new()};
+            net.Forward(mats, blobName);
 
             var list = new List<DetectObject>();
 
-
-            mats.ForEach(m =>
+            mats.ToList().ForEach(m =>
             {
                 foreach (var i in Enumerable.Range(0, m.Height))
                 {
