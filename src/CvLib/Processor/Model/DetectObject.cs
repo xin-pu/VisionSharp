@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using CVLib.Utils;
 using OpenCvSharp;
 
 namespace CVLib.Processor
@@ -32,14 +31,6 @@ namespace CVLib.Processor
                 : rotatedRect.Angle + 180;
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="rect"></param>
-        public DetectObject(Rect rect)
-            : base(CvCvt.CvtToRotatedRect(rect))
-        {
-        }
-
 
         /// <summary>
         ///     抓取点，目标点
@@ -51,7 +42,6 @@ namespace CVLib.Processor
         /// </summary>
         public bool IsConfidence { set; get; }
 
-        public float Confidence { set; get; }
 
         /// <summary>
         ///     分类

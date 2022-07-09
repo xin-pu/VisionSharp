@@ -6,15 +6,28 @@
         xmlns:local="clr-namespace:VisionProcessor"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="768" Width="1366"
+        WindowState="Maximized">
     <DockPanel DataContext="{Binding Source={StaticResource Locator},Path=ImageProcessor}">
-        <StackPanel DockPanel.Dock="Top">
-            <Button Command="{Binding ExecuteProcessorCommand}">Open</Button>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Button Command="{Binding ExecuteProcessorCommand}" 
+                    Style="{StaticResource ButtonDashedInfo}"
+                    Content="Select Image"
+                    Margin="5"/>
         </StackPanel>
 
-        <Grid>
-            <hc:ImageViewer ImageSource="{Binding BitmapSource}"></hc:ImageViewer>
-        </Grid>
+        <DockPanel>
+            <Grid Width="300" DockPanel.Dock="Left">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <hc:PropertyGrid Grid.Row="0" SelectedObject="{Binding VocObjectsDetector}"></hc:PropertyGrid>
+                <ListBox Grid.Row="1" ItemsSource="{Binding VocObjectsDetector.Names}"></ListBox>
+            </Grid>
+            <hc:ImageViewer ImageSource="{Binding BitmapSource}"/>
+            
+        </DockPanel>
         
     </DockPanel>
 </Window>

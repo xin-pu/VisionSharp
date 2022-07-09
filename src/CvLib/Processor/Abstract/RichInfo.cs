@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using GalaSoft.MvvmLight;
 using OpenCvSharp;
 
 namespace CVLib.Processor
@@ -7,7 +8,7 @@ namespace CVLib.Processor
     ///     Process 返回的富信息
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class RichInfo<T> : CvViewModelBase
+    public class RichInfo<T> : ViewModelBase
     {
         public RichInfo(T result, double conf, Mat outmat)
         {

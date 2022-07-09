@@ -1,10 +1,11 @@
 ﻿using System.Text;
+using GalaSoft.MvvmLight;
 using OpenCvSharp;
 using YAXLib.Attributes;
 
 namespace CVLib.Processor
 {
-    public class CvSize : CvViewModelBase
+    public class CvSize : ViewModelBase
     {
         private double height;
         private double width;
@@ -35,13 +36,13 @@ namespace CVLib.Processor
 
         public double Width
         {
-            set => UpdateProperty(ref width, value);
+            set => Set(ref width, value);
             get => width;
         }
 
         public double Height
         {
-            set => UpdateProperty(ref height, value);
+            set => Set(ref height, value);
             get => height;
         }
 
