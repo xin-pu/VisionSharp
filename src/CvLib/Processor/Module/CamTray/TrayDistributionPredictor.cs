@@ -52,7 +52,7 @@ namespace CVLib.Processor.Module
             //    ImageSize,
             //    swapRB: false, crop: false);
             //Net.SetInput(inputBlob);
-            //var result = Net.Forward();
+            //var result = Net.Decode();
             //return Resolve(result);
             return new bool[8, 5]
             {

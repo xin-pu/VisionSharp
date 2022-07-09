@@ -1,10 +1,11 @@
 ﻿using System.Text;
+using GalaSoft.MvvmLight;
 using OpenCvSharp;
 using YAXLib.Attributes;
 
 namespace CVLib.Processor
 {
-    public class CvRect : CvViewModelBase
+    public class CvRect : ViewModelBase
     {
         private int height;
         private int width;
@@ -36,25 +37,25 @@ namespace CVLib.Processor
 
         public int X
         {
-            set => UpdateProperty(ref x, value);
+            set => Set(ref x, value);
             get => x;
         }
 
         public int Y
         {
-            set => UpdateProperty(ref y, value);
+            set => Set(ref y, value);
             get => y;
         }
 
         public int Width
         {
-            set => UpdateProperty(ref width, value);
+            set => Set(ref width, value);
             get => width;
         }
 
         public int Height
         {
-            set => UpdateProperty(ref height, value);
+            set => Set(ref height, value);
             get => height;
         }
 
@@ -62,9 +63,7 @@ namespace CVLib.Processor
         public override string ToString()
         {
             var str = new StringBuilder();
-            str.AppendLine("CvPoint");
-            str.AppendLine($"\tCenter\t({X:F4},{Y:F4})");
-            str.AppendLine($"\tSize:\t({Width:F4}*{Height:F4})");
+            str.Append($"Rect\t[{X:F4},{Y:F4}],[{Width:F4},{Height:F4}]");
             return str.ToString();
         }
     }

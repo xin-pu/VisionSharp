@@ -16,12 +16,12 @@ namespace VisionProcessor.Models
     {
         private BitmapImage _bitmapImage;
         private BitmapSource _bitmapSource;
-        private VocObejctsDetector _vocObejctsDetector = new VocObejctsDetector();
+        private VocObejctsDetector _vocObjectsDetector = new VocObejctsDetector();
 
-        public VocObejctsDetector VocObejctsDetector
+        public VocObejctsDetector VocObjectsDetector
         {
-            get => _vocObejctsDetector;
-            set => Set(ref _vocObejctsDetector, value);
+            get => _vocObjectsDetector;
+            set => Set(ref _vocObjectsDetector, value);
         }
 
         public BitmapImage BitmapDataImage
@@ -42,10 +42,10 @@ namespace VisionProcessor.Models
 
         private void ExecuteProcessorCommand_Execute()
         {
-            VocObejctsDetector.ModelWeights = @"E:\Code DeepLearning\darknet_release\weights\yolov3-voc.weights";
-            VocObejctsDetector.ConfigFile = @"E:\Code DeepLearning\darknet_release\cfg\yolov3-voc.cfg";
-            VocObejctsDetector.CONFIDENCE = 0.5F;
-            VocObejctsDetector.THRESHOLD = 0.5F;
+            VocObjectsDetector.ModelWeights = @"E:\Code DeepLearning\darknet_release\weights\yolov3-voc.weights";
+            VocObjectsDetector.ConfigFile = @"E:\Code DeepLearning\darknet_release\cfg\yolov3-voc.cfg";
+            VocObjectsDetector.CONFIDENCE = 0.5F;
+            VocObjectsDetector.IOUThreshold = 0.5F;
 
             var fileDialog = new OpenFileDialog
             {
@@ -59,7 +59,7 @@ namespace VisionProcessor.Models
 
             var mat = Cv2.ImRead(fileDialog.FileName);
 
-            var res = VocObejctsDetector.Call(mat, mat);
+            var res = VocObjectsDetector.Call(mat, mat);
             RefreshView(res.OutMat);
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using GalaSoft.MvvmLight;
 using OpenCvSharp;
 using YAXLib.Attributes;
 
@@ -7,7 +8,7 @@ namespace CVLib.Processor
     /// <summary>
     ///     This is Point class for UI corresponding to point2d @ openCV
     /// </summary>
-    public class CvPoint : CvViewModelBase
+    public class CvPoint : ViewModelBase
     {
         private double x;
         private double y;
@@ -39,13 +40,13 @@ namespace CVLib.Processor
 
         public double X
         {
-            set => UpdateProperty(ref x, value);
+            set => Set(ref x, value);
             get => x;
         }
 
         public double Y
         {
-            set => UpdateProperty(ref y, value);
+            set => Set(ref y, value);
             get => y;
         }
 

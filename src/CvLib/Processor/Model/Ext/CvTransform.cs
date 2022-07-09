@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GalaSoft.MvvmLight;
 using OpenCvSharp;
 using YAXLib.Attributes;
 
 namespace CVLib.Processor
 {
-    public class CvTransform : CvViewModelBase
+    public class CvTransform : ViewModelBase
     {
         private List<CvMatCell> arrayCells;
 
@@ -21,7 +22,7 @@ namespace CVLib.Processor
 
         public List<CvMatCell> ArrayList
         {
-            set => UpdateProperty(ref arrayCells, value);
+            set => Set(ref arrayCells, value);
             get => arrayCells;
         }
 

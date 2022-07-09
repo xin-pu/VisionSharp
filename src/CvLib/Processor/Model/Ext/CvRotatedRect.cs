@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using GalaSoft.MvvmLight;
 using OpenCvSharp;
 using YAXLib.Attributes;
 
@@ -7,7 +8,7 @@ namespace CVLib.Processor
     /// <summary>
     ///     对应OpenCV中RotatedRect
     /// </summary>
-    public class CvRotatedRect : CvViewModelBase
+    public class CvRotatedRect : ViewModelBase
     {
         private double angle;
         private double height;
@@ -37,25 +38,25 @@ namespace CVLib.Processor
 
         public double X
         {
-            set => UpdateProperty(ref x, value);
+            set => Set(ref x, value);
             get => x;
         }
 
         public double Y
         {
-            set => UpdateProperty(ref y, value);
+            set => Set(ref y, value);
             get => y;
         }
 
         public double Width
         {
-            set => UpdateProperty(ref width, value);
+            set => Set(ref width, value);
             get => width;
         }
 
         public double Height
         {
-            set => UpdateProperty(ref height, value);
+            set => Set(ref height, value);
             get => height;
         }
 
@@ -65,7 +66,7 @@ namespace CVLib.Processor
         /// </summary>
         public double Angle
         {
-            set => UpdateProperty(ref angle, value);
+            set => Set(ref angle, value);
             get => angle;
         }
 

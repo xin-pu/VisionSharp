@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using GalaSoft.MvvmLight;
 using OpenCvSharp;
 
 namespace CVLib.Processor
@@ -11,7 +12,7 @@ namespace CVLib.Processor
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
-    public abstract class Processor<T1, T2>
+    public abstract class Processor<T1, T2> : ViewModelBase
     {
         protected Processor(string name)
         {
