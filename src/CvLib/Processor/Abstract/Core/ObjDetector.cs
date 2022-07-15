@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
@@ -10,7 +11,8 @@ namespace CVLib.Processor
     ///     输入一张图像
     ///     返回多个含有目标物的检测框
     /// </summary>
-    public abstract class ObjDetector : Processor<Mat, List<DetectRectObject>>
+    public abstract class ObjDetector<T> : Processor<Mat, List<DetectRectObject>>
+        where T : Enum
     {
         protected ObjDetector(string name)
             : base(name)
@@ -22,7 +24,7 @@ namespace CVLib.Processor
 
         private Net Model { set; get; }
 
-        public abstract string[] Names { get; }
+        public T Names { get; }
 
         internal override List<DetectRectObject> Process(Mat input)
         {
@@ -87,7 +89,7 @@ namespace CVLib.Processor
                 .ForEach(a =>
                 {
                     DrawRect(mat, a.Rect, PenColor, thickness: 2, size: 5);
-                    mat.PutText($"{a.Label} {a.ObjectConfidence:P2}",
+                    mat.PutText($"{Enum.Parse(typeof(T), a.Category.ToString())} {a.ObjectConfidence:P2}",
                         a.Rect.TopLeft,
                         HersheyFonts.HersheyPlain,
                         2, PenColor, 2);

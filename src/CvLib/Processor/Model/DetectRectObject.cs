@@ -25,22 +25,18 @@ namespace CVLib.Processor
 
         public float ObjectConfidence { set; get; }
 
-        /// <summary>
-        ///     分类索引
-        /// </summary>
-        public int Category { set; get; }
 
         public float CategoryConfidence { set; get; }
 
         /// <summary>
         /// </summary>
-        public string Label { set; get; }
+        public int Category { set; get; }
 
 
         public override string ToString()
         {
             var strBuild = new StringBuilder();
-            strBuild.AppendLine($"DetectRectObject:{Label}({ObjectConfidence:P2})");
+            strBuild.AppendLine($"DetectRectObject:{Category}({ObjectConfidence:P2})");
             strBuild.AppendLine(base.ToString());
             return strBuild.ToString();
         }

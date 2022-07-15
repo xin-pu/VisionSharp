@@ -6,9 +6,33 @@ using OpenCvSharp.Dnn;
 
 namespace CVLib.Processor.Unit
 {
+    public enum VOC_Category
+    {
+        aeroplane,
+        bicycle,
+        bird,
+        boat,
+        bottle,
+        bus,
+        car,
+        cat,
+        chair,
+        cow,
+        diningtable,
+        dog,
+        horse,
+        motorbike,
+        person,
+        pottedplant,
+        sheep,
+        sofa,
+        train,
+        tvmonitor
+    }
+
     /// <summary>
     /// </summary>
-    public class VocObejctsDetector : ObjDetector
+    public class VocObejctsDetector : ObjDetector<VOC_Category>
     {
         public VocObejctsDetector(string name = "VocObejctsDetector")
             : base(name)
@@ -18,31 +42,6 @@ namespace CVLib.Processor.Unit
 
         public string ModelWeights { set; get; } = "voc.weights";
         public string ConfigFile { set; get; } = "voc.cfg";
-
-
-        public override string[] Names { get; } =
-        {
-            "aeroplane",
-            "bicycle",
-            "bird",
-            "boat",
-            "bottle",
-            "bus",
-            "car",
-            "cat",
-            "chair",
-            "cow",
-            "diningtable",
-            "dog",
-            "horse",
-            "motorbike",
-            "person",
-            "pottedplant",
-            "sheep",
-            "sofa",
-            "train",
-            "tvmonitor"
-        };
 
 
         internal override Net InitialNet()
@@ -108,7 +107,6 @@ namespace CVLib.Processor.Unit
                     var detectRectObject = new DetectRectObject(rect)
                     {
                         Category = classIndex,
-                        Label = Names[classIndex],
                         ObjectConfidence = classProb
                     };
                     list.Add(detectRectObject);
