@@ -26,7 +26,7 @@ namespace CVLib.Processor
             get => arrayCells;
         }
 
-        [YAXDontSerialize] public Mat mat => ConvertToMat(ArrayList);
+        [YAXDontSerialize] public Mat Mat => ToMat();
 
 
         public static List<CvMatCell> ConvertFrom(double[,] array)
@@ -50,16 +50,16 @@ namespace CVLib.Processor
             return array;
         }
 
-        public static Mat ConvertToMat(List<CvMatCell> cells)
+        public Mat ToMat()
         {
-            var array = ConvertTo(cells);
+            var array = ConvertTo(arrayCells);
             return Mat.FromArray(array);
         }
 
 
         public override string ToString()
         {
-            var size = mat.Size();
+            var size = Mat.Size();
             var strBuild = new StringBuilder();
             strBuild.AppendLine("CvTransform");
             strBuild.AppendLine(new string('-', 30));
@@ -67,7 +67,7 @@ namespace CVLib.Processor
 
             for (var r = 0; r < size.Height; r++)
             {
-                var row = mat.Row(r);
+                var row = Mat.Row(r);
                 row.GetArray(out double[] rowArray);
                 var rowArrayStr = rowArray.Select(a => $"{a:F4}");
                 strBuild.AppendLine(string.Join("\t", rowArrayStr));
