@@ -130,10 +130,6 @@
     <Compile Include="Processor\Model\AnnObject.cs" />
     <Compile Include="Processor\Model\Annotation.cs" />
     <Compile Include="Processor\Model\ClassifyResult.cs" />
-    <Compile Include="Processor\Module\CamTray\CocTrayDistributionPredictor.cs" />
-    <Compile Include="Processor\Module\CamTray\ModuleGrabMultiPredictor.cs" />
-    <Compile Include="Processor\Module\CamTray\ModuleSplitter.cs" />
-    <Compile Include="Processor\Module\CamTray\TrayDistributionPredictor.cs" />
     <Compile Include="Processor\Unit\Calculator\CorrectionCalculator.cs" />
     <Compile Include="Processor\Unit\Detector\VocObejctsDetector.cs" />
     <Compile Include="Processor\Unit\Painter\GridObjectPainter.cs" />
@@ -151,12 +147,6 @@
     <Compile Include="Processor\Unit\Detector\CirclePatternFinder.cs" />
     <Compile Include="Processor\Model\DetectObject.cs" />
     <Compile Include="Processor\Unit\Calculator\OffsetProcessor.cs" />
-    <Compile Include="Processor\Module\CamRegressor\ModuleTemplateFinder.cs" />
-    <Compile Include="Processor\Module\CamTray\ModuleClassify.cs" />
-    <Compile Include="Processor\Module\CamTray\ModuleGrabPredictor.cs" />
-    <Compile Include="Processor\Module\CamTray\ModuleGrabsFinder.cs" />
-    <Compile Include="Processor\Module\CamRegressor\ModuleFPFinder.cs" />
-    <Compile Include="Processor\Module\ModuleType.cs" />
     <Compile Include="Processor\Unit\Calculator\DutyCovBoxCounter.cs" />
     <Compile Include="Processor\Abstract\RichInfo.cs" />
     <Compile Include="Calibration\Models\NinePoint.cs" />

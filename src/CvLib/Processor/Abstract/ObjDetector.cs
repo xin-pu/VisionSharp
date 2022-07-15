@@ -5,6 +5,11 @@ using OpenCvSharp.Dnn;
 
 namespace CVLib.Processor
 {
+    /// <summary>
+    ///     用于目标检测的探测器
+    ///     输入一张图像
+    ///     返回多个含有目标物的检测框
+    /// </summary>
     public abstract class ObjDetector : Processor<Mat, List<DetectRectObject>>
     {
         protected ObjDetector(string name)
