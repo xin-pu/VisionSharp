@@ -119,7 +119,8 @@
     <Compile Include="Calibration\Evaluate.cs" />
     <Compile Include="Calibration\Models\Calibrate.cs" />
     <Compile Include="Calibration\Models\RelativeShift.cs" />
-    <Compile Include="Processor\Abstract\ObjDetector.cs" />
+    <Compile Include="Processor\Abstract\Core\Classifier.cs" />
+    <Compile Include="Processor\Abstract\Core\ObjDetector.cs" />
     <Compile Include="Processor\Model\DetectRectObject.cs" />
     <Compile Include="Processor\Model\Ext\CvPoint.cs" />
     <Compile Include="Processor\Model\Ext\CvRect.cs" />
@@ -129,7 +130,6 @@
     <Compile Include="Processor\Model\Ext\CvMatCell.cs" />
     <Compile Include="Processor\Model\AnnObject.cs" />
     <Compile Include="Processor\Model\Annotation.cs" />
-    <Compile Include="Processor\Model\ClassifyResult.cs" />
     <Compile Include="Processor\Unit\Calculator\CorrectionCalculator.cs" />
     <Compile Include="Processor\Unit\Detector\VocObejctsDetector.cs" />
     <Compile Include="Processor\Unit\Painter\GridObjectPainter.cs" />
@@ -141,7 +141,7 @@
     <Compile Include="Processor\Unit\Transform\RectCropper.cs" />
     <Compile Include="Processor\Unit\Transform\Zoomer.cs" />
     <Compile Include="Processor\Unit\Transform\Rotator.cs" />
-    <Compile Include="Processor\Abstract\PointProcessor.cs" />
+    <Compile Include="Processor\Abstract\Core\PointProcessor.cs" />
     <Compile Include="Processor\Model\AdjustPara.cs" />
     <Compile Include="Processor\Unit\Detector\CircleFinder.cs" />
     <Compile Include="Processor\Unit\Detector\CirclePatternFinder.cs" />

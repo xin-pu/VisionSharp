@@ -6,7 +6,7 @@ using YAXLib.Attributes;
 namespace CVLib.Processor
 {
     /// <summary>
-    ///     对应OpenCV中RotatedRect
+    ///     This is RotatedRect for UI corresponding to cell of RotatedRect @ openCV
     /// </summary>
     public class CvRotatedRect : ViewModelBase
     {
@@ -80,21 +80,5 @@ namespace CVLib.Processor
             str.AppendLine($"\tAngle:\t{Angle:F2} Deg");
             return str.ToString();
         }
-
-        #region Static Method
-
-        public static CvRotatedRect ConvertFromRotatedRect(RotatedRect rotatedRect)
-        {
-            return new CvRotatedRect
-            {
-                X = rotatedRect.Center.X,
-                Y = rotatedRect.Center.Y,
-                Width = rotatedRect.Size.Width,
-                Height = rotatedRect.Size.Height,
-                Angle = rotatedRect.Angle
-            };
-        }
-
-        #endregion
     }
 }
