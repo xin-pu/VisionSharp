@@ -1,40 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GalaSoft.MvvmLight.CommandWpf;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
 
 namespace CVLib.Processor.Unit
 {
-    public enum VOC_Category
-    {
-        aeroplane,
-        bicycle,
-        bird,
-        boat,
-        bottle,
-        bus,
-        car,
-        cat,
-        chair,
-        cow,
-        diningtable,
-        dog,
-        horse,
-        motorbike,
-        person,
-        pottedplant,
-        sheep,
-        sofa,
-        train,
-        tvmonitor
-    }
-
     /// <summary>
+    ///     Yolo V3 object detect by DarkNet
     /// </summary>
-    public class VocObejctsDetector : ObjDetector<VOC_Category>
+    public class YoloV3Detector : ObjDetector
+
     {
-        public VocObejctsDetector(string name = "VocObejctsDetector")
+        public YoloV3Detector(string name = "YoloV3Detector")
             : base(name)
         {
             DrawInfo = false;
@@ -43,6 +22,29 @@ namespace CVLib.Processor.Unit
         public string ModelWeights { set; get; } = "voc.weights";
         public string ConfigFile { set; get; } = "voc.cfg";
 
+        public override string[] Categroy => new[]
+        {
+            "aeroplane",
+            "bicycle",
+            "bird",
+            "boat",
+            "bottle",
+            "bus",
+            "car",
+            "cat",
+            "chair",
+            "cow",
+            "diningtable",
+            "dog",
+            "horse",
+            "motorbike",
+            "person",
+            "pottedplant",
+            "sheep",
+            "sofa",
+            "train",
+            "tvmonitor"
+        };
 
         internal override Net InitialNet()
         {
@@ -115,5 +117,35 @@ namespace CVLib.Processor.Unit
 
             return list;
         }
+
+
+        #region MyRegion
+
+        public RelayCommand SelectCFGCommand => new(SelectCFGCommand_Execute);
+        public RelayCommand SelectWeightCommand => new(SelectWeightCommand_Execute);
+        public RelayCommand SelectNamesCommand => new(SelectNamesCommand_Execute);
+        public RelayCommand PredictCommand => new(PredictCommand_Execute);
+
+        private void PredictCommand_Execute()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SelectWeightCommand_Execute()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SelectCFGCommand_Execute()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SelectNamesCommand_Execute()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

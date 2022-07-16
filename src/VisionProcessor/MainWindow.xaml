@@ -14,6 +14,10 @@
                     Style="{StaticResource ButtonDashedInfo}"
                     Content="Select Image"
                     Margin="5"/>
+            <Button Command="{Binding ExecuteVedioCommand}" 
+                    Style="{StaticResource ButtonDashedInfo}"
+                    Content="Select Image"
+                    Margin="5"/>
         </StackPanel>
 
         <DockPanel>
