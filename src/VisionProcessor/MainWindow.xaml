@@ -5,33 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VisionProcessor"
         xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:views="clr-namespace:VisionProcessor.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="768" Width="1366"
         WindowState="Maximized">
-    <DockPanel DataContext="{Binding Source={StaticResource Locator},Path=ImageProcessor}">
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <Button Command="{Binding ExecuteProcessorCommand}" 
-                    Style="{StaticResource ButtonDashedInfo}"
-                    Content="Select Image"
-                    Margin="5"/>
-            <Button Command="{Binding ExecuteVedioCommand}" 
-                    Style="{StaticResource ButtonDashedInfo}"
-                    Content="Select Image"
-                    Margin="5"/>
-        </StackPanel>
-
-        <DockPanel>
-            <Grid Width="300" DockPanel.Dock="Left">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <hc:PropertyGrid Grid.Row="0" SelectedObject="{Binding VocObjectsDetector}"></hc:PropertyGrid>
-                <ListBox Grid.Row="1" ItemsSource="{Binding VocObjectsDetector.Names}"></ListBox>
-            </Grid>
-            <hc:ImageViewer ImageSource="{Binding BitmapSource}"/>
-            
-        </DockPanel>
-        
-    </DockPanel>
+    <TabControl>
+        <TabItem>
+            <views:ObjectDetectorView/>
+        </TabItem>
+    </TabControl>
 </Window>

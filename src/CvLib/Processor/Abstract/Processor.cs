@@ -74,7 +74,7 @@ namespace CVLib.Processor
                 /// Step 1 Process and get Result
                 return Process(input);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return default;
             }

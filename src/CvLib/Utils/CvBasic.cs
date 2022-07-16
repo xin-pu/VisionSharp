@@ -1,40 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CVLib.Processor;
-using OpenCvSharp;
+﻿using OpenCvSharp;
 
 namespace CVLib.Utils
 {
     public class CvBasic
     {
-        /// <summary>
-        ///     Get Detect Grid Size from size of mat, and target pattern size.
-        /// </summary>
-        /// <param name="matsize"></param>
-        /// <param name="gridSize"></param>
-        /// <returns></returns>
-        public static List<DetectGridRect> GetDetectRects(Size matsize, Size gridSize)
-        {
-            var gridWidth = matsize.Width / gridSize.Width;
-            var gridHeight = matsize.Height / gridSize.Height;
-            var gridRects = new List<DetectGridRect>();
-
-            foreach (var row in Enumerable.Range(0, gridSize.Height))
-            foreach (var column in Enumerable.Range(0, gridSize.Width))
-            {
-                var x = column * gridWidth;
-                var y = row * gridHeight;
-                var rect = new Rect(x, y, gridWidth, gridHeight);
-                gridRects.Add(new DetectGridRect(row + 1, column + 1, rect)
-                {
-                    IsEmpty = true
-                });
-            }
-
-            return gridRects;
-        }
-
-
         /// <summary>
         ///     Get Mat from Original Mat by ROI Rect
         /// </summary>
