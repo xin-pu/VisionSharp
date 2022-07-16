@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
@@ -11,8 +10,8 @@ namespace CVLib.Processor
     ///     输入一张图像
     ///     返回多个含有目标物的检测框
     /// </summary>
-    public abstract class ObjDetector<T> : Processor<Mat, List<DetectRectObject>>
-        where T : Enum
+    public abstract class ObjDetector : Processor<Mat, List<DetectRectObject>>
+
     {
         protected ObjDetector(string name)
             : base(name)
@@ -22,9 +21,10 @@ namespace CVLib.Processor
         public float CONFIDENCE { set; get; } = 0.8F;
         public float IOUThreshold { set; get; } = 0.5F;
 
+
         private Net Model { set; get; }
 
-        public T Names { get; }
+        public abstract string[] Categroy { get; }
 
         internal override List<DetectRectObject> Process(Mat input)
         {
@@ -70,7 +70,7 @@ namespace CVLib.Processor
                 IOUThreshold,
                 out var boxIndex);
             var filter = candidate
-                .Where((a, b) => boxIndex.Contains(b))
+                .Where((_, b) => boxIndex.Contains(b))
                 .ToList();
 
             return filter;
@@ -89,7 +89,7 @@ namespace CVLib.Processor
                 .ForEach(a =>
                 {
                     DrawRect(mat, a.Rect, PenColor, thickness: 2, size: 5);
-                    mat.PutText($"{Enum.Parse(typeof(T), a.Category.ToString())} {a.ObjectConfidence:P2}",
+                    mat.PutText($"{Categroy[a.Category]} {a.ObjectConfidence:P2}",
                         a.Rect.TopLeft,
                         HersheyFonts.HersheyPlain,
                         2, PenColor, 2);

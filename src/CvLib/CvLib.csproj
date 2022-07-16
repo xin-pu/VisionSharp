@@ -131,7 +131,7 @@
     <Compile Include="Processor\Model\AnnObject.cs" />
     <Compile Include="Processor\Model\Annotation.cs" />
     <Compile Include="Processor\Unit\Calculator\CorrectionCalculator.cs" />
-    <Compile Include="Processor\Unit\Detector\VocObejctsDetector.cs" />
+    <Compile Include="Processor\Unit\Detector\YoloV3Detector.cs" />
     <Compile Include="Processor\Unit\Painter\GridObjectPainter.cs" />
     <Compile Include="Processor\Unit\Painter\ObjAnnotationCreator.cs" />
     <Compile Include="Processor\Unit\Painter\ObjAnnotationPainter.cs" />

@@ -1,15 +1,34 @@
 ﻿using System.Text;
+using GalaSoft.MvvmLight;
 
 namespace CVLib.Processor
 {
     /// <summary>
     ///     用于同一轮廓，角度和像素偏移量
     /// </summary>
-    public struct AdjustPara
+    public class AdjustPara : ViewModelBase
     {
-        public double Angle { set; get; }
-        public double XBias { set; get; }
-        public double YBias { set; get; }
+        private double _angle;
+        private double _xbias;
+        private double _ybias;
+
+        public double Angle
+        {
+            set => Set(ref _angle, value);
+            get => _angle;
+        }
+
+        public double XBias
+        {
+            set => Set(ref _xbias, value);
+            get => _xbias;
+        }
+
+        public double YBias
+        {
+            set => Set(ref _ybias, value);
+            get => _ybias;
+        }
 
         public override string ToString()
         {
