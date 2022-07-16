@@ -10,7 +10,7 @@ namespace CVLib.Processor
     ///     输入一张图像
     ///     返回多个含有目标物的检测框
     /// </summary>
-    public abstract class ObjDetector : Processor<Mat, List<DetectRectObject>>
+    public abstract class ObjDetector : MatProcessor<List<DetectRectObject>>
 
     {
         protected ObjDetector(string name)
@@ -24,7 +24,9 @@ namespace CVLib.Processor
 
         private Net Model { set; get; }
 
-        public abstract string[] Categroy { get; }
+
+        public string[] Categroy { get; set; }
+        public Scalar[] Colors { get; set; }
 
         internal override List<DetectRectObject> Process(Mat input)
         {
@@ -88,11 +90,11 @@ namespace CVLib.Processor
                 .ToList()
                 .ForEach(a =>
                 {
-                    DrawRect(mat, a.Rect, PenColor, thickness: 2, size: 5);
+                    DrawRect(mat, a.Rect, Colors[a.Category], thickness: 2, size: 5);
                     mat.PutText($"{Categroy[a.Category]} {a.ObjectConfidence:P2}",
                         a.Rect.TopLeft,
                         HersheyFonts.HersheyPlain,
-                        2, PenColor, 2);
+                        2, Colors[a.Category], 2);
                 });
             return mat;
         }

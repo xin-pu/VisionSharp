@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using GalaSoft.MvvmLight.CommandWpf;
+using System.Windows.Forms;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
 
@@ -22,29 +23,6 @@ namespace CVLib.Processor.Unit
         public string ModelWeights { set; get; } = "voc.weights";
         public string ConfigFile { set; get; } = "voc.cfg";
 
-        public override string[] Categroy => new[]
-        {
-            "aeroplane",
-            "bicycle",
-            "bird",
-            "boat",
-            "bottle",
-            "bus",
-            "car",
-            "cat",
-            "chair",
-            "cow",
-            "diningtable",
-            "dog",
-            "horse",
-            "motorbike",
-            "person",
-            "pottedplant",
-            "sheep",
-            "sofa",
-            "train",
-            "tvmonitor"
-        };
 
         internal override Net InitialNet()
         {
@@ -118,32 +96,31 @@ namespace CVLib.Processor.Unit
             return list;
         }
 
-
         #region MyRegion
 
-        public RelayCommand SelectCFGCommand => new(SelectCFGCommand_Execute);
-        public RelayCommand SelectWeightCommand => new(SelectWeightCommand_Execute);
-        public RelayCommand SelectNamesCommand => new(SelectNamesCommand_Execute);
-        public RelayCommand PredictCommand => new(PredictCommand_Execute);
-
-        private void PredictCommand_Execute()
+        internal override void SelectConfigCommand_Execute()
         {
-            throw new NotImplementedException();
-        }
+            var openFileDialog = new FolderBrowserDialog();
+            var res = openFileDialog.ShowDialog();
+            if (res != DialogResult.OK)
+                return;
 
-        private void SelectWeightCommand_Execute()
-        {
-            throw new NotImplementedException();
-        }
+            var path = openFileDialog.SelectedPath;
 
-        private void SelectCFGCommand_Execute()
-        {
-            throw new NotImplementedException();
-        }
 
-        private void SelectNamesCommand_Execute()
-        {
-            throw new NotImplementedException();
+            var dire = new DirectoryInfo(path);
+
+            ModelWeights = dire.GetFiles("*.weights").FirstOrDefault()?.FullName;
+            ConfigFile = dire.GetFiles("*.cfg").FirstOrDefault()?.FullName;
+            var namefile = dire.GetFiles("*.names").FirstOrDefault()?.FullName;
+            if (ModelWeights == null || ConfigFile == null || namefile == null)
+                return;
+            using var sr = new StreamReader(namefile);
+            Categroy = sr.ReadToEnd().Split('\r', '\n')
+                .Select(a => a.TrimEnd())
+                .Where(a => a != "")
+                .ToArray();
+            Colors = Categroy.Select(a => Scalar.RandomColor()).ToArray();
         }
 
         #endregion
