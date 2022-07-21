@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -60,10 +61,11 @@ namespace CVLib.Processor
 
         #region Commmands
 
-        public RelayCommand CallProcessorMatCommand => new(CallProcessorMatCommand_Execute);
-        public RelayCommand CallProcessorVideoCommand => new(CallProcessorVideoCommand_Execute);
+        [Category("Command")] public RelayCommand CallProcessorMatCommand => new(CallProcessorMatCommand_Execute);
 
-        public RelayCommand SelectConfigCommand => new(SelectConfigCommand_Execute);
+        [Category("Command")] public RelayCommand CallProcessorVideoCommand => new(CallProcessorVideoCommand_Execute);
+
+        [Category("Command")] public RelayCommand SelectConfigCommand => new(SelectConfigCommand_Execute);
 
         internal virtual void SelectConfigCommand_Execute()
         {
