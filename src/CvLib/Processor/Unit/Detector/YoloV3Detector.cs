@@ -120,7 +120,7 @@ namespace CVLib.Processor.Unit
                 .Select(a => a.TrimEnd())
                 .Where(a => a != "")
                 .ToArray();
-            Colors = Categroy.Select(a => Scalar.RandomColor()).ToArray();
+            Colors = Categroy.Select(_ => Scalar.RandomColor()).ToArray();
         }
 
         #endregion

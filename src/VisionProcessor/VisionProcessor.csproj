@@ -97,6 +97,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\PropertyGridExt\EditorType.cs" />
+    <Compile Include="Controls\PropertyGridExt\Editor\Command\CommandEditor.cs" />
+    <Compile Include="Controls\PropertyGridExt\Editor\Command\SwitchCommandEditor.cs" />
+    <Compile Include="Controls\PropertyGridExt\Editor\CV\CVPointEditor.cs" />
+    <Compile Include="Controls\PropertyGridExt\Editor\CV\CVRectEditor.cs" />
+    <Compile Include="Controls\PropertyGridExt\Editor\CV\CVSizeEditor.cs" />
+    <Compile Include="Controls\PropertyGridExt\Editor\CV\CVTransformEditor.cs" />
+    <Compile Include="Controls\PropertyGridExt\PropertyResolverExt.cs" />
     <Compile Include="Views\ObjectDetectorView.xaml.cs">
       <DependentUpon>ObjectDetectorView.xaml</DependentUpon>
     </Compile>
