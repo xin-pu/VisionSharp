@@ -29,6 +29,12 @@ namespace CVLib.Processor
             Height = s.Height;
         }
 
+        public CvSize(Size s)
+        {
+            Width = s.Width;
+            Height = s.Height;
+        }
+
         public CvSize(double width, double height)
         {
             Width = width;
