@@ -1,28 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
 
-namespace CVLib.Processor.Unit
+namespace CVLib.Processor.Unit.ObjDetectors
 {
-    /// <summary>
-    ///     Yolo V3 object detect by DarkNet
-    /// </summary>
     public class YoloV3Detector : ObjDetector
 
     {
+        /// <summary>
+        ///     基于DarkNet下YoloV3结构的目标检测
+        /// </summary>
         public YoloV3Detector(string name = "YoloV3Detector")
             : base(name)
         {
             DrawInfo = false;
         }
 
-        public string ModelWeights { set; get; } = "voc.weights";
-        public string ConfigFile { set; get; } = "voc.cfg";
 
+        #region Option
+
+        private string _modelWeights = "voc.weights";
+        private string _configFile = "voc.cfg";
+
+        [Category("Option")]
+        public string ModelWeights
+        {
+            set => Set(ref _modelWeights, value);
+            get => _modelWeights;
+        }
+
+        [Category("Option")]
+        public string ConfigFile
+        {
+            set => Set(ref _configFile, value);
+            get => _configFile;
+        }
+
+        #endregion
+
+        #region Method
 
         internal override Net InitialNet()
         {
@@ -96,8 +117,6 @@ namespace CVLib.Processor.Unit
             return list;
         }
 
-        #region MyRegion
-
         internal override void SelectConfigCommand_Execute()
         {
             var openFileDialog = new FolderBrowserDialog();
@@ -121,6 +140,8 @@ namespace CVLib.Processor.Unit
                 .Where(a => a != "")
                 .ToArray();
             Colors = Categroy.Select(_ => Scalar.RandomColor()).ToArray();
+
+            Model ??= InitialNet();
         }
 
         #endregion

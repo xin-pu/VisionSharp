@@ -13,15 +13,15 @@
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" DataContext="{Binding ObjDetector}">
             <Button Command="{Binding SelectConfigCommand }" 
                     Style="{StaticResource ButtonDashedInfo}"
-                    Content="Select Image"
+                    Content="Load Model"
                     Margin="5"/>
             <Button Command="{Binding CallProcessorMatCommand }" 
                     Style="{StaticResource ButtonDashedInfo}"
-                    Content="Select Image"
+                    Content="Detect Image"
                     Margin="5"/>
             <Button Command="{Binding CallProcessorVideoCommand}" 
                     Style="{StaticResource ButtonDashedInfo}"
-                    Content="Select Video"
+                    Content="Detect Video"
                     Margin="5"/>
         </StackPanel>
 

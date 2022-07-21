@@ -61,15 +61,30 @@ namespace CVLib.Processor
 
         #region Commmands
 
-        [Category("Command")] public RelayCommand CallProcessorMatCommand => new(CallProcessorMatCommand_Execute);
-
-        [Category("Command")] public RelayCommand CallProcessorVideoCommand => new(CallProcessorVideoCommand_Execute);
-
         [Category("Command")] public RelayCommand SelectConfigCommand => new(SelectConfigCommand_Execute);
 
         internal virtual void SelectConfigCommand_Execute()
         {
         }
+
+        [Category("Command")]
+        public RelayCommand CallProcessorMatCommand =>
+            new(CallProcessorMatCommand_Execute, CallProcessorMatCommand_CanExecute);
+
+        internal virtual bool CallProcessorMatCommand_CanExecute()
+        {
+            return true;
+        }
+
+        [Category("Command")]
+        public RelayCommand CallProcessorVideoCommand =>
+            new(CallProcessorVideoCommand_Execute, CallProcessorVideoCommand_CanExecute);
+
+        internal virtual bool CallProcessorVideoCommand_CanExecute()
+        {
+            return true;
+        }
+
 
         internal virtual void CallProcessorMatCommand_Execute()
         {

@@ -32,19 +32,16 @@ namespace CVLib.Processor.Unit.Painter
 
 
             Enumerable.Range(0, gridSize.Height).ToList().ForEach(r =>
-            {
                 Enumerable.Range(0, gridSize.Width).ToList().ForEach(c =>
                 {
                     var isObject = SystemRandomSource.Default.NextBoolean();
                     array[r, c] = isObject;
-                    if (isObject)
-                    {
-                        var x = (c + 1) * 80;
-                        var y = (r + 1) * 35;
-                        DrawObject(mat, new Point(x, y));
-                    }
-                });
-            });
+                    if (!isObject) return;
+
+                    var x = (c + 1) * 80;
+                    var y = (r + 1) * 35;
+                    DrawObject(mat, new Point(x, y));
+                }));
 
             return new Tuple<Mat, bool[,]>(mat, array);
         }
