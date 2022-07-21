@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VisionProcessor.Views"
              xmlns:hc="https://handyorg.github.io/handycontrol"
+             xmlns:propertyGridExt="clr-namespace:VisionProcessor.Controls.PropertyGridExt"
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1366"
              Background="White"
@@ -27,11 +27,8 @@
 
         <DockPanel DataContext="{Binding ObjDetector}">
             <Grid Width="300" DockPanel.Dock="Left">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <hc:PropertyGrid Grid.Row="0" SelectedObject="{Binding }"></hc:PropertyGrid>
+                <propertyGridExt:PropertyGridExt  SelectedObject="{Binding }"
+                                                  Style="{DynamicResource PropertyGridBaseStyle}"/>
             </Grid>
             <hc:ImageViewer ImageSource="{Binding BitmapSource}"/>
 
