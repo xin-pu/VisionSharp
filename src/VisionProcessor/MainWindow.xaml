@@ -10,7 +10,7 @@
         Title="MainWindow" Height="768" Width="1366"
         WindowState="Maximized">
     <TabControl>
-        <TabItem>
+        <TabItem Header="Object Detector">
             <views:ObjectDetectorView/>
         </TabItem>
     </TabControl>

@@ -20,9 +20,9 @@ namespace CVLib.Processor.Unit
         }
 
 
-        #region Configuration
+        #region Built-in
 
-        [Category("Configuration")] public CvSize PatternSize { get; }
+        [Category("Built-in")] public CvSize PatternSize { get; }
         internal Net Net { get; }
         internal int PatternWidth => (int) PatternSize.Width;
         internal int PatternHeight => (int) PatternSize.Height;

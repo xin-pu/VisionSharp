@@ -1,6 +1,5 @@
 ﻿using System;
-using CVLib.Processor;
-using CVLib.Processor.Unit;
+using CVLib.Processor.Unit.ObjDetectors;
 using GalaSoft.MvvmLight;
 
 namespace VisionProcessor.Models

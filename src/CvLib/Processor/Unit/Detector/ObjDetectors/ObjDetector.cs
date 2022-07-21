@@ -4,7 +4,7 @@ using System.Linq;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
 
-namespace CVLib.Processor
+namespace CVLib.Processor.Unit.ObjDetectors
 {
     /// <summary>
     ///     用于目标检测的探测器
@@ -14,37 +14,24 @@ namespace CVLib.Processor
     public abstract class ObjDetector : MatProcessor<List<DetectRectObject>>
 
     {
-        private float _confidence = 0.8f;
-
-        private float _iouThreshold = 0.5f;
-
         protected ObjDetector(string name)
             : base(name)
         {
         }
 
-        [Category("Option")]
-        public float Confidence
-        {
-            set => Set(ref _confidence, value);
-            get => _confidence;
-        }
 
-        [Category("Option")]
-        public float IOUThreshold
-        {
-            set => Set(ref _iouThreshold, value);
-            get => _iouThreshold;
-        }
-
+        #region built-in
 
         internal string[] Categroy { get; set; }
         internal Net Model { set; get; }
         internal Scalar[] Colors { get; set; }
 
+        #endregion
+
+        #region Method
+
         internal override List<DetectRectObject> Process(Mat input)
         {
-            Model ??= InitialNet();
             var mats = FrontNet(Model, input);
             var candidate = Decode(mats, input.Size());
             var final = NonMaximalSuppression(candidate);
@@ -112,5 +99,39 @@ namespace CVLib.Processor
                 });
             return mat;
         }
+
+        internal override bool CallProcessorMatCommand_CanExecute()
+        {
+            return Model != null;
+        }
+
+        internal override bool CallProcessorVideoCommand_CanExecute()
+        {
+            return Model != null;
+        }
+
+        #endregion
+
+        #region Option
+
+        private float _confidence = 0.8f;
+
+        private float _iouThreshold = 0.5f;
+
+        [Category("Option")]
+        public float Confidence
+        {
+            set => Set(ref _confidence, value);
+            get => _confidence;
+        }
+
+        [Category("Option")]
+        public float IOUThreshold
+        {
+            set => Set(ref _iouThreshold, value);
+            get => _iouThreshold;
+        }
+
+        #endregion
     }
 }

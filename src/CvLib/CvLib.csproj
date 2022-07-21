@@ -124,7 +124,7 @@
     <Compile Include="Calibration\Models\RelativeShift.cs" />
     <Compile Include="Processor\Abstract\Core\Classifier.cs" />
     <Compile Include="Processor\Abstract\Core\MatProcessor.cs" />
-    <Compile Include="Processor\Abstract\Core\ObjDetector.cs" />
+    <Compile Include="Processor\Custom\CocTrayDistributionPredictor.cs" />
     <Compile Include="Processor\Model\DetectRectObject.cs" />
     <Compile Include="Processor\Model\CvPoint.cs" />
     <Compile Include="Processor\Model\CvRect.cs" />
@@ -133,8 +133,9 @@
     <Compile Include="Processor\Model\CvTransform.cs" />
     <Compile Include="Processor\Model\CvMatCell.cs" />
     <Compile Include="Processor\Model\TuneRange.cs" />
-    <Compile Include="Processor\Unit\Detector\DistributionDetector.cs" />
-    <Compile Include="Processor\Unit\Detector\YoloV3Detector.cs" />
+    <Compile Include="Processor\Unit\Detector\DistributionDetectots\DistributionDetector.cs" />
+    <Compile Include="Processor\Unit\Detector\ObjDetectors\ObjDetector.cs" />
+    <Compile Include="Processor\Unit\Detector\ObjDetectors\YoloV3Detector.cs" />
     <Compile Include="Processor\Unit\Painter\GridObjectPainter.cs" />
     <Compile Include="Processor\Unit\PretreatMent\DrawCenter.cs" />
     <Compile Include="Processor\Unit\PretreatMent\NormalPretreatment.cs" />
