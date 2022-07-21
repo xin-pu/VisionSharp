@@ -10,6 +10,11 @@ namespace CVLib.Processor
     /// <typeparam name="T"></typeparam>
     public class RichInfo<T> : ViewModelBase
     {
+        private double _confidence;
+        private string _errorMessage;
+        private Mat _outMat;
+        private T _result;
+
         public RichInfo(T result, double conf, Mat outmat)
         {
             ErrorMessage = string.Empty;
@@ -26,13 +31,29 @@ namespace CVLib.Processor
             OutMat = null;
         }
 
-        public T Result { set; get; }
+        public T Result
+        {
+            set => Set(ref _result, value);
+            get => _result;
+        }
 
-        public Mat OutMat { set; get; }
+        public Mat OutMat
+        {
+            set => Set(ref _outMat, value);
+            get => _outMat;
+        }
 
-        public double Confidence { set; get; }
+        public double Confidence
+        {
+            set => Set(ref _confidence, value);
+            get => _confidence;
+        }
 
-        public string ErrorMessage { set; get; }
+        public string ErrorMessage
+        {
+            set => Set(ref _errorMessage, value);
+            get => _errorMessage;
+        }
 
         public override string ToString()
         {

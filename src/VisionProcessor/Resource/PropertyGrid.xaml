@@ -1,0 +1,57 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:hc="https://handyorg.github.io/handycontrol"
+                    xmlns:command="clr-namespace:VisionProcessor.Controls.PropertyGridExt.Editor.Command">
+
+
+    <Style TargetType="command:RelayCommandEditor">
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextIconBrush}"/>
+        <Setter Property="hc:BorderElement.CornerRadius" Value="3"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="command:RelayCommandEditor">
+                    <hc:UniformSpacingPanel Spacing="10" Margin="2"
+                                            DataContext="{Binding RelativeSource={RelativeSource Mode=TemplatedParent} }">
+                        <Button Command="{Binding RelayCommand}"
+                                Style="{DynamicResource ButtonIconCircular}"
+                                Background="{StaticResource InfoBrush}"
+                                Foreground="White"
+                                hc:IconElement.Geometry="{StaticResource RightGeometry}"
+                                ToolTip="Run Command"/>
+                    </hc:UniformSpacingPanel>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="command:SwitchCommandEditor">
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextIconBrush}"/>
+        <Setter Property="hc:BorderElement.CornerRadius" Value="3"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="command:SwitchCommandEditor">
+                    <hc:UniformSpacingPanel Spacing="10" Margin="2"
+                                            DataContext="{Binding RelativeSource={RelativeSource Mode=TemplatedParent} }">
+
+                        <ToggleButton Command="{Binding RelayCommand}"
+                                      CommandParameter="{Binding ElementName=DD,Path=IsChecked }"
+                                      Background="{StaticResource InfoBrush}"
+                                      Style="{DynamicResource ToggleButtonSwitch}"
+                                      Foreground="White"
+                                      hc:IconElement.Geometry="{StaticResource SuccessGeometry}"
+                                      ToolTip="Run Command"
+                                      Name="DD"/>
+                    </hc:UniformSpacingPanel>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

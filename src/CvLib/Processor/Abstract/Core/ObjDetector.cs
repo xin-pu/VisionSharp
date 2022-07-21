@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
@@ -13,20 +14,33 @@ namespace CVLib.Processor
     public abstract class ObjDetector : MatProcessor<List<DetectRectObject>>
 
     {
+        private float _confidence = 0.8f;
+
+        private float _iouThreshold = 0.5f;
+
         protected ObjDetector(string name)
             : base(name)
         {
         }
 
-        public float CONFIDENCE { set; get; } = 0.8F;
-        public float IOUThreshold { set; get; } = 0.5F;
+        [Category("Option")]
+        public float Confidence
+        {
+            set => Set(ref _confidence, value);
+            get => _confidence;
+        }
+
+        [Category("Option")]
+        public float IOUThreshold
+        {
+            set => Set(ref _iouThreshold, value);
+            get => _iouThreshold;
+        }
 
 
-        private Net Model { set; get; }
-
-
-        public string[] Categroy { get; set; }
-        public Scalar[] Colors { get; set; }
+        internal string[] Categroy { get; set; }
+        internal Net Model { set; get; }
+        internal Scalar[] Colors { get; set; }
 
         internal override List<DetectRectObject> Process(Mat input)
         {
@@ -68,7 +82,7 @@ namespace CVLib.Processor
             CvDnn.NMSBoxes(
                 candidate.Select(a => a.Rect),
                 candidate.Select(a => a.ObjectConfidence),
-                CONFIDENCE,
+                Confidence,
                 IOUThreshold,
                 out var boxIndex);
             var filter = candidate

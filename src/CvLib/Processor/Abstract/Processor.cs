@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,10 @@ namespace CVLib.Processor
     /// <typeparam name="T2"></typeparam>
     public abstract class Processor<T1, T2> : ViewModelBase
     {
+        private bool _drawinfo = true;
+
+        private bool _saveOutMat = true;
+
         protected Processor(string name)
         {
             Name = name;
@@ -22,14 +27,25 @@ namespace CVLib.Processor
 
         public string OutPutDire => Path.Combine(Environment.CurrentDirectory, "Temp", Name);
 
-        public string Name { internal set; get; }
+        internal string Name { set; get; }
 
-        public string FileName { internal set; get; }
+        internal string FileName { set; get; }
+        internal Scalar PenColor => Scalar.OrangeRed;
 
-        public bool SaveOutMat { set; get; } = true;
-        public bool DrawInfo { set; get; } = true;
+        [Category("Option")]
+        public bool SaveOutMat
+        {
+            set => Set(ref _saveOutMat, value);
+            get => _saveOutMat;
+        }
 
-        public Scalar PenColor => Scalar.OrangeRed;
+        [Category("Option")]
+        public bool DrawInfo
+        {
+            set => Set(ref _drawinfo, value);
+            get => _drawinfo;
+        }
+
 
         /// <summary>
         ///     If you want to keep input, you should insert a clone of input.

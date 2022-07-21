@@ -60,7 +60,7 @@ namespace CVLib.Processor.Unit
 
                 var conList = confidence
                     .Select((c, i) => (c, i))
-                    .Where(p => p.c > CONFIDENCE)
+                    .Where(p => p.c > Confidence)
                     .Select(p => p.i)
                     .ToList();
 
@@ -72,7 +72,7 @@ namespace CVLib.Processor.Unit
                     var classify = rowInfo.Skip(5).ToList();
                     var classProb = classify.Max();
                     var classIndex = classify.IndexOf(classProb);
-                    if (classProb < CONFIDENCE) return;
+                    if (classProb < Confidence) return;
 
                     var center_x = rowInfo[0] * size.Width;
                     var center_y = rowInfo[1] * size.Height;
