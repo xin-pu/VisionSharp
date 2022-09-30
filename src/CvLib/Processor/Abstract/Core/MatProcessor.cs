@@ -90,7 +90,7 @@ namespace CVLib.Processor
         {
             var dialog = new OpenFileDialog
             {
-                Filter = "(*.jpg)|*.jpg|(*.png)|*.png",
+                Filter = "(*.jpg)|*.jpg|(*.png)|*.png|(*.bmp)|*.bmp",
                 RestoreDirectory = true
             };
             if (dialog.ShowDialog() != true) return;
