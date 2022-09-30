@@ -54,9 +54,15 @@ namespace CVLib.Processor.Unit
 
         internal override bool[,] Process(Mat input)
         {
+            var gratMat = new Mat();
+            if (input.Channels() != 3)
+                gratMat = input;
+            else
+                Cv2.CvtColor(input, gratMat, ColorConversionCodes.BGR2GRAY);
+
             try
             {
-                var inputBlob = CvDnn.BlobFromImage(input,
+                var inputBlob = CvDnn.BlobFromImage(gratMat,
                     1d / 255,
                     InputSize.Size,
                     swapRB: false,

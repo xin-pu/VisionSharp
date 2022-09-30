@@ -11,6 +11,7 @@ namespace VisionProcessor.Models
             /// 否则 design time 模式下，会重复注册Instance.
             SimpleIoc.Default.Reset();
             SimpleIoc.Default.Register(() => new ObjDetectorManager());
+            SimpleIoc.Default.Register(() => new DistributionDetectorManager());
         }
 
         public static ViewModelLocator Instance => new Lazy<ViewModelLocator>(() =>
@@ -18,5 +19,8 @@ namespace VisionProcessor.Models
 
 
         public ObjDetectorManager ObjDetectorManager => SimpleIoc.Default.GetInstance<ObjDetectorManager>();
+
+        public DistributionDetectorManager DistributionDetector =>
+            SimpleIoc.Default.GetInstance<DistributionDetectorManager>();
     }
 }
