@@ -1,12 +1,12 @@
 ﻿using System.Text;
-using GalaSoft.MvvmLight;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace VisionSharp.Models.Ext
 {
     /// <summary>
     ///     OpenCV中矩阵 Cell对象
     /// </summary>
-    public class CvMatCell : ViewModelBase
+    public class CvMatCell : ObservableObject
     {
         public CvMatCell()
         {

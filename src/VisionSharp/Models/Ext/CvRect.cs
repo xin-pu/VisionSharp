@@ -1,15 +1,15 @@
 ﻿using System.Text;
-using GalaSoft.MvvmLight;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 
-namespace CVLib.Models
+namespace VisionSharp.Models.Ext
 {
-    public class CvRect : ViewModelBase
+    public class CvRect : ObservableObject
     {
-        private int height;
-        private int width;
-        private int x;
-        private int y;
+        private int _height;
+        private int _width;
+        private int _x;
+        private int _y;
 
         public CvRect()
         {
@@ -36,26 +36,26 @@ namespace CVLib.Models
 
         public int X
         {
-            set => Set(ref x, value);
-            get => x;
+            set => SetProperty(ref _x, value);
+            get => _x;
         }
 
         public int Y
         {
-            set => Set(ref y, value);
-            get => y;
+            set => SetProperty(ref _y, value);
+            get => _y;
         }
 
         public int Width
         {
-            set => Set(ref width, value);
-            get => width;
+            set => SetProperty(ref _width, value);
+            get => _width;
         }
 
         public int Height
         {
-            set => Set(ref height, value);
-            get => height;
+            set => SetProperty(ref _height, value);
+            get => _height;
         }
 
 

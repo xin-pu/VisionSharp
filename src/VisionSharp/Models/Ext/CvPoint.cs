@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using GalaSoft.MvvmLight;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 
 namespace VisionSharp.Models.Ext
@@ -7,10 +7,10 @@ namespace VisionSharp.Models.Ext
     /// <summary>
     ///     This is Point class for UI corresponding to point2d @ openCV
     /// </summary>
-    public class CvPoint : ViewModelBase
+    public class CvPoint : ObservableObject
     {
-        private double x;
-        private double y;
+        private double _x;
+        private double _y;
 
         public CvPoint()
         {
@@ -39,14 +39,14 @@ namespace VisionSharp.Models.Ext
 
         public double X
         {
-            set => Set(ref x, value);
-            get => x;
+            set => SetProperty(ref _x, value);
+            get => _x;
         }
 
         public double Y
         {
-            set => Set(ref y, value);
-            get => y;
+            set => SetProperty(ref _y, value);
+            get => _y;
         }
 
 

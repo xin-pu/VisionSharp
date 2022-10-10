@@ -1,12 +1,12 @@
 ﻿using System.Text;
-using GalaSoft.MvvmLight;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 
 namespace VisionSharp.Models.Ext
 {
-    public class CvTransform : ViewModelBase
+    public class CvTransform : ObservableObject
     {
-        private List<CvMatCell> arrayCells;
+        private List<CvMatCell> _arrayCells;
 
         public CvTransform()
         {
@@ -19,11 +19,11 @@ namespace VisionSharp.Models.Ext
 
         public List<CvMatCell> ArrayList
         {
-            set => Set(ref arrayCells, value);
-            get => arrayCells;
+            set => SetProperty(ref _arrayCells, value);
+            get => _arrayCells;
         }
 
-        public Mat mat => ConvertToMat(ArrayList);
+        public Mat Mat => ConvertToMat(ArrayList);
 
 
         public static List<CvMatCell> ConvertFrom(double[,] array)
@@ -33,7 +33,9 @@ namespace VisionSharp.Models.Ext
             var column = array.GetLength(1);
             foreach (var r in Enumerable.Range(0, row))
             foreach (var c in Enumerable.Range(0, column))
+            {
                 res.Add(new CvMatCell(r, c, array[r, c]));
+            }
 
             return res;
         }
@@ -56,7 +58,7 @@ namespace VisionSharp.Models.Ext
 
         public override string ToString()
         {
-            var size = mat.Size();
+            var size = Mat.Size();
             var strBuild = new StringBuilder();
             strBuild.AppendLine("CvTransform");
             strBuild.AppendLine(new string('-', 30));
@@ -64,7 +66,7 @@ namespace VisionSharp.Models.Ext
 
             for (var r = 0; r < size.Height; r++)
             {
-                var row = mat.Row(r);
+                var row = Mat.Row(r);
                 row.GetArray(out double[] rowArray);
                 var rowArrayStr = rowArray.Select(a => $"{a:F4}");
                 strBuild.AppendLine(string.Join("\t", rowArrayStr));
