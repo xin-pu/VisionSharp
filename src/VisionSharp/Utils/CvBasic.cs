@@ -1,6 +1,5 @@
 ﻿using OpenCvSharp;
 using VisionSharp.Models.Detect;
-using Size = System.Drawing.Size;
 
 namespace VisionSharp.Utils
 {
