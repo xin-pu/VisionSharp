@@ -78,10 +78,9 @@ namespace CVLib.Processor
             return angleFinal;
         }
 
-        internal override double CalScore(double result)
+        internal override bool CalScore(double result)
         {
-            var klist = KeyLines.Select(a => a.Item2).ToArray();
-            return 1 - Math.Abs(klist.Variance() / klist.Mean());
+            return true;
         }
     }
 }

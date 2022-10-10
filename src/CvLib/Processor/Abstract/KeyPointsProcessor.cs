@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using MathNet.Numerics.Statistics;
+﻿using System.Linq;
 using OpenCvSharp;
 
 namespace CVLib.Processor
@@ -35,19 +33,10 @@ namespace CVLib.Processor
             return mat;
         }
 
-        internal override double CalScore(KeyPoint[] result)
+        internal override bool CalScore(KeyPoint[] result)
         {
-            if (result.Length != Count)
-            {
-                return 0;
-            }
-
-            var rectPointSize = result.Take(4)
-                .Select(a => a.Size)
-                .ToArray();
-            var var = 1 - Math.Abs(rectPointSize.Variance() /
-                                   rectPointSize.Mean());
-            return var;
+            if (result.Length != Count) return false;
+            return true;
         }
     }
 }

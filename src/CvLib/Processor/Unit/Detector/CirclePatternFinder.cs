@@ -80,13 +80,11 @@ namespace CVLib.Processor.Unit
             return mat;
         }
 
-        internal override double CalScore(Point2d[] point2ds)
+        internal override bool CalScore(Point2d[] point2ds)
         {
             if (point2ds == null)
-                return 0;
-            return point2ds.Length == Pattern.Height * Pattern.Width
-                ? 1
-                : 0;
+                return false;
+            return point2ds.Length == Pattern.Height * Pattern.Width;
         }
 
 

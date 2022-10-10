@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using CVLib.Utils;
-using MathNet.Numerics.Statistics;
 using OpenCvSharp;
 
 namespace CVLib.Processor.Unit
@@ -59,7 +58,7 @@ namespace CVLib.Processor.Unit
             return mat;
         }
 
-        internal override double CalScore(Point2d result)
+        internal override bool CalScore(Point2d result)
         {
             var temp = OriginalFeatures.ToList();
             var pair = new Dictionary<Point2d, Point2d>();
@@ -75,12 +74,7 @@ namespace CVLib.Processor.Unit
             var pairDistance = pair
                 .Select(a => CvMath.GetDistance(a.Key, a.Value))
                 .ToArray();
-            if (pairDistance.Any(a => a > Threshold))
-            {
-                return 0;
-            }
-
-            return 1 - Math.Abs(pairDistance.Variance() / pairDistance.Mean());
+            return !pairDistance.Any(a => a > Threshold);
         }
     }
 }

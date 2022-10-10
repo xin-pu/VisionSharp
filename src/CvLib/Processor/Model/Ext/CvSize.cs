@@ -5,9 +5,6 @@ using YAXLib.Attributes;
 
 namespace CVLib.Processor
 {
-    /// <summary>
-    ///     This is Size for UI corresponding to cell of Size @ openCV
-    /// </summary>
     public class CvSize : ViewModelBase
     {
         private double height;
@@ -24,12 +21,6 @@ namespace CVLib.Processor
         }
 
         public CvSize(Size2d s)
-        {
-            Width = s.Width;
-            Height = s.Height;
-        }
-
-        public CvSize(Size s)
         {
             Width = s.Width;
             Height = s.Height;

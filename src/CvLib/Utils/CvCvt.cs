@@ -48,10 +48,10 @@ namespace CVLib.Utils
                 .ToList()
                 .ForEach(r =>
                 {
-                    Enumerable.Range(0, column)
+                    var line = Enumerable.Range(0, column)
                         .ToList()
-                        .ForEach(c => strBuild.Append(mat[r, c] ? 1 : 0));
-                    strBuild.AppendLine();
+                        .Select(c => mat[r, c] ? 1 : 0);
+                    strBuild.AppendLine(string.Join(",", line));
                 });
             return strBuild.ToString();
         }
@@ -64,9 +64,12 @@ namespace CVLib.Utils
             var array = new double[row, column];
             Enumerable.Range(0, row)
                 .ToList()
-                .ForEach(r => Enumerable.Range(0, column)
-                    .ToList()
-                    .ForEach(c => array[r, c] = input[r, c] ? 1 : 0));
+                .ForEach(r =>
+                {
+                    Enumerable.Range(0, column)
+                        .ToList()
+                        .ForEach(c => { array[r, c] = input[r, c] ? 1 : 0; });
+                });
             return Mat.FromArray(array);
         }
 

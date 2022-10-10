@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,10 +14,6 @@ namespace CVLib.Processor
     /// <typeparam name="T2"></typeparam>
     public abstract class Processor<T1, T2> : ViewModelBase
     {
-        private bool _drawinfo = true;
-
-        private bool _saveOutMat = true;
-
         protected Processor(string name)
         {
             Name = name;
@@ -27,25 +22,14 @@ namespace CVLib.Processor
 
         public string OutPutDire => Path.Combine(Environment.CurrentDirectory, "Temp", Name);
 
-        internal string Name { set; get; }
+        public string Name { internal set; get; }
 
-        internal string FileName { set; get; }
-        internal Scalar PenColor => Scalar.OrangeRed;
+        public string FileName { set; get; }
 
-        [Category("Option")]
-        public bool SaveOutMat
-        {
-            set => Set(ref _saveOutMat, value);
-            get => _saveOutMat;
-        }
+        public bool SaveOutMat { set; get; } = true;
+        public bool DrawInfo { set; get; } = true;
 
-        [Category("Option")]
-        public bool DrawInfo
-        {
-            set => Set(ref _drawinfo, value);
-            get => _drawinfo;
-        }
-
+        public Scalar PenColor => Scalar.OrangeRed;
 
         /// <summary>
         ///     If you want to keep input, you should insert a clone of input.
@@ -54,7 +38,7 @@ namespace CVLib.Processor
         /// <param name="input"></param>
         /// <param name="mat"></param>
         /// <returns></returns>
-        public RichInfo<T2> Call(T1 input, Mat mat = null)
+        public RichInfo<T2> Call(T1 input, Mat mat = null, string saveName = "")
         {
             try
             {
@@ -64,7 +48,7 @@ namespace CVLib.Processor
                 var result = Process(input);
 
                 /// Step 2 Give a Score
-                var score = CalScore(result);
+                var confi = CalScore(result);
 
                 /// Draw 3 Draw Result and Score to Mat
                 if (mat != null)
@@ -72,10 +56,10 @@ namespace CVLib.Processor
                     var color = mat.Type() == MatType.CV_8UC3
                         ? mat
                         : mat.CvtColor(ColorConversionCodes.GRAY2BGR);
-                    matOut = DrawMat(color, result, score);
+                    matOut = DrawMat(color, result, confi, saveName);
                 }
 
-                return new RichInfo<T2>(result, score, matOut);
+                return new RichInfo<T2>(result, confi, matOut);
             }
             catch (Exception ex)
             {
@@ -90,46 +74,29 @@ namespace CVLib.Processor
                 /// Step 1 Process and get Result
                 return Process(input);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return default;
             }
         }
 
-        internal Mat DrawMat(Mat mat, T2 result, double score)
+        internal Mat DrawMat(Mat mat, T2 result, bool score, string savename)
         {
             if (!Directory.Exists(OutPutDire)) Directory.CreateDirectory(OutPutDire);
 
             try
             {
-                var fontScale = mat.Width / 500;
-                fontScale = fontScale > 1 ? fontScale : 1;
-                var distance = mat.Height / 1000 + 1;
-                distance = distance > 1 ? distance : 1;
-
-
                 mat = Draw(mat.Clone(), result);
-                if (DrawInfo)
-                {
-                    mat.PutText($"Time:   {DateTime.Now:yy/MM/dd hh:mm:ss}", new Point(100, 120 * (distance - 1) - 50),
-                        HersheyFonts.HersheyPlain,
-                        fontScale,
-                        PenColor, 2);
-                    mat.PutText($"Result: {result}", new Point(100, 120 * distance - 50), HersheyFonts.HersheyPlain,
-                        fontScale, PenColor, 2);
-                    mat.PutText($"Score:  {score:P2}", new Point(100, 120 * (distance + 1) - 50),
-                        HersheyFonts.HersheyPlain,
-                        fontScale, PenColor, 2);
-                }
-
 
                 if (!SaveOutMat) return mat;
 
-                FileName = Path.Combine(OutPutDire, $"{DateTime.Now:MM_dd_HH_mm_ss}_{DateTime.Now.Ticks}.png");
+                FileName = savename == ""
+                    ? Path.Combine(OutPutDire, $"{DateTime.Now:MM_dd_HH_mm_ss}_{DateTime.Now.Ticks}.png")
+                    : Path.Combine(OutPutDire, $"{savename}.png");
                 mat.SaveImage(FileName);
                 return mat;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 /// Todo Return Error Mat
                 return mat;
@@ -160,9 +127,9 @@ namespace CVLib.Processor
         ///     0 means bad, 1 means good
         /// </summary>
         /// <returns></returns>
-        internal virtual double CalScore(T2 result)
+        internal virtual bool CalScore(T2 result)
         {
-            return 1;
+            return true;
         }
 
         public override string ToString()
@@ -195,7 +162,6 @@ namespace CVLib.Processor
             Cv2.DrawContours(mat, new[] {cons}, -1, color, thickness);
 
             points.Add(rect.Center.ToPoint());
-            points.ForEach(p => Cv2.Circle(mat, p.ToPoint(), size, color, -1));
             return mat;
         }
 
@@ -206,6 +172,21 @@ namespace CVLib.Processor
             var points = new[] {rect.TopLeft, rect.BottomRight, topRight, bottomLeft};
             var rotatcedRect = Cv2.MinAreaRect(points);
             return DrawRotatedRect(mat, rotatcedRect, color, size, thickness);
+        }
+
+        public Mat DrawText(Mat mat, Point point, string info, Scalar color, int fontScale = 1, int thickness = 3)
+        {
+            var size = Cv2.GetTextSize(info, HersheyFonts.HersheyPlain, fontScale, thickness, out var base_line);
+
+            var newpoint = point + new Point(0, size.Height + 10);
+
+            var rectSize = new Size(size.Width, size.Height + 10);
+            Cv2.Rectangle(mat, new Rect(point, rectSize), color, -1);
+            Cv2.PutText(mat, info, newpoint, HersheyFonts.HersheyPlain,
+                fontScale,
+                new Scalar(255, 255, 255),
+                thickness);
+            return mat;
         }
 
         #endregion

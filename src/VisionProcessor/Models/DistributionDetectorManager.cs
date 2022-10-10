@@ -1,7 +1,7 @@
 ﻿using System;
-using CVLib.Processor.Custom;
-using CVLib.Processor.Unit;
+using CVLib.Processor.Module;
 using GalaSoft.MvvmLight;
+using OpenCvSharp;
 
 namespace VisionProcessor.Models
 {
@@ -9,13 +9,13 @@ namespace VisionProcessor.Models
     {
         private static readonly Lazy<DistributionDetectorManager> lazy = new(() => new DistributionDetectorManager());
 
-        private DistributionDetector _distributionDetector = new CocTrayDistributionPredictor();
+        private TrayDistributionPredictor _distributionDetector = new("load.onnx", new Size(2, 8));
 
 
         public static DistributionDetectorManager Instance => lazy.Value;
 
 
-        public DistributionDetector DistributionDetector
+        public TrayDistributionPredictor DistributionDetector
         {
             get => _distributionDetector;
             set => Set(ref _distributionDetector, value);
