@@ -26,7 +26,7 @@ namespace CVLib.Processor.Unit
                 TempSize.Height / 2 - size.Height / 2);
             var rect = new Rect(shift, size);
             temp[rect] = input;
-            return temp.Resize(TargetSize);
+            return input.Resize(TempSize);
         }
     }
 }

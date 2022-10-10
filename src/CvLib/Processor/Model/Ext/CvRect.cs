@@ -63,7 +63,9 @@ namespace CVLib.Processor
         public override string ToString()
         {
             var str = new StringBuilder();
-            str.Append($"Rect\t[{X:F4},{Y:F4}],[{Width:F4},{Height:F4}]");
+            str.AppendLine("CvPoint");
+            str.AppendLine($"\tCenter\t({X:F4},{Y:F4})");
+            str.AppendLine($"\tSize:\t({Width:F4}*{Height:F4})");
             return str.ToString();
         }
     }

@@ -1,4 +1,5 @@
-﻿using CVLib.Utils;
+﻿using System.Collections.Generic;
+using System.Linq;
 using OpenCvSharp;
 
 namespace CVLib.Processor.Unit
@@ -15,32 +16,42 @@ namespace CVLib.Processor.Unit
             RotatedRect = rect;
         }
 
+        public RotatedRectCropper(CvRotatedRect rect)
+            : base("RotatedRectCropper")
+        {
+            RotatedRect = rect.RotatedRect;
+            Horizon = rect.Horizontal;
+        }
+
         public RotatedRect RotatedRect { set; get; }
+        public bool Horizon { set; get; } = true;
 
         internal override Mat Process(Mat input)
         {
             if (RotatedRect == new RotatedRect()) return input;
 
-            /// Step 1 旋转
-            var needResver = RotatedRect.Size.Width < RotatedRect.Size.Height;
+            var width = RotatedRect.Size.Width;
+            var height = RotatedRect.Size.Height;
+            var size = new List<float> {width, height};
+            width = Horizon ? size.Max() : size.Min();
+            height = Horizon ? size.Min() : size.Max();
 
-            var angle = needResver
-                ? RotatedRect.Angle - 90
-                : RotatedRect.Angle;
-            var rotMat = Cv2.GetRotationMatrix2D(RotatedRect.Center, angle, 1);
-            var tempMat = new Mat();
-            Cv2.WarpAffine(input, tempMat, rotMat, input.Size());
+            var points = RotatedRect.Points()
+                .OrderBy(a => a.X)
+                .ThenBy(a => a.Y).ToArray();
 
-            var centerX = RotatedRect.Center.X;
-            var centerY = RotatedRect.Center.Y;
-            var width = needResver ? RotatedRect.Size.Height : RotatedRect.Size.Width;
-            var height = needResver ? RotatedRect.Size.Width : RotatedRect.Size.Height;
+            var m = Cv2.GetPerspectiveTransform(points,
+                new List<Point2f>
+                {
+                    new(0, 0),
+                    new(0, height - 1),
+                    new(width - 1, 0),
+                    new(width - 1, height - 1)
+                });
+            var outmat = new Mat();
+            Cv2.WarpPerspective(input, outmat, m, new Size(width, height));
 
-            var newCenter = new Point(centerX - width / 2, centerY - height / 2);
-
-            var newSize = new Size(width, height);
-
-            return CvBasic.GetRectMat(tempMat, new Rect(newCenter, newSize));
+            return outmat;
         }
     }
 }

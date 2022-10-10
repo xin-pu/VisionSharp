@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CvLib", "CvLib\CvLib.csproj", "{C01F8829-9023-432D-9351-CF846F6BBA80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisionProcessor", "VisionProcessor\VisionProcessor.csproj", "{3E61B324-BB82-4E4B-A660-4445B0FA10CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CvExperiment", "CvExperiment\CvExperiment.csproj", "{0357942A-05D0-45EB-9FBF-6139DF6CB343}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{C01F8829-9023-432D-9351-CF846F6BBA80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C01F8829-9023-432D-9351-CF846F6BBA80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C01F8829-9023-432D-9351-CF846F6BBA80}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3E61B324-BB82-4E4B-A660-4445B0FA10CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E61B324-BB82-4E4B-A660-4445B0FA10CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E61B324-BB82-4E4B-A660-4445B0FA10CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E61B324-BB82-4E4B-A660-4445B0FA10CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0357942A-05D0-45EB-9FBF-6139DF6CB343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0357942A-05D0-45EB-9FBF-6139DF6CB343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0357942A-05D0-45EB-9FBF-6139DF6CB343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0357942A-05D0-45EB-9FBF-6139DF6CB343}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

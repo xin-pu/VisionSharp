@@ -10,12 +10,7 @@ namespace CVLib.Processor
     /// <typeparam name="T"></typeparam>
     public class RichInfo<T> : ViewModelBase
     {
-        private double _confidence;
-        private string _errorMessage;
-        private Mat _outMat;
-        private T _result;
-
-        public RichInfo(T result, double conf, Mat outmat)
+        public RichInfo(T result, bool conf, Mat outmat)
         {
             ErrorMessage = string.Empty;
             Result = result;
@@ -27,40 +22,24 @@ namespace CVLib.Processor
         {
             ErrorMessage = errorMessage;
             Result = default;
-            Confidence = 0;
+            Confidence = false;
             OutMat = null;
         }
 
-        public T Result
-        {
-            set => Set(ref _result, value);
-            get => _result;
-        }
+        public T Result { set; get; }
 
-        public Mat OutMat
-        {
-            set => Set(ref _outMat, value);
-            get => _outMat;
-        }
+        public Mat OutMat { set; get; }
 
-        public double Confidence
-        {
-            set => Set(ref _confidence, value);
-            get => _confidence;
-        }
+        public bool Confidence { set; get; }
 
-        public string ErrorMessage
-        {
-            set => Set(ref _errorMessage, value);
-            get => _errorMessage;
-        }
+        public string ErrorMessage { set; get; }
 
         public override string ToString()
         {
             var strBuild = new StringBuilder();
             strBuild.AppendLine(new string('-', 30));
             strBuild.AppendLine($"RichInfo:\t{Result.GetType()}");
-            strBuild.AppendLine($"\tConfidence:\t{Confidence:P2}");
+            strBuild.AppendLine($"\tConfidence:\t{Confidence}");
             strBuild.AppendLine(ErrorMessage == string.Empty
                 ? $"\tResult:\t{Result}"
                 : $"\tError:\t{ErrorMessage}");

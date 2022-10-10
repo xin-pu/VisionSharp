@@ -55,7 +55,10 @@ namespace CVLib.Processor.Unit
 
         internal override Mat Draw(Mat grayInMat, KeyPoint[] keyPoints)
         {
-            if (keyPoints == null) return grayInMat;
+            if (keyPoints == null)
+            {
+                return grayInMat;
+            }
 
             foreach (var keyPoint in keyPoints)
             {

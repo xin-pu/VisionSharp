@@ -4,11 +4,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using CVLib.Utils;
 using GalaSoft.MvvmLight.CommandWpf;
-using Microsoft.Win32;
 using OpenCvSharp;
 
 namespace CVLib.Processor
@@ -93,7 +92,7 @@ namespace CVLib.Processor
                 Filter = "(*.jpg)|*.jpg|(*.png)|*.png|(*.bmp)|*.bmp",
                 RestoreDirectory = true
             };
-            if (dialog.ShowDialog() != true) return;
+            if (dialog.ShowDialog() != DialogResult.OK) return;
 
 
             var file = dialog.FileName;
@@ -109,7 +108,7 @@ namespace CVLib.Processor
                 Filter = "(*.mp4)|*.mp4|(*.avi)|*.avi",
                 RestoreDirectory = true
             };
-            if (dialog.ShowDialog() != true) return;
+            if (dialog.ShowDialog() != DialogResult.OK) return;
 
             using var capture = new VideoCapture();
             var isopen = capture.Open(dialog.FileName);
