@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using CVLib.Processor;
+using CVLib.Models;
 using CVLib.Processor.Module;
 using CVLib.Processor.Unit.Painter;
 using OpenCvSharp;

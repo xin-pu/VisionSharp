@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CVLib.Models;
 using OpenCvSharp;
 
 namespace CVLib.Processor.Unit.Painter

@@ -3,7 +3,7 @@ using GalaSoft.MvvmLight;
 using OpenCvSharp;
 using YAXLib.Attributes;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     /// <summary>
     ///     对应OpenCV中RotatedRect

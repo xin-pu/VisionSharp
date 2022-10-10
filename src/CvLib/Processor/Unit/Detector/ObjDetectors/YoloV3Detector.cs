@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CVLib.Models;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
 

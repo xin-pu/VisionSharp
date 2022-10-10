@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using GalaSoft.MvvmLight;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     public class DetectLayout : ViewModelBase, IEquatable<DetectLayout>
     {

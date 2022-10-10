@@ -5,7 +5,7 @@ using GalaSoft.MvvmLight;
 using OpenCvSharp;
 using YAXLib.Attributes;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     public class CvTransform : ViewModelBase
     {

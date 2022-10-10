@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using GalaSoft.MvvmLight;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     /// <summary>
     ///     OpenCV中矩阵 Cell对象

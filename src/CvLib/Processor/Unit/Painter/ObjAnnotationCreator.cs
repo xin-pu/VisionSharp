@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using CVLib.Models;
 using CVLib.Utils;
 using MathNet.Numerics.Random;
 using OpenCvSharp;

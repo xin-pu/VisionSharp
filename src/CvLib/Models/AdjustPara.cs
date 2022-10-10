@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     /// <summary>
     ///     用于同一轮廓，角度和像素偏移量

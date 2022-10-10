@@ -2,7 +2,7 @@
 using System.Text;
 using OpenCvSharp;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     /// <summary>
     ///     包含格子信息的区域信息
