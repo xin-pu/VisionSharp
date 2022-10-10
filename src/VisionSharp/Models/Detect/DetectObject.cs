@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using CVLib.Models;
 using OpenCvSharp;
+using VisionSharp.Models.Ext;
 using VisionSharp.Utils;
 
 namespace VisionSharp.Models.Detect

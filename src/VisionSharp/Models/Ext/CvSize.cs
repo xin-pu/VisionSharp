@@ -1,13 +1,13 @@
 ﻿using System.Text;
-using GalaSoft.MvvmLight;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 
 namespace VisionSharp.Models.Ext
 {
-    public class CvSize : ViewModelBase
+    public class CvSize : ObservableObject
     {
-        private double height;
-        private double width;
+        private double _height;
+        private double _width;
 
         public CvSize()
         {
@@ -35,14 +35,14 @@ namespace VisionSharp.Models.Ext
 
         public double Width
         {
-            set => Set(ref width, value);
-            get => width;
+            set => SetProperty(ref _width, value);
+            get => _width;
         }
 
         public double Height
         {
-            set => Set(ref height, value);
-            get => height;
+            set => SetProperty(ref _height, value);
+            get => _height;
         }
 
         public override string ToString()

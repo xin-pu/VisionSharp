@@ -1,21 +1,20 @@
 ﻿using System.Text;
-using GalaSoft.MvvmLight;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 
-namespace CVLib.Models
+namespace VisionSharp.Models.Ext
 {
     /// <summary>
     ///     对应OpenCV中RotatedRect
     /// </summary>
-    public class CvRotatedRect : ViewModelBase
+    public class CvRotatedRect : ObservableObject
     {
-        private double angle;
-        private double height;
-
-        private bool horizontal;
-        private double width;
-        private double x;
-        private double y;
+        private double _angle;
+        private double _height;
+        private bool _horizontal;
+        private double _width;
+        private double _x;
+        private double _y;
 
         public CvRotatedRect()
         {
@@ -33,32 +32,32 @@ namespace CVLib.Models
 
 
         public RotatedRect RotatedRect => new(
-            new Point2f((float) x, (float) y),
-            new Size2f(width, height),
-            (float) angle);
+            new Point2f((float) _x, (float) _y),
+            new Size2f(_width, _height),
+            (float) _angle);
 
         public double X
         {
-            set => Set(ref x, value);
-            get => x;
+            set => SetProperty(ref _x, value);
+            get => _x;
         }
 
         public double Y
         {
-            set => Set(ref y, value);
-            get => y;
+            set => SetProperty(ref _y, value);
+            get => _y;
         }
 
         public double Width
         {
-            set => Set(ref width, value);
-            get => width;
+            set => SetProperty(ref _width, value);
+            get => _width;
         }
 
         public double Height
         {
-            set => Set(ref height, value);
-            get => height;
+            set => SetProperty(ref _height, value);
+            get => _height;
         }
 
         /// <summary>
@@ -67,14 +66,14 @@ namespace CVLib.Models
         /// </summary>
         public double Angle
         {
-            set => Set(ref angle, value);
-            get => angle;
+            set => SetProperty(ref _angle, value);
+            get => _angle;
         }
 
         public bool Horizontal
         {
-            set => Set(ref horizontal, value);
-            get => horizontal;
+            set => SetProperty(ref _horizontal, value);
+            get => _horizontal;
         }
 
         public override string ToString()

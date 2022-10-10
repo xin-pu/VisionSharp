@@ -83,7 +83,8 @@ namespace VisionSharp.Utils
                 y.Add(p.Y);
             }
 
-            return Fit.Line(x.ToArray(), y.ToArray());
+            var res = Fit.Line(x.ToArray(), y.ToArray());
+            return new Tuple<double, double>(res.A, res.B);
         }
 
         /// <summary>
@@ -261,9 +262,15 @@ namespace VisionSharp.Utils
             Point2f startPoint,
             Point2f endPoint)
         {
-            if (startPoint == endPoint) throw new Exception();
+            if (startPoint == endPoint)
+            {
+                throw new Exception();
+            }
 
-            if (endPoint.X - startPoint.X == 0) return endPoint.Y > startPoint.Y ? 270 : 90;
+            if (endPoint.X - startPoint.X == 0)
+            {
+                return endPoint.Y > startPoint.Y ? 270 : 90;
+            }
 
             var k = (endPoint.Y - startPoint.Y) / (endPoint.X - startPoint.X);
 

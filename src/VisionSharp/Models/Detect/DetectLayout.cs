@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using GalaSoft.MvvmLight;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace VisionSharp.Models.Detect
 {
-    public class DetectLayout : ViewModelBase, IEquatable<DetectLayout>
+    public class DetectLayout : ObservableObject, IEquatable<DetectLayout>
     {
         private int _column;
         private List<DetectPosition> _detectPositions;
@@ -18,44 +18,62 @@ namespace VisionSharp.Models.Detect
             DetectPositions = new List<DetectPosition>();
             foreach (var r in Enumerable.Range(0, row))
             foreach (var c in Enumerable.Range(0, column))
+            {
                 DetectPositions.Add(new DetectPosition(r, c));
+            }
         }
 
         public int Row
         {
-            protected set => Set(ref _row, value);
+            protected set => SetProperty(ref _row, value);
             get => _row;
         }
 
         public int Column
         {
-            protected set => Set(ref _column, value);
+            protected set => SetProperty(ref _column, value);
             get => _column;
         }
 
         public List<DetectPosition> DetectPositions
         {
-            protected set => Set(ref _detectPositions, value);
+            protected set => SetProperty(ref _detectPositions, value);
             get => _detectPositions;
         }
 
 
         public double ScoreThreshold
         {
-            protected set => Set(ref _scoreThreshold, value);
+            protected set => SetProperty(ref _scoreThreshold, value);
             get => _scoreThreshold;
         }
 
-        public bool Equals(DetectLayout other)
+        public bool Equals(DetectLayout? other)
         {
-            if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(this, null)) return false;
-            if (ReferenceEquals(other, null)) return false;
-            if (GetType() != other.GetType()) return false;
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(this, null))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(other, null))
+            {
+                return false;
+            }
+
+            if (GetType() != other.GetType())
+            {
+                return false;
+            }
+
             if (Row == other.Row && Column == other.Column)
             {
                 var res = DetectPositions.All(d =>
-                    d.LayoutStatus == other.getDetectPosition(d.Row, d.Column).LayoutStatus);
+                    d.LayoutStatus == other.GetDetectPosition(d.Row, d.Column).LayoutStatus);
                 return res;
             }
 
@@ -77,7 +95,7 @@ namespace VisionSharp.Models.Detect
         /// <exception cref="ArgumentException"></exception>
         public void SetStatus(int row, int column, double positiveScore, double negativeScore)
         {
-            var detectPosition = getDetectPosition(row, column);
+            var detectPosition = GetDetectPosition(row, column);
             detectPosition.PositiveScore = positiveScore;
             detectPosition.NegativeScore = negativeScore;
 
@@ -102,7 +120,7 @@ namespace VisionSharp.Models.Detect
             var res = new bool[Row, Column];
             Enumerable.Range(0, Row).ToList()
                 .ForEach(r => Enumerable.Range(0, Column).ToList()
-                    .ForEach(c => res[r, c] = getDetectPosition(r, c).GetLayoutStatus()));
+                    .ForEach(c => res[r, c] = GetDetectPosition(r, c).GetLayoutStatus()));
             return res;
         }
 
@@ -112,9 +130,10 @@ namespace VisionSharp.Models.Detect
         }
 
 
-        public DetectPosition getDetectPosition(int row, int column)
+        public DetectPosition GetDetectPosition(int row, int column)
         {
-            return DetectPositions.FirstOrDefault(a => a.Row == row && a.Column == column);
+            return DetectPositions.FirstOrDefault(a => a.Row == row && a.Column == column)
+                   ?? throw new InvalidOperationException();
         }
 
         public override string ToString()
@@ -123,17 +142,24 @@ namespace VisionSharp.Models.Detect
             foreach (var r in Enumerable.Range(0, Row))
             {
                 var res = Enumerable.Range(0, Column)
-                    .Select(c => getDetectPosition(r, c).LayoutStatus)
+                    .Select(c => GetDetectPosition(r, c).LayoutStatus)
                     .Select(a => $"{(int) a}");
                 str.AppendLine(string.Join(",", res));
             }
 
-            if (GetReliability()) return str.ToString();
+            if (GetReliability())
             {
-                var Unidentifieds = DetectPositions
+                return str.ToString();
+            }
+
+            {
+                var unidentifieds = DetectPositions
                     .Where(a => a.LayoutStatus == LayoutStatus.Unidentified)
                     .ToList();
-                foreach (var u in Unidentifieds) str.AppendLine(u.ToString());
+                foreach (var u in unidentifieds)
+                {
+                    str.AppendLine(u.ToString());
+                }
             }
 
             return str.ToString();
@@ -143,9 +169,13 @@ namespace VisionSharp.Models.Detect
         {
             var str = new StringBuilder();
 
-            var Unidentifieds = DetectPositions
+            var unidentifieds = DetectPositions
                 .ToList();
-            foreach (var u in Unidentifieds) str.AppendLine(u.ToString());
+            foreach (var u in unidentifieds)
+            {
+                str.AppendLine(u.ToString());
+            }
+
             return str.ToString();
         }
 
@@ -157,7 +187,10 @@ namespace VisionSharp.Models.Detect
             var rows = rowlines.Count();
             var columns_rows = rowlines.Select(a => a.Count()).Distinct().ToList();
             if (columns_rows.Count() != 1)
+            {
                 throw new FileLoadException();
+            }
+
             var column = columns_rows[0];
 
             var res = new DetectLayout(rows, column);
@@ -181,7 +214,7 @@ namespace VisionSharp.Models.Detect
     /// <summary>
     ///     布局预测每个位置的信息结构类
     /// </summary>
-    public class DetectPosition : ViewModelBase
+    public class DetectPosition : ObservableObject
     {
         private int _column;
         private LayoutStatus _layoutStatus;
@@ -198,31 +231,31 @@ namespace VisionSharp.Models.Detect
 
         public int Row
         {
-            protected set => Set(ref _row, value);
+            protected set => SetProperty(ref _row, value);
             get => _row;
         }
 
         public int Column
         {
-            protected set => Set(ref _column, value);
+            protected set => SetProperty(ref _column, value);
             get => _column;
         }
 
         public LayoutStatus LayoutStatus
         {
-            set => Set(ref _layoutStatus, value);
+            set => SetProperty(ref _layoutStatus, value);
             get => _layoutStatus;
         }
 
         public double PositiveScore
         {
-            set => Set(ref _positiveScore, value);
+            set => SetProperty(ref _positiveScore, value);
             get => _positiveScore;
         }
 
         public double NegativeScore
         {
-            set => Set(ref _negativeScore, value);
+            set => SetProperty(ref _negativeScore, value);
             get => _negativeScore;
         }
 
