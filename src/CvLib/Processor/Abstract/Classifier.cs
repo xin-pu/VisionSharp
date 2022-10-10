@@ -3,7 +3,7 @@
     /// <summary>
     ///     抽象分类器
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">分类枚举</typeparam>
     public abstract class Classifier<T> : MatProcessor<T>
         where T : struct
     {

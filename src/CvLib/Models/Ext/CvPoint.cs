@@ -3,7 +3,7 @@ using GalaSoft.MvvmLight;
 using OpenCvSharp;
 using YAXLib.Attributes;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     /// <summary>
     ///     This is Point class for UI corresponding to point2d @ openCV

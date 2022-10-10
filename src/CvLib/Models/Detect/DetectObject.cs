@@ -2,7 +2,7 @@
 using CVLib.Utils;
 using OpenCvSharp;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     /// <summary>
     ///     包含更丰富的物体信息的旋转轮廓

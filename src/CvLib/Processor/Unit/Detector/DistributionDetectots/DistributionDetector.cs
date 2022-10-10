@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using CVLib.Models;
 using CVLib.Utils;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;

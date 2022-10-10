@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml;
 using OpenCvSharp;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     /// <summary>
     ///     This is  Annotation for PascalVOA xml format

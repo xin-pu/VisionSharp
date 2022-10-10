@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using CsvHelper;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     public struct ClassifyResult
     {

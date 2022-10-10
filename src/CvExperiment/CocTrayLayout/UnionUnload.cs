@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using CVLib.Processor;
+using CVLib.Models;
 using CVLib.Processor.Module;
 using OpenCvSharp;
 using Xunit;

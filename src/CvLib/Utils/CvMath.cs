@@ -11,20 +11,20 @@ namespace CVLib.Utils
     /// </summary>
     public class CvMath
     {
-        public static Point2f GetMeanPoint2F(Rect rect)
+        /// <summary>
+        ///     获取一列点的中心点
+        /// </summary>
+        /// <param name="point2Fs"></param>
+        /// <returns></returns>
+        public static Point2d GetMeanPoint2F(IList<Point> points)
         {
-            var points = new List<Point> {rect.BottomRight, rect.TopLeft};
-            var meanPoint2F = GetMeanPoint2F(points);
-            return new Point2f((float) meanPoint2F.X, (float) meanPoint2F.Y);
-        }
-
-        public static Point2f GetMeanPoint2F(RotatedRect rotatedRect)
-        {
-            var rect = rotatedRect.BoundingRect();
-            return GetMeanPoint2F(rect);
+            var meanX = points.Select(p => p.X).Average();
+            var meanY = points.Select(p => p.Y).Average();
+            return new Point2d(meanX, meanY);
         }
 
         /// <summary>
+        ///     获取一列点的中心点
         /// </summary>
         /// <param name="point2Fs"></param>
         /// <returns></returns>
@@ -34,6 +34,7 @@ namespace CVLib.Utils
             var meanY = point2Fs.Select(p => p.Y).Average();
             return new Point2d(meanX, meanY);
         }
+
 
         /// <summary>
         /// </summary>
@@ -47,15 +48,28 @@ namespace CVLib.Utils
         }
 
         /// <summary>
+        ///     获取矩形框的中心点
         /// </summary>
-        /// <param name="point2Fs"></param>
+        /// <param name="rect"></param>
         /// <returns></returns>
-        public static Point2d GetMeanPoint2F(IList<Point> points)
+        public static Point2f GetMeanPoint2F(Rect rect)
         {
-            var meanX = points.Select(p => p.X).Average();
-            var meanY = points.Select(p => p.Y).Average();
-            return new Point2d(meanX, meanY);
+            var points = new List<Point> {rect.BottomRight, rect.TopLeft};
+            var meanPoint2F = GetMeanPoint2F(points);
+            return new Point2f((float) meanPoint2F.X, (float) meanPoint2F.Y);
         }
+
+        /// <summary>
+        ///     获取旋转矩形框的中心点
+        /// </summary>
+        /// <param name="rotatedRect"></param>
+        /// <returns></returns>
+        public static Point2f GetMeanPoint2F(RotatedRect rotatedRect)
+        {
+            var rect = rotatedRect.BoundingRect();
+            return GetMeanPoint2F(rect);
+        }
+
 
         /// <summary>
         ///     return B,K with Tuple

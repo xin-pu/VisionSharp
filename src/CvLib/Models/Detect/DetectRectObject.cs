@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using OpenCvSharp;
 
-namespace CVLib.Processor
+namespace CVLib.Models
 {
     public class DetectRectObject : CvRect
     {
