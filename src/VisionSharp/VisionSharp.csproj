@@ -21,8 +21,6 @@
     <Folder Include="Models\RectObject\" />
     <Folder Include="Processor\ObjectDetector\" />
     <Folder Include="Processor\Classifier\" />
-    <Folder Include="Processor\ImageProcessors\Painter\" />
-    <Folder Include="Processor\LayoutDetector\" />
   </ItemGroup>
 
 </Project>
