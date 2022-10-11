@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using OpenCvSharp;
-using VisionSharp.Models.Ext;
+using VisionSharp.Models.Base;
 using VisionSharp.Utils;
 using Xunit.Abstractions;
 

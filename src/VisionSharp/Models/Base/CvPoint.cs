@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 
-namespace VisionSharp.Models.Ext
+namespace VisionSharp.Models.Base
 {
     /// <summary>
     ///     This is Point class for UI corresponding to point2d @ openCV

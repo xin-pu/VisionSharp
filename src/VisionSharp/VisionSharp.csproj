@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\RectObject\" />
     <Folder Include="Processor\ObjectDetector\" />
     <Folder Include="Processor\Classifier\" />
     <Folder Include="Processor\ImageProcessors\Painter\" />

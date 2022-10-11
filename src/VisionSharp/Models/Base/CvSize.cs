@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 
-namespace VisionSharp.Models.Ext
+namespace VisionSharp.Models.Base
 {
     public class CvSize : ObservableObject
     {
