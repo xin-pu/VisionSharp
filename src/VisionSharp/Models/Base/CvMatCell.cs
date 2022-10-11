@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace VisionSharp.Models.Ext
+namespace VisionSharp.Models.Base
 {
     /// <summary>
     ///     OpenCV中矩阵 Cell对象
