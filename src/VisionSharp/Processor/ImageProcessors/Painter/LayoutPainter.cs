@@ -1,3 +1,0 @@
-﻿namespace VisionSharp.Processor.Painter
-{
-}

@@ -271,7 +271,7 @@ namespace VisionSharp.Models.Layout
         public static void SaveAnnotation(string filename, Layout layout)
         {
             using var sw = new StreamWriter(filename, false);
-            sw.Write(layout.ToString());
+            sw.Write(layout.ToAnnotationString());
         }
 
         #endregion
