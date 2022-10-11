@@ -26,8 +26,8 @@ namespace VisionSharp.Models
         {
             var strBuild = new StringBuilder();
             strBuild.AppendLine($"AnnObject:{Name}");
-            strBuild.AppendLine($"\tTopLeft:\t({Rect.Left},{Rect.Top})");
-            strBuild.AppendLine($"\tBottomRight:\t({Rect.Right},{Rect.Bottom})");
+            strBuild.AppendLine($"\tTopLeft:\t[{Rect.Left},{Rect.Top}]");
+            strBuild.AppendLine($"\tBottomRight:\t[{Rect.Right},{Rect.Bottom}]");
             return strBuild.ToString();
         }
     }

@@ -1,5 +1,7 @@
 ﻿using System.Text;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
+using VisionSharp.Utils;
 
 namespace VisionSharp.Processor
 {
@@ -8,8 +10,13 @@ namespace VisionSharp.Processor
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
-    public abstract class Processor<T1, T2>
+    public abstract class Processor<T1, T2> : ObservableObject
     {
+        private bool _enableDrawInfo = true;
+        private bool _enableSaveMat = true;
+        private string _fileName;
+        private string _name;
+
         protected Processor(string name)
         {
             Name = name;
@@ -17,15 +24,32 @@ namespace VisionSharp.Processor
 
 
         public string OutPutDire => Path.Combine(Environment.CurrentDirectory, "Temp", Name);
-
-        public string Name { internal set; get; }
-
-        public string FileName { set; get; }
-
-        public bool SaveOutMat { set; get; } = true;
-        public bool DrawInfo { set; get; } = true;
-
         public Scalar PenColor => Scalar.OrangeRed;
+
+        public string Name
+        {
+            internal set => SetProperty(ref _name, value);
+            get => _name;
+        }
+
+        public string FileName
+        {
+            internal set => SetProperty(ref _fileName, value);
+            get => _fileName;
+        }
+
+        public bool EnableSaveMat
+        {
+            set => SetProperty(ref _enableSaveMat, value);
+            get => _enableSaveMat;
+        }
+
+        public bool EnableDrawInfo
+        {
+            set => SetProperty(ref _enableDrawInfo, value);
+            get => _enableDrawInfo;
+        }
+
 
         /// <summary>
         ///     If you want to keep input, you should insert a clone of input.
@@ -34,7 +58,7 @@ namespace VisionSharp.Processor
         /// <param name="input"></param>
         /// <param name="mat"></param>
         /// <returns></returns>
-        public RichInfo<T2> Call(T1 input, Mat mat = null, string saveName = "")
+        public RichInfo<T2?> Call(T1 input, Mat? mat = null, string saveName = "")
         {
             try
             {
@@ -55,15 +79,15 @@ namespace VisionSharp.Processor
                     matOut = DrawMat(color, result, confi, saveName);
                 }
 
-                return new RichInfo<T2>(result, confi, matOut);
+                return new RichInfo<T2?>(result, confi, matOut);
             }
             catch (Exception ex)
             {
-                return new RichInfo<T2>(ex.Message);
+                return new RichInfo<T2?>(ex.Message);
             }
         }
 
-        public T2 CallLight(T1 input)
+        public T2? CallLight(T1 input)
         {
             try
             {
@@ -76,7 +100,7 @@ namespace VisionSharp.Processor
             }
         }
 
-        internal Mat DrawMat(Mat mat, T2 result, bool score, string savename)
+        internal Mat? DrawMat(Mat? mat, T2? result, bool score, string savename)
         {
             if (!Directory.Exists(OutPutDire))
             {
@@ -87,7 +111,7 @@ namespace VisionSharp.Processor
             {
                 mat = Draw(mat.Clone(), result);
 
-                if (!SaveOutMat)
+                if (!EnableSaveMat)
                 {
                     return mat;
                 }
@@ -119,7 +143,7 @@ namespace VisionSharp.Processor
         /// </summary>
         /// <param name="mat"></param>
         /// <returns></returns>
-        internal virtual Mat Draw(Mat mat, T2 result)
+        internal virtual Mat? Draw(Mat? mat, T2 result)
         {
             return mat;
         }
@@ -142,53 +166,76 @@ namespace VisionSharp.Processor
         }
 
 
-        #region Normal DrawFunction
+        #region 内部绘画功能
 
-        public Mat DrawPoint(Mat mat, Point point, Scalar color, int size = 20, int thickness = 3)
+        /// <summary>
+        ///     绘制点
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="point"></param>
+        /// <param name="color"></param>
+        /// <param name="size"></param>
+        /// <param name="thickness"></param>
+        /// <returns></returns>
+        internal Mat DrawPoint(Mat mat, Point point, Scalar color, int size = 20, int thickness = 3)
         {
-            mat.Line(point + new Point(-size, 0), point + new Point(size, 0), color, thickness);
-            mat.Line(point + new Point(0, size), point + new Point(0, -size), color, thickness);
-            return mat;
+            return CvDraw.DrawPoint(mat, point, color, size, thickness);
         }
 
-        public Mat DrawLine(Mat mat, Point pointStart, Point pointEnd, Scalar color, int thickness = 3)
+        /// <summary>
+        ///     绘制线
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="pointStart"></param>
+        /// <param name="pointEnd"></param>
+        /// <param name="color"></param>
+        /// <param name="thickness"></param>
+        /// <returns></returns>
+        internal Mat DrawLine(Mat mat, Point pointStart, Point pointEnd, Scalar color, int thickness = 3)
         {
-            mat.Line(pointStart, pointEnd, color, thickness);
-            return mat;
+            return CvDraw.DrawLine(mat, pointStart, pointEnd, color, thickness);
         }
 
-        public Mat DrawRotatedRect(Mat mat, RotatedRect rect, Scalar color, int size = 10, int thickness = 3)
+        /// <summary>
+        ///     绘制矩形框
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="rect"></param>
+        /// <param name="color"></param>
+        /// <param name="size"></param>
+        /// <param name="thickness"></param>
+        /// <returns></returns>
+        internal Mat DrawRect(Mat mat, Rect rect, Scalar color, int thickness = 3)
         {
-            var points = Cv2.BoxPoints(rect).ToList();
-            var cons = points.Select(a => a.ToPoint());
-            Cv2.DrawContours(mat, new[] {cons}, -1, color, thickness);
-
-            points.Add(rect.Center.ToPoint());
-            return mat;
+            return CvDraw.DrawRect(mat, rect, color, thickness);
         }
 
-        public Mat DrawRect(Mat mat, Rect rect, Scalar color, int size = 10, int thickness = 3)
+        /// <summary>
+        ///     绘制旋转矩形框
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="rotatedRect"></param>
+        /// <param name="color"></param>
+        /// <param name="thickness"></param>
+        /// <returns></returns>
+        internal Mat DrawRotatedRect(Mat mat, RotatedRect rotatedRect, Scalar color, int thickness = 3)
         {
-            var topRight = new Point(rect.Right, rect.Top);
-            var bottomLeft = new Point(rect.Left, rect.Bottom);
-            var points = new[] {rect.TopLeft, rect.BottomRight, topRight, bottomLeft};
-            var rotatcedRect = Cv2.MinAreaRect(points);
-            return DrawRotatedRect(mat, rotatcedRect, color, size, thickness);
+            return CvDraw.DrawRotatedRect(mat, rotatedRect, color, thickness);
         }
 
-        public Mat DrawText(Mat mat, Point point, string info, Scalar color, int fontScale = 1, int thickness = 3)
+        /// <summary>
+        ///     绘制文字
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="point"></param>
+        /// <param name="info"></param>
+        /// <param name="color"></param>
+        /// <param name="fontScale"></param>
+        /// <param name="thickness"></param>
+        /// <returns></returns>
+        internal Mat DrawText(Mat mat, Point point, string info, Scalar color, int fontScale = 1, int thickness = 3)
         {
-            var size = Cv2.GetTextSize(info, HersheyFonts.HersheyPlain, fontScale, thickness, out var base_line);
-
-            var newpoint = point + new Point(0, size.Height + 10);
-
-            var rectSize = new Size(size.Width, size.Height + 10);
-            Cv2.Rectangle(mat, new Rect(point, rectSize), color, -1);
-            Cv2.PutText(mat, info, newpoint, HersheyFonts.HersheyPlain,
-                fontScale,
-                new Scalar(255, 255, 255),
-                thickness);
-            return mat;
+            return CvDraw.DrawText(mat, point, info, color, fontScale, thickness);
         }
 
         #endregion

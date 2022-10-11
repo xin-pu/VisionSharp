@@ -10,29 +10,60 @@ namespace VisionSharp.Processor
     /// <typeparam name="T"></typeparam>
     public class RichInfo<T> : ObservableObject
     {
+        private bool _confidence;
+        private string _errorMessage;
+        private Mat? _outMat;
+        private T? _result;
+
+        /// <summary>
+        ///     正常时的富信息
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="conf"></param>
+        /// <param name="outmat"></param>
         public RichInfo(T result, bool conf, Mat outmat)
         {
-            ErrorMessage = string.Empty;
-            Result = result;
             Confidence = conf;
+            Result = result;
             OutMat = outmat;
+            ErrorMessage = string.Empty;
         }
 
+        /// <summary>
+        ///     异常时的富信息
+        /// </summary>
+        /// <param name="errorMessage"></param>
         public RichInfo(string errorMessage)
         {
+            Confidence = false;
             ErrorMessage = errorMessage;
             Result = default;
-            Confidence = false;
             OutMat = null;
         }
 
-        public T? Result { set; get; }
+        public T? Result
+        {
+            internal set => SetProperty(ref _result, value);
+            get => _result;
+        }
 
-        public Mat? OutMat { set; get; }
+        public Mat? OutMat
+        {
+            internal set => SetProperty(ref _outMat, value);
+            get => _outMat;
+        }
 
-        public bool Confidence { set; get; }
+        public bool Confidence
+        {
+            internal set => SetProperty(ref _confidence, value);
+            get => _confidence;
+        }
 
-        public string ErrorMessage { set; get; }
+        public string ErrorMessage
+        {
+            internal set => SetProperty(ref _errorMessage, value);
+            get => _errorMessage;
+        }
 
         public override string ToString()
         {
