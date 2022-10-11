@@ -59,7 +59,7 @@ namespace UnitTest.UtilsTest
         public void LinefitTest()
         {
             var points = new[] {TopLeft, BottomRight};
-            var point2Fs = points.Select(CvCvt.CvtToPoint2f);
+            var point2Fs = points.Select(CvCvt.CvtToPoint2F);
             var res = CvMath.Linefit(point2Fs);
             res.Item1.Should().Be(0);
             res.Item2.Should().Be(1);
@@ -99,7 +99,7 @@ namespace UnitTest.UtilsTest
             dis = CvMath.GetDistance(TopLeft.ToPoint(), BottomRight.ToPoint());
             dis.Should().BeInRange(2.80, 2.83);
 
-            dis = CvMath.GetDistance(CvCvt.CvtToPoint2f(TopLeft), CvCvt.CvtToPoint2f(BottomRight));
+            dis = CvMath.GetDistance(CvCvt.CvtToPoint2F(TopLeft), CvCvt.CvtToPoint2F(BottomRight));
             dis.Should().BeInRange(2.80, 2.83);
 
             dis = CvMath.GetDistance(new Point3d(0, 0, 0), new Point3d(0, 0, 1));

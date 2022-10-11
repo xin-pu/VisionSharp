@@ -3,13 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisionSharp", "VisionSharp\VisionSharp.csproj", "{71B4B83B-62D8-4665-B8F1-8669A86650F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisionSharp", "VisionSharp\VisionSharp.csproj", "{71B4B83B-62D8-4665-B8F1-8669A86650F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{7226666E-6933-403E-923D-04B5D99102EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{7226666E-6933-403E-923D-04B5D99102EA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{571CF3D6-F838-49FC-ADBE-096DE133245D}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestImage", "TestImage", "{3F9B7AB0-EACD-421F-8E87-254EE585A992}"
+	ProjectSection(SolutionItems) = preProject
+		..\testimages\002341.jpg = ..\testimages\002341.jpg
+		..\testimages\barcode.png = ..\testimages\barcode.png
+		..\testimages\qrcode.png = ..\testimages\qrcode.png
 	EndProjectSection
 EndProject
 Global
@@ -29,6 +36,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3F9B7AB0-EACD-421F-8E87-254EE585A992} = {571CF3D6-F838-49FC-ADBE-096DE133245D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E4FC7CCC-9738-473F-9A41-B6FC233D43A4}
