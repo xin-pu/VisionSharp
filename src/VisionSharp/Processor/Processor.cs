@@ -59,17 +59,17 @@ namespace VisionSharp.Processor
         /// <param name="mat">传入图像</param>
         /// <param name="saveName">是否按</param>
         /// <returns></returns>
-        public RichInfo<T2> Call(T1 input, Mat mat, string saveName = "")
+        public virtual RichInfo<T2> Call(T1 input, Mat mat, string saveName = "")
         {
             try
             {
-                /// Step 1 Process and get Result
+                /// Step 1 执行处理
                 var result = Process(input);
 
-                /// Step 2 Give a Score
+                /// Step 2 分析结果
                 var confi = GetReliability(result);
 
-                /// Draw 3 Draw Result and Score to Mat
+                /// Draw 3 绘制输出图像
                 var colorMat = mat.Type() == MatType.CV_8UC3
                     ? mat
                     : mat.CvtColor(ColorConversionCodes.GRAY2BGR);
