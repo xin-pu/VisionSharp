@@ -1,4 +1,6 @@
-﻿using OpenCvSharp;
+﻿using FluentAssertions;
+using OpenCvSharp;
+using VisionSharp.Models.Layout;
 using VisionSharp.Processor;
 using VisionSharp.Processor.LayoutDetectors;
 using Xunit.Abstractions;
@@ -13,6 +15,31 @@ namespace UnitTest.ProcessorTest
         }
 
         [Fact]
+        public void TestLayout()
+        {
+            var layout = new Layout(3, 5);
+            PrintObject(layout);
+            PrintObject(layout.ToAnnotationString());
+        }
+
+
+        [Fact]
+        public void TestLayoutSave()
+        {
+            var layout = new Layout(3, 5);
+            layout.Save("save.txt");
+            var res = File.Exists("save.txt");
+            res.Should().BeTrue();
+        }
+
+        [Fact]
+        public void TestLayoutArgument()
+        {
+            var argument = new LayoutArgument(new Size(2, 8), new Size(800, 800), 0.7);
+            PrintObject(argument);
+        }
+
+        [Fact]
         public void TrayLayoutDetectorTest()
         {
             var onnx = @"..\..\..\..\testonnx\load800.onnx";
@@ -22,9 +49,8 @@ namespace UnitTest.ProcessorTest
             var layoutDetector = new LayoutDlDetector(onnx, argument);
 
             var mat = Cv2.ImRead(testImage, ImreadModes.Grayscale);
-            var res = layoutDetector.Call(mat);
+            var res = layoutDetector.Call(mat, mat);
             PrintObject(res);
-            PrintObject(res.ToAnnotationString());
         }
     }
 }

@@ -113,7 +113,7 @@ namespace VisionSharp.Processor
                     }
 
                     FileName = savename == ""
-                        ? Path.Combine(OutPutDire, $"{DateTime.Now:MM_dd_HH_mm_ss}_{DateTime.Now.Ticks}.png")
+                        ? Path.Combine(OutPutDire, $"{DateTime.Now:MMdd HH-mm-ss} {DateTime.Now.Millisecond:D3}.png")
                         : Path.Combine(OutPutDire, $"{savename}.png");
                     mat.SaveImage(FileName);
                     return mat;
