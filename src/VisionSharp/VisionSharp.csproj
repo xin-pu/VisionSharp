@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net4.7.2</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	  <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

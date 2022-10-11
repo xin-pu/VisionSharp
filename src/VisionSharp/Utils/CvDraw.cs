@@ -115,13 +115,13 @@ namespace VisionSharp.Utils
         /// <param name="thickness"></param>
         /// <returns></returns>
         public static Mat DrawText(Mat mat, Point point, string info, Scalar color, int fontScale = 1,
-            int thickness = 3)
+            int thickness = 1)
         {
             var size = Cv2.GetTextSize(info, HersheyFonts.HersheyPlain, fontScale, thickness, out _);
 
-            var newpoint = point + new Point(0, size.Height + 10);
+            var newpoint = point + new Point(0, size.Height);
 
-            var rectSize = new Size(size.Width, size.Height + 10);
+            var rectSize = new Size(size.Width, size.Height * 1.2);
             Cv2.Rectangle(mat, new Rect(point, rectSize), color, -1);
             Cv2.PutText(mat, info, newpoint, HersheyFonts.HersheyPlain,
                 fontScale,

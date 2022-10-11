@@ -10,5 +10,15 @@ namespace VisionSharp.Processor
         protected TextDetector(string name) : base(name)
         {
         }
+
+        internal override bool GetReliability(string result)
+        {
+            return !string.IsNullOrEmpty(result);
+        }
+
+        internal override Mat Draw(Mat mat, string result, bool reliability)
+        {
+            return DrawText(mat, new Point(), result, PenColor);
+        }
     }
 }
