@@ -15,11 +15,11 @@ namespace UnitTest.UtilsTest
         [Fact]
         public void CvtToPoint2FTest()
         {
-            var res = CvCvt.CvtToPoint2f(new Point2d(0, 0));
+            var res = CvCvt.CvtToPoint2F(new Point2d(0, 0));
             res.X.Should().Be(0);
             res.Y.Should().Be(0);
 
-            res = CvCvt.CvtToPoint2f(new Point(0, 0));
+            res = CvCvt.CvtToPoint2F(new Point(0, 0));
             res.X.Should().Be(0);
             res.Y.Should().Be(0);
         }
@@ -27,7 +27,7 @@ namespace UnitTest.UtilsTest
         [Fact]
         public void CvtToPoint2FsTest()
         {
-            var res = CvCvt.CvtToPoint2fs(new[]
+            var res = CvCvt.CvtToPoint2Fs(new[]
             {
                 new Point(0, 0), new Point(2, 2)
             });
@@ -38,7 +38,7 @@ namespace UnitTest.UtilsTest
         [Fact]
         public void CvtToPoint3FTest()
         {
-            var res = CvCvt.CvtToPoint3f(new Point3d(0, 0, 1));
+            var res = CvCvt.CvtToPoint3F(new Point3d(0, 0, 1));
             res.X.Should().Be(0);
             res.Y.Should().Be(0);
             res.Z.Should().Be(1);
@@ -48,7 +48,7 @@ namespace UnitTest.UtilsTest
         [Fact]
         public void CvtToPoint3FsTest()
         {
-            var res = CvCvt.CvtToPoint3fs(new[]
+            var res = CvCvt.CvtToPoint3Fs(new[]
             {
                 new Point3d(0, 0, 0),
                 new Point3d(2, 2, 2)

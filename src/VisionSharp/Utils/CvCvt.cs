@@ -1,5 +1,9 @@
-﻿using System.Text;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
+using System.Text;
 using OpenCvSharp;
+using Point = OpenCvSharp.Point;
+using Size = OpenCvSharp.Size;
 
 namespace VisionSharp.Utils
 {
@@ -71,17 +75,17 @@ namespace VisionSharp.Utils
 
         #region Conver From PointXd to PointXf
 
-        public static Point2f CvtToPoint2f(Point point)
+        public static Point2f CvtToPoint2F(Point point)
         {
             return new Point2f(point.X, point.Y);
         }
 
-        public static Point2f CvtToPoint2f(Point2d point2F)
+        public static Point2f CvtToPoint2F(Point2d point2F)
         {
             return new Point2f((float) point2F.X, (float) point2F.Y);
         }
 
-        public static Point3f CvtToPoint3f(Point3d point3F)
+        public static Point3f CvtToPoint3F(Point3d point3F)
         {
             return new Point3f((float) point3F.X, (float) point3F.Y, (float) point3F.Z);
         }
@@ -91,9 +95,9 @@ namespace VisionSharp.Utils
         /// </summary>
         /// <param name="points"></param>
         /// <returns></returns>
-        public static Point2f[] CvtToPoint2fs(IEnumerable<Point> points)
+        public static Point2f[] CvtToPoint2Fs(IEnumerable<Point> points)
         {
-            return points.Select(CvtToPoint2f).ToArray();
+            return points.Select(CvtToPoint2F).ToArray();
         }
 
 
@@ -101,9 +105,9 @@ namespace VisionSharp.Utils
         /// </summary>
         /// <param name="word">Mat with width=3, X,Y,Z</param>
         /// <returns></returns>
-        public static Point3f[] CvtToPoint3fs(IEnumerable<Point3d> positions)
+        public static Point3f[] CvtToPoint3Fs(IEnumerable<Point3d> positions)
         {
-            return positions.Select(CvtToPoint3f).ToArray();
+            return positions.Select(CvtToPoint3F).ToArray();
         }
 
         #endregion
@@ -257,6 +261,214 @@ namespace VisionSharp.Utils
         public static Rect CvtToRect(RotatedRect rotatedRect)
         {
             return rotatedRect.BoundingRect();
+        }
+
+        #endregion
+
+
+        #region Convert Mat to Bitmap
+
+        /// <summary>
+        ///     Converts Mat to System.Drawing.Bitmap
+        /// </summary>
+        /// <param name="src">Mat</param>
+        /// <returns></returns>
+        //[SupportedOSPlatform("windows")]
+        public static Bitmap CvtToBitmap(Mat src)
+        {
+            if (src == null)
+            {
+                throw new ArgumentNullException(nameof(src));
+            }
+
+            PixelFormat pf;
+            switch (src.Channels())
+            {
+                case 1:
+                    pf = PixelFormat.Format8bppIndexed;
+                    break;
+                case 3:
+                    pf = PixelFormat.Format24bppRgb;
+                    break;
+                case 4:
+                    pf = PixelFormat.Format32bppArgb;
+                    break;
+                default:
+                    throw new ArgumentException("Number of channels must be 1, 3 or 4.", nameof(src));
+            }
+
+            return ToBitmap(src, pf);
+        }
+
+
+        /// <summary>
+        ///     Converts Mat to System.Drawing.Bitmap
+        /// </summary>
+        /// <param name="src">Mat</param>
+        /// <param name="pf">Pixel Depth</param>
+        /// <returns></returns>
+        //[SupportedOSPlatform("windows")]
+        protected static Bitmap ToBitmap(Mat src, PixelFormat pf)
+        {
+            if (src == null)
+            {
+                throw new ArgumentNullException(nameof(src));
+            }
+
+            src.ThrowIfDisposed();
+
+            var bitmap = new Bitmap(src.Width, src.Height, pf);
+            ToBitmap(src, bitmap);
+            return bitmap;
+        }
+
+        /// <summary>
+        ///     Converts Mat to System.Drawing.Bitmap
+        /// </summary>
+        /// <param name="src">Mat</param>
+        /// <param name="dst">Mat</param>
+        /// <example></example>
+        //[SupportedOSPlatform("windows")]
+        protected static unsafe void ToBitmap(Mat src, Bitmap dst)
+        {
+            if (src == null)
+            {
+                throw new ArgumentNullException(nameof(src));
+            }
+
+            if (dst == null)
+            {
+                throw new ArgumentNullException(nameof(dst));
+            }
+
+            if (src.IsDisposed)
+            {
+                throw new ArgumentException("The image is disposed.", nameof(src));
+            }
+
+            if (src.Depth() != MatType.CV_8U)
+            {
+                throw new ArgumentException("Depth of the image must be CV_8U");
+            }
+
+            if (src.Width != dst.Width || src.Height != dst.Height)
+            {
+                throw new ArgumentException("");
+            }
+
+            var pf = dst.PixelFormat;
+
+
+            if (pf == PixelFormat.Format8bppIndexed)
+            {
+                var plt = dst.Palette;
+                for (var x = 0; x < 256; x++)
+                {
+                    plt.Entries[x] = Color.FromArgb(x, x, x);
+                }
+
+                dst.Palette = plt;
+            }
+
+            var w = src.Width;
+            var h = src.Height;
+            var rect = new Rectangle(0, 0, w, h);
+            BitmapData bd = null;
+
+            var submat = src.IsSubmatrix();
+            var continuous = src.IsContinuous();
+
+            try
+            {
+                bd = dst.LockBits(rect, ImageLockMode.WriteOnly, pf);
+
+                var srcData = src.Data;
+                var pSrc = (byte*) srcData.ToPointer();
+                var pDst = (byte*) bd.Scan0.ToPointer();
+                var ch = src.Channels();
+                var srcStep = (int) src.Step();
+                var dstStep = (src.Width * ch + 3) / 4 * 4; // 4の倍数に揃える
+                var stride = bd.Stride;
+
+                switch (pf)
+                {
+                    case PixelFormat.Format1bppIndexed:
+                    {
+                        if (submat)
+                        {
+                            throw new NotImplementedException("submatrix not supported");
+                        }
+
+                        // BitmapDataは4byte幅だが、IplImageは1byte幅
+                        // 手作業で移し替える                 
+                        //int offset = stride - (w / 8);
+                        var x = 0;
+                        byte b = 0;
+                        for (var y = 0; y < h; y++)
+                        {
+                            for (var bytePos = 0; bytePos < stride; bytePos++)
+                            {
+                                if (x < w)
+                                {
+                                    for (var i = 0; i < 8; i++)
+                                    {
+                                        var mask = (byte) (0x80 >> i);
+                                        if (x < w && pSrc[srcStep * y + x] == 0)
+                                        {
+                                            b &= (byte) (mask ^ 0xff);
+                                        }
+                                        else
+                                        {
+                                            b |= mask;
+                                        }
+
+                                        x++;
+                                    }
+
+                                    pDst[bytePos] = b;
+                                }
+                            }
+
+                            x = 0;
+                            pDst += stride;
+                        }
+
+                        break;
+                    }
+
+                    case PixelFormat.Format8bppIndexed:
+                    case PixelFormat.Format24bppRgb:
+                    case PixelFormat.Format32bppArgb:
+                        if (srcStep == dstStep && !submat && continuous)
+                        {
+                            var bytesToCopy = src.DataEnd.ToInt64() - src.Data.ToInt64();
+                            Buffer.MemoryCopy(pSrc, pDst, bytesToCopy, bytesToCopy);
+                        }
+                        else
+                        {
+                            for (var y = 0; y < h; y++)
+                            {
+                                long offsetSrc = y * srcStep;
+                                long offsetDst = y * dstStep;
+                                long bytesToCopy = w * ch;
+                                // 一列ごとにコピー
+                                Buffer.MemoryCopy(pSrc + offsetSrc, pDst + offsetDst, bytesToCopy, bytesToCopy);
+                            }
+                        }
+
+                        break;
+
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+            finally
+            {
+                if (bd != null)
+                {
+                    dst.UnlockBits(bd);
+                }
+            }
         }
 
         #endregion
