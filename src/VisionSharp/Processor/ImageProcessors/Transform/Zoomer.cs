@@ -5,8 +5,7 @@ namespace VisionSharp.Processor.Transform
     /// <summary>
     ///     缩放处理器
     /// </summary>
-    public class Zoomer
-        : Processor<Mat, Mat>
+    public class Zoomer : ImageProcessor
     {
         public Zoomer(Size size) : base("Zoomer")
         {

@@ -21,8 +21,7 @@ namespace UnitTest.ProcessorTest
             mat.Should().NotBeNull();
             var res = barcodeDetector.Call(mat, mat);
             PrintObject(res.Result);
-            Cv2.ImShow(res.Result, res.OutMat);
-            Cv2.WaitKey();
+            res.Confidence.Should().BeTrue();
         }
 
         [Fact]
