@@ -12,6 +12,19 @@ namespace UnitTest.ProcessorTest
         {
         }
 
+
+        [Fact]
+        public void TextDetectorTest()
+        {
+            var barcodeDetector = new BarcodeDetector();
+            var mat = Cv2.ImRead(@"..\..\..\..\testimages\barcode.png");
+            mat.Should().NotBeNull();
+            var res = barcodeDetector.Call(mat, mat);
+            PrintObject(res.Result);
+            Cv2.ImShow(res.Result, res.OutMat);
+            Cv2.WaitKey();
+        }
+
         [Fact]
         public void BarCodeTest()
         {

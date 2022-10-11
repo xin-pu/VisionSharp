@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿#nullable enable
+using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 using VisionSharp.Utils;
@@ -51,12 +52,12 @@ namespace VisionSharp.Processor
 
 
         /// <summary>
-        ///     If you want to keep input, you should insert a clone of input.
-        ///     Is you want to save memory, you can insert the original input, but it will be change in the process.
+        ///     执行处理器,并在传入MAT上绘制相关处理结果
+        ///     绘制结果包含在返回的RichInfo中
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="mat"></param>
-        /// <param name="saveName"></param>
+        /// <param name="input">输入对象</param>
+        /// <param name="mat">传入图像</param>
+        /// <param name="saveName">是否按</param>
         /// <returns></returns>
         public RichInfo<T2> Call(T1 input, Mat mat, string saveName = "")
         {
@@ -106,6 +107,11 @@ namespace VisionSharp.Processor
 
                 if (EnableSaveMat)
                 {
+                    if (!Directory.Exists(OutPutDire))
+                    {
+                        Directory.CreateDirectory(OutPutDire);
+                    }
+
                     FileName = savename == ""
                         ? Path.Combine(OutPutDire, $"{DateTime.Now:MM_dd_HH_mm_ss}_{DateTime.Now.Ticks}.png")
                         : Path.Combine(OutPutDire, $"{savename}.png");
@@ -223,7 +229,7 @@ namespace VisionSharp.Processor
         /// <param name="fontScale"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
-        internal Mat DrawText(Mat mat, Point point, string info, Scalar color, int fontScale = 1, int thickness = 3)
+        internal Mat DrawText(Mat mat, Point point, string info, Scalar color, int fontScale = 1, int thickness = 1)
         {
             return CvDraw.DrawText(mat, point, info, color, fontScale, thickness);
         }
@@ -240,8 +246,8 @@ namespace VisionSharp.Processor
     {
         private bool _confidence;
         private string _errorMessage;
-        private Mat? _outMat;
-        private T? _result;
+        private Mat _outMat;
+        private T _result;
 
         /// <summary>
         ///     正常时的富信息
@@ -265,17 +271,17 @@ namespace VisionSharp.Processor
         {
             Confidence = false;
             ErrorMessage = errorMessage;
-            Result = default;
-            OutMat = null;
+            Result = default!;
+            OutMat = null!;
         }
 
-        public T? Result
+        public T Result
         {
             internal set => SetProperty(ref _result, value);
             get => _result;
         }
 
-        public Mat? OutMat
+        public Mat OutMat
         {
             internal set => SetProperty(ref _outMat, value);
             get => _outMat;
