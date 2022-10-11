@@ -22,7 +22,6 @@ namespace VisionSharp.Processor
             Name = name;
         }
 
-
         public string OutPutDire => Path.Combine(Environment.CurrentDirectory, "Temp", Name);
         public Scalar PenColor => Scalar.OrangeRed;
 
@@ -57,27 +56,23 @@ namespace VisionSharp.Processor
         /// </summary>
         /// <param name="input"></param>
         /// <param name="mat"></param>
+        /// <param name="saveName"></param>
         /// <returns></returns>
-        public RichInfo<T2?> Call(T1 input, Mat? mat = null, string saveName = "")
+        public RichInfo<T2?> Call(T1 input, Mat mat, string saveName = "")
         {
             try
             {
-                var matOut = new Mat().Clone();
-
                 /// Step 1 Process and get Result
                 var result = Process(input);
 
                 /// Step 2 Give a Score
-                var confi = CalScore(result);
+                var confi = GetReliability(result);
 
                 /// Draw 3 Draw Result and Score to Mat
-                if (mat != null)
-                {
-                    var color = mat.Type() == MatType.CV_8UC3
-                        ? mat
-                        : mat.CvtColor(ColorConversionCodes.GRAY2BGR);
-                    matOut = DrawMat(color, result, confi, saveName);
-                }
+                var colorMat = mat.Type() == MatType.CV_8UC3
+                    ? mat
+                    : mat.CvtColor(ColorConversionCodes.GRAY2BGR);
+                var matOut = DrawMat(colorMat, result, confi, saveName);
 
                 return new RichInfo<T2?>(result, confi, matOut);
             }
@@ -87,20 +82,18 @@ namespace VisionSharp.Processor
             }
         }
 
-        public T2? CallLight(T1 input)
+        /// <summary>
+        ///     快速处理，直接返回处理结果，
+        ///     若有异常，跑异常
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public T2 Call(T1 input)
         {
-            try
-            {
-                /// Step 1 Process and get Result
-                return Process(input);
-            }
-            catch (Exception ex)
-            {
-                return default;
-            }
+            return Process(input);
         }
 
-        internal Mat? DrawMat(Mat? mat, T2? result, bool score, string savename)
+        internal Mat DrawMat(Mat mat, T2 result, bool reliability, string savename)
         {
             if (!Directory.Exists(OutPutDire))
             {
@@ -109,51 +102,48 @@ namespace VisionSharp.Processor
 
             try
             {
-                mat = Draw(mat.Clone(), result);
+                mat = Draw(mat.Clone(), result, reliability);
 
-                if (!EnableSaveMat)
+                if (EnableSaveMat)
                 {
+                    FileName = savename == ""
+                        ? Path.Combine(OutPutDire, $"{DateTime.Now:MM_dd_HH_mm_ss}_{DateTime.Now.Ticks}.png")
+                        : Path.Combine(OutPutDire, $"{savename}.png");
+                    mat.SaveImage(FileName);
                     return mat;
                 }
 
-                FileName = savename == ""
-                    ? Path.Combine(OutPutDire, $"{DateTime.Now:MM_dd_HH_mm_ss}_{DateTime.Now.Ticks}.png")
-                    : Path.Combine(OutPutDire, $"{savename}.png");
-                mat.SaveImage(FileName);
                 return mat;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                /// Todo Return Error Mat
                 return mat;
             }
         }
 
 
         /// <summary>
-        ///     The main method for your process
+        ///     实际需要重载的处理器过程
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         internal abstract T2 Process(T1 input);
 
-
         /// <summary>
-        ///     When you input a mat, we will draw a result mat.
+        ///     绘制带结果信息的图像
         /// </summary>
         /// <param name="mat"></param>
         /// <returns></returns>
-        internal virtual Mat? Draw(Mat? mat, T2 result)
+        internal virtual Mat Draw(Mat mat, T2 result, bool reliability)
         {
             return mat;
         }
 
         /// <summary>
-        ///     You need give a score between 0 and 1 for your process
-        ///     0 means bad, 1 means good
+        ///     获取可靠度
         /// </summary>
         /// <returns></returns>
-        internal virtual bool CalScore(T2 result)
+        internal virtual bool GetReliability(T2 result)
         {
             return true;
         }
