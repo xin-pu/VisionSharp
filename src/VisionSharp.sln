@@ -19,6 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestImage", "TestImage", "{
 		..\testimages\qrcode.png = ..\testimages\qrcode.png
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestOnnx", "TestOnnx", "{46C26380-B33A-4ACF-A6C1-168D1329CAAE}"
+	ProjectSection(SolutionItems) = preProject
+		..\testOnnx\load800.onnx = ..\testOnnx\load800.onnx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +44,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3F9B7AB0-EACD-421F-8E87-254EE585A992} = {571CF3D6-F838-49FC-ADBE-096DE133245D}
+		{46C26380-B33A-4ACF-A6C1-168D1329CAAE} = {571CF3D6-F838-49FC-ADBE-096DE133245D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E4FC7CCC-9738-473F-9A41-B6FC233D43A4}

@@ -124,7 +124,7 @@ namespace VisionSharp.Models.Layout
         }
 
 
-        public bool?[,] GetBoolLayout()
+        public bool?[,] ToBoolLayout()
         {
             var res = new bool?[Row, Column];
             Enumerable.Range(0, Row).ToList()
@@ -148,44 +148,40 @@ namespace VisionSharp.Models.Layout
             SaveAnnotation(filePath, this);
         }
 
-
+        /// <summary>
+        ///     返回布局转的文本信息
+        ///     +,-,?标记
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
         public override string ToString()
         {
             var str = new StringBuilder();
-            foreach (var r in Enumerable.Range(0, Row))
+            var header = string.Join("\t", Enumerable.Range(0, Column).Select(c => $"{c:D2}"));
+            str.AppendLine($"  \t{header}");
+            foreach (var row in Enumerable.Range(0, Row))
             {
-                var res = this[r]
-                    .Select(a => $"{(int) a.LayoutStatus}");
-                str.AppendLine(string.Join(",", res));
-            }
-
-            if (GetReliability())
-            {
-                return str.ToString();
-            }
-
-            {
-                var unidentifieds = LayoutCells
-                    .Where(a => a.LayoutStatus == LayoutStatus.Unidentified)
-                    .ToList();
-                foreach (var u in unidentifieds)
-                {
-                    str.AppendLine(u.ToString());
-                }
+                var status = string.Join("\t", this[row].Select(c => c.AsStrStatus()));
+                var score = string.Join("\t", this[row].Select(c => c.AsScoreStatus()));
+                var line = $"{row:D2}|\t{status}\t{score}";
+                str.AppendLine(line);
             }
 
             return str.ToString();
         }
 
-        public string ToScoreString()
+        /// <summary>
+        ///     返回用于训练的注释文件字符串
+        ///     0,1,?标记
+        /// </summary>
+        /// <returns></returns>
+        public string ToAnnotationString()
         {
             var str = new StringBuilder();
-
-            var unidentifieds = LayoutCells
-                .ToList();
-            foreach (var u in unidentifieds)
+            foreach (var row in Enumerable.Range(0, Row))
             {
-                str.AppendLine(u.ToString());
+                var line = string.Join(",", this[row].Select(c => c.AsAnnStatus()));
+                str.AppendLine(line);
             }
 
             return str.ToString();
@@ -225,7 +221,6 @@ namespace VisionSharp.Models.Layout
 
             return false;
         }
-
 
         public int GetHashCode(Layout obj)
         {

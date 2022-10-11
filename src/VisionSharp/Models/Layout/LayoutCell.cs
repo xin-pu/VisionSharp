@@ -102,8 +102,33 @@ namespace VisionSharp.Models.Layout
         public override string ToString()
         {
             var str = new StringBuilder(
-                $"[{Row},{Column}]\t[{PositiveScore:F4},{NegativeScore:F4}]\t{LayoutStatus})");
+                $"[{Row},{Column}]:{AsStrStatus()}\t{AsScoreStatus()}");
             return str.ToString();
+        }
+
+        public string AsScoreStatus()
+        {
+            return $"[{PositiveScore:F4},{NegativeScore:F4}]";
+        }
+
+        public string AsStrStatus()
+        {
+            return LayoutStatus switch
+            {
+                LayoutStatus.Positive => "+",
+                LayoutStatus.Negative => "-",
+                _ => "?"
+            };
+        }
+
+        public string AsAnnStatus()
+        {
+            return LayoutStatus switch
+            {
+                LayoutStatus.Positive => "1",
+                LayoutStatus.Negative => "0",
+                _ => "?"
+            };
         }
     }
 }
