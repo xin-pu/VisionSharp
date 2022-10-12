@@ -8,8 +8,8 @@ namespace VisionSharp.Processor.Analyzer
     ///     产品占比计算器
     ///     指定图图像大小，格子划分行列数目，计算每个轮廓占用的格子数量
     /// </summary>
-    public class DutyCovBoxCounter
-        : Processor<IEnumerable<ObjRotatedrect>, IEnumerable<ObjRotatedrect>>
+    public class DutyCovBoxCounter<T> : Processor<IEnumerable<ObjRotatedrect<T>>, IEnumerable<ObjRotatedrect<T>>>
+        where T : Enum
     {
         public DutyCovBoxCounter(
             Size gridSize,
@@ -27,9 +27,9 @@ namespace VisionSharp.Processor.Analyzer
 
         public List<GridRect> GridRects { set; get; }
 
-        internal override IEnumerable<ObjRotatedrect> Process(IEnumerable<ObjRotatedrect> input)
+        internal override IEnumerable<ObjRotatedrect<T>> Process(IEnumerable<ObjRotatedrect<T>> input)
         {
-            var dutStructs = (input as ObjRotatedrect[] ?? input.ToArray()).ToList();
+            var dutStructs = (input as ObjRotatedrect<T>[] ?? input.ToArray()).ToList();
             dutStructs.ForEach(a =>
             {
                 var count = GridRects
@@ -42,7 +42,7 @@ namespace VisionSharp.Processor.Analyzer
                         return Cv2.RotatedRectangleIntersection(rotatdRect, a.RotatedRect, out _) !=
                                RectanglesIntersectTypes.None;
                     });
-                a.DutyCount = count;
+                //Mark Delete DutyCount
             });
             return dutStructs;
         }

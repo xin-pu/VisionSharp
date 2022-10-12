@@ -9,25 +9,31 @@ namespace VisionSharp.Models.Detect
         private T _category;
 
         private float _categoryConfidence;
-
         private float _objectConfidence;
 
         /// <summary>
         ///     常用带分类的识别框
         /// </summary>
-        public ObjRect(Rect rect)
+        public ObjRect(Rect rect) : base(rect)
         {
         }
-
 
         /// <summary>
         ///     常用带分类的识别框
         /// </summary>
         /// <param name="rect"></param>
-        public ObjRect(T category, Rect rect)
-            : base(rect)
+        public ObjRect(T category, Rect rect) : base(rect)
         {
             Category = category;
+        }
+
+        /// <summary>
+        ///     分类
+        /// </summary>
+        public T Category
+        {
+            internal set => SetProperty(ref _category, value);
+            get => _category;
         }
 
         /// <summary>
@@ -48,20 +54,10 @@ namespace VisionSharp.Models.Detect
             get => _categoryConfidence;
         }
 
-        /// <summary>
-        ///     分类
-        /// </summary>
-        public T Category
-        {
-            internal set => SetProperty(ref _category, value);
-            get => _category;
-        }
-
-
         public override string ToString()
         {
             var strBuild = new StringBuilder();
-            strBuild.AppendLine($"[{Category}]({ObjectConfidence:P2})");
+            strBuild.AppendLine($"{Category}\t[{ObjectConfidence:P2}]");
             strBuild.AppendLine(base.ToString());
             return strBuild.ToString();
         }
