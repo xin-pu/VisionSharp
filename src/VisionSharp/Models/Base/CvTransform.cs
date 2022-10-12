@@ -8,10 +8,17 @@ namespace VisionSharp.Models.Base
     {
         private List<CvMatCell> _arrayCells;
 
+        /// <summary>
+        ///     可观测的矩阵
+        /// </summary>
         public CvTransform()
         {
         }
 
+        /// <summary>
+        ///     可观测的矩阵
+        /// </summary>
+        /// <param name="array"></param>
         public CvTransform(double[,] array)
         {
             ArrayList = ConvertFrom(array);
@@ -25,6 +32,28 @@ namespace VisionSharp.Models.Base
 
         public Mat Mat => ConvertToMat(ArrayList);
 
+
+        public override string ToString()
+        {
+            var size = Mat.Size();
+            var strBuild = new StringBuilder();
+            strBuild.AppendLine("CvTransform");
+            strBuild.AppendLine(new string('-', 30));
+            strBuild.AppendLine($"\tMatrix Size:\t{size.Height:F4}*{size.Width:F4}");
+
+            for (var r = 0; r < size.Height; r++)
+            {
+                var row = Mat.Row(r);
+                row.GetArray(out double[] rowArray);
+                var rowArrayStr = rowArray.Select(a => $"{a:F4}");
+                strBuild.AppendLine(string.Join("\t", rowArrayStr));
+            }
+
+            strBuild.AppendLine(new string('-', 30));
+            return strBuild.ToString();
+        }
+
+        #region 静态方法
 
         public static List<CvMatCell> ConvertFrom(double[,] array)
         {
@@ -55,25 +84,6 @@ namespace VisionSharp.Models.Base
             return Mat.FromArray(array);
         }
 
-
-        public override string ToString()
-        {
-            var size = Mat.Size();
-            var strBuild = new StringBuilder();
-            strBuild.AppendLine("CvTransform");
-            strBuild.AppendLine(new string('-', 30));
-            strBuild.AppendLine($"\tMatrix Size:\t{size.Height:F4}*{size.Width:F4}");
-
-            for (var r = 0; r < size.Height; r++)
-            {
-                var row = Mat.Row(r);
-                row.GetArray(out double[] rowArray);
-                var rowArrayStr = rowArray.Select(a => $"{a:F4}");
-                strBuild.AppendLine(string.Join("\t", rowArrayStr));
-            }
-
-            strBuild.AppendLine(new string('-', 30));
-            return strBuild.ToString();
-        }
+        #endregion
     }
 }

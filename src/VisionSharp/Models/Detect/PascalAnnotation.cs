@@ -1,22 +1,21 @@
 ﻿using System.Text;
 using System.Xml;
 using OpenCvSharp;
-using VisionSharp.Models.Detect;
 
-namespace VisionSharp.Models
+namespace VisionSharp.Models.Detect
 {
     /// <summary>
-    ///     This is  Annotation for PascalVOA xml format
+    ///     This is  PascalAnnotation for PascalVOA xml format
     /// </summary>
-    public class Annotation<T> : IDisposable where T : Enum
+    public class PascalAnnotation<T> : IDisposable where T : Enum
     {
-        public Annotation(string xmlPath)
+        public PascalAnnotation(string xmlPath)
         {
             ObjectInfos = new List<ObjRect<T>>();
             Init(xmlPath);
         }
 
-        public Annotation()
+        public PascalAnnotation()
         {
         }
 
@@ -95,7 +94,7 @@ namespace VisionSharp.Models
         public override string ToString()
         {
             var strBuild = new StringBuilder();
-            strBuild.AppendLine("Annotation");
+            strBuild.AppendLine("PascalAnnotation");
             strBuild.AppendLine($"\tSize:\t({Size.Width},{Size.Height})");
             ObjectInfos.ForEach(obj => strBuild.AppendLine(obj.ToString()));
             return strBuild.ToString();
@@ -142,9 +141,9 @@ namespace VisionSharp.Models
             writer.WriteEndElement();
         }
 
-        public static Annotation<T2> CreateAnnotation<T2>(string xmlPath) where T2 : Enum
+        public static PascalAnnotation<T2> CreateAnnotation<T2>(string xmlPath) where T2 : Enum
         {
-            return new Annotation<T2>(xmlPath);
+            return new PascalAnnotation<T2>(xmlPath);
         }
     }
 }
