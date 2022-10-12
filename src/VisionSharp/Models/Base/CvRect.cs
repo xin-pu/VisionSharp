@@ -11,10 +11,17 @@ namespace VisionSharp.Models.Base
         private int _x;
         private int _y;
 
+        /// <summary>
+        ///     拓展的矩形框
+        /// </summary>
         public CvRect()
         {
         }
 
+        /// <summary>
+        ///     从Rect构造
+        /// </summary>
+        /// <param name="rect"></param>
         public CvRect(Rect rect)
         {
             X = rect.X;
@@ -63,8 +70,8 @@ namespace VisionSharp.Models.Base
         {
             var str = new StringBuilder();
             str.AppendLine("CvPoint");
-            str.AppendLine($"\tCenter\t({X:F4},{Y:F4})");
-            str.AppendLine($"\tSize:\t({Width:F4}*{Height:F4})");
+            str.AppendLine($"Location\t[{X:F4},{Y:F4}]");
+            str.AppendLine($"Size\t[{Width:F4}*{Height:F4}]");
             return str.ToString();
         }
     }

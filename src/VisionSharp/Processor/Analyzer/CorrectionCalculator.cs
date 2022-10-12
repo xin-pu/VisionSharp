@@ -8,18 +8,18 @@ namespace VisionSharp.Processor.Analyzer
     /// <summary>
     ///     根据模板轮廓，现有轮廓，以及旋转轴心，计算需要补偿的角度，和像素偏移
     /// </summary>
-    public class CorrectionCalculator : Processor<DetectObject, AdjustPara>
+    public class CorrectionCalculator : Processor<ObjRotatedrect, AdjustPara>
     {
         public CorrectionCalculator(
-            DetectObject detectObject,
+            ObjRotatedrect objRotatedrect,
             Point pivot)
             : base("CorrectionCalculator")
         {
-            TemplateObject = detectObject;
+            TemplateObject = objRotatedrect;
             Pivot = new Point2f(pivot.X, pivot.Y);
         }
 
-        public DetectObject TemplateObject { set; get; }
+        public ObjRotatedrect TemplateObject { set; get; }
 
         public Point2f Pivot { set; get; }
 
@@ -34,7 +34,7 @@ namespace VisionSharp.Processor.Analyzer
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        internal override AdjustPara Process(DetectObject input)
+        internal override AdjustPara Process(ObjRotatedrect input)
         {
             var templatePoint = TemplateObject.RotatedRect.Points();
 
