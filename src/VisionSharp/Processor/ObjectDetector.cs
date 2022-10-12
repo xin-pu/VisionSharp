@@ -1,13 +1,12 @@
-﻿using OpenCvSharp;
-using VisionSharp.Models.Detect;
+﻿using VisionSharp.Models.Detect;
 
 namespace VisionSharp.Processor
 {
-    /// <summary>
-    ///     目标检测器
-    /// </summary>
-    public abstract class ObjectDetector : Processor<Mat, DetectRectObject>
+    public abstract class ObjectDetector : FeatureExtractor<DetectRectObject>
     {
+        /// <summary>
+        ///     目标检测器
+        /// </summary>
         protected ObjectDetector(string name) : base(name)
         {
         }

@@ -13,6 +13,7 @@ namespace VisionSharp.Processor.LayoutDetectors
             Net = Net.ReadNetFromONNX(modelFile);
         }
 
+
         /// <summary>
         ///     通过深度学习构建的布局检测器
         /// </summary>
@@ -71,8 +72,12 @@ namespace VisionSharp.Processor.LayoutDetectors
             var width = LayoutArgument.LayoutPattern.Width;
             var resultCh = result.Reshape(1, height * width, 2);
             var array = CvCvt.CvtToArray(resultCh);
-            var res = new Layout(height, width, LayoutArgument.ScoreThreshold);
 
+            resultCh.Dispose();
+            GC.Collect();
+            GC.WaitForFullGCComplete();
+
+            var res = new Layout(height, width, LayoutArgument.ScoreThreshold);
 
             Enumerable.Range(0, height * width).ToList().ForEach(d =>
             {
