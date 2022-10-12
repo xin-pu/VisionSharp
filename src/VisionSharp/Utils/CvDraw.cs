@@ -114,7 +114,7 @@ namespace VisionSharp.Utils
         /// <param name="fontScale"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
-        public static Mat DrawText(Mat mat, Point point, string info, Scalar color, int fontScale = 1,
+        public static Mat DrawText(Mat mat, Point point, string info, Scalar color, double fontScale = 1,
             int thickness = 1)
         {
             var size = Cv2.GetTextSize(info, HersheyFonts.HersheyPlain, fontScale, thickness, out _);

@@ -229,7 +229,7 @@ namespace VisionSharp.Processor
         /// <param name="fontScale"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
-        internal Mat DrawText(Mat mat, Point point, string info, Scalar color, int fontScale = 1, int thickness = 1)
+        internal Mat DrawText(Mat mat, Point point, string info, Scalar color, double fontScale = 1, int thickness = 1)
         {
             return CvDraw.DrawText(mat, point, info, color, fontScale, thickness);
         }
