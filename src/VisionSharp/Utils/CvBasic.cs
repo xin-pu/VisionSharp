@@ -11,11 +11,11 @@ namespace VisionSharp.Utils
         /// <param name="matsize"></param>
         /// <param name="gridSize"></param>
         /// <returns></returns>
-        public static List<DetectGridRect> GetDetectRects(Size matsize, Size gridSize)
+        public static List<GridRect> GetDetectRects(Size matsize, Size gridSize)
         {
             var gridWidth = matsize.Width / gridSize.Width;
             var gridHeight = matsize.Height / gridSize.Height;
-            var gridRects = new List<DetectGridRect>();
+            var gridRects = new List<GridRect>();
 
             foreach (var row in Enumerable.Range(0, gridSize.Height))
             foreach (var column in Enumerable.Range(0, gridSize.Width))
@@ -23,7 +23,7 @@ namespace VisionSharp.Utils
                 var x = column * gridWidth;
                 var y = row * gridHeight;
                 var rect = new Rect(x, y, gridWidth, gridHeight);
-                gridRects.Add(new DetectGridRect(row + 1, column + 1, rect)
+                gridRects.Add(new GridRect(row + 1, column + 1, rect)
                 {
                     IsEmpty = true
                 });

@@ -6,9 +6,9 @@ namespace VisionSharp.Models.Detect
     /// <summary>
     ///     包含格子信息的区域信息
     /// </summary>
-    public class DetectGridRect
+    public class GridRect
     {
-        public DetectGridRect(int row, int column, Rect rect)
+        public GridRect(int row, int column, Rect rect)
         {
             Row = row;
             Column = column;

@@ -8,14 +8,14 @@ namespace VisionSharp.Models.Detect
     /// <summary>
     ///     包含更丰富的物体信息的旋转轮廓
     /// </summary>
-    public class DetectObject : CvRotatedRect
+    public class ObjRotatedrect : CvRotatedRect
     {
-        public DetectObject()
+        public ObjRotatedrect()
         {
         }
 
 
-        public DetectObject(RotatedRect rotatedRect, double angleFix)
+        public ObjRotatedrect(RotatedRect rotatedRect, double angleFix)
             : base(rotatedRect)
         {
             AngleFix = angleFix;
@@ -25,7 +25,7 @@ namespace VisionSharp.Models.Detect
         ///     如果构造是不传如修正角度，则表示物体朝上，并且以Opencv旋转区域角度为物体朝向
         /// </summary>
         /// <param name="rotatedRect"></param>
-        public DetectObject(RotatedRect rotatedRect)
+        public ObjRotatedrect(RotatedRect rotatedRect)
             : base(rotatedRect)
         {
             AngleFix = rotatedRect.Angle > 0
@@ -36,7 +36,7 @@ namespace VisionSharp.Models.Detect
         /// <summary>
         /// </summary>
         /// <param name="rect"></param>
-        public DetectObject(Rect rect)
+        public ObjRotatedrect(Rect rect)
             : base(CvCvt.CvtToRotatedRect(rect))
         {
         }
@@ -83,7 +83,7 @@ namespace VisionSharp.Models.Detect
         public override string ToString()
         {
             var strBuild = new StringBuilder();
-            strBuild.AppendLine("DetectObject");
+            strBuild.AppendLine("ObjRotatedrect");
             strBuild.AppendLine(
                 $"\tRotatedRect:\t({RotatedRect.Center.X:F2},{RotatedRect.Center.Y:F2})," +
                 $"({RotatedRect.Size.Width},{RotatedRect.Size.Height}),{RotatedRect.Angle},");

@@ -8,7 +8,7 @@ namespace VisionSharp.Processor.Analyzer
     ///     预分割格子，计算每个格子的占空比
     /// </summary>
     public class DutyCovObjCounter
-        : Processor<IEnumerable<RotatedRect>, List<DetectGridRect>>
+        : Processor<IEnumerable<RotatedRect>, List<GridRect>>
     {
         public DutyCovObjCounter(
             Size gridSize,
@@ -26,10 +26,10 @@ namespace VisionSharp.Processor.Analyzer
         public Size GridSize { get; }
         public int GridWidth { set; get; }
         public int GridHeight { set; get; }
-        public List<DetectGridRect> GridRects { set; get; }
+        public List<GridRect> GridRects { set; get; }
 
 
-        internal override List<DetectGridRect> Process(IEnumerable<RotatedRect> input)
+        internal override List<GridRect> Process(IEnumerable<RotatedRect> input)
         {
             var area = GridWidth * GridHeight;
             var rectBoxes = GridRects
@@ -61,7 +61,7 @@ namespace VisionSharp.Processor.Analyzer
         }
 
 
-        internal override Mat Draw(Mat mat, List<DetectGridRect> result, bool reliability)
+        internal override Mat Draw(Mat mat, List<GridRect> result, bool reliability)
         {
             result.ForEach(rect => mat = DrawRect(mat, rect.Rect, PenColor, -1));
             return mat;

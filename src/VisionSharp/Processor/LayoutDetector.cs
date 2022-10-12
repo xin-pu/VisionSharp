@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
+using VisionSharp.Models.Category;
 using VisionSharp.Models.Layout;
 
 namespace VisionSharp.Processor

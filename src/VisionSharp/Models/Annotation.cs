@@ -1,17 +1,18 @@
 ﻿using System.Text;
 using System.Xml;
 using OpenCvSharp;
+using VisionSharp.Models.Detect;
 
 namespace VisionSharp.Models
 {
     /// <summary>
     ///     This is  Annotation for PascalVOA xml format
     /// </summary>
-    public class Annotation : IDisposable
+    public class Annotation<T> : IDisposable where T : Enum
     {
         public Annotation(string xmlPath)
         {
-            ObjectInfos = new List<AnnObject>();
+            ObjectInfos = new List<ObjRect<T>>();
             Init(xmlPath);
         }
 
@@ -28,7 +29,7 @@ namespace VisionSharp.Models
 
         public Size Size { set; get; }
 
-        public List<AnnObject> ObjectInfos { set; get; }
+        public List<ObjRect<T>> ObjectInfos { set; get; }
 
         public void Dispose()
         {
@@ -43,11 +44,17 @@ namespace VisionSharp.Models
 
 
             var root = doc.DocumentElement;
-            if (root == null) return;
+            if (root == null)
+            {
+                return;
+            }
 
             foreach (var rootChildNode in root.ChildNodes)
             {
-                if (!(rootChildNode is XmlNode d)) return;
+                if (!(rootChildNode is XmlNode d))
+                {
+                    return;
+                }
 
                 switch (d.Name)
                 {
@@ -72,9 +79,11 @@ namespace VisionSharp.Models
                         var xmax = d.SelectSingleNode(@"bndbox/xmax")?.InnerText;
                         var ymax = d.SelectSingleNode(@"bndbox/ymax")?.InnerText;
 
+                        var cate = (T) Enum.Parse(typeof(T), name);
                         var ptopleft = new Point(int.Parse(xmin!), int.Parse(ymin!));
-                        var pbottomright = new Point(int.Parse(xmax!), int.Parse(ymax!));
-                        var obj = new AnnObject(name, ptopleft, pbottomright);
+                        var size = new Size(int.Parse(xmax!) - int.Parse(xmin!), int.Parse(ymax!) - int.Parse(ymin!));
+                        var rect = new Rect(ptopleft, size);
+                        var obj = new ObjRect<T>(cate, rect);
                         ObjectInfos.Add(obj);
                         break;
                     }
@@ -82,17 +91,13 @@ namespace VisionSharp.Models
             }
         }
 
-        public static Annotation CreateAnnotation(string xmlPath)
-        {
-            return new Annotation(xmlPath);
-        }
 
         public override string ToString()
         {
             var strBuild = new StringBuilder();
             strBuild.AppendLine("Annotation");
             strBuild.AppendLine($"\tSize:\t({Size.Width},{Size.Height})");
-            ObjectInfos.ForEach(obj => { strBuild.AppendLine(obj.ToString()); });
+            ObjectInfos.ForEach(obj => strBuild.AppendLine(obj.ToString()));
             return strBuild.ToString();
         }
 
@@ -118,7 +123,7 @@ namespace VisionSharp.Models
             ObjectInfos.ForEach(obj =>
             {
                 writer.WriteStartElement("object");
-                writer.WriteElementString("name", obj.Name);
+                writer.WriteElementString("name", obj.Category.ToString());
                 writer.WriteElementString("pose", "");
                 writer.WriteElementString("truncated", "0");
                 writer.WriteElementString("difficult", "0");
@@ -135,6 +140,11 @@ namespace VisionSharp.Models
             });
 
             writer.WriteEndElement();
+        }
+
+        public static Annotation<T2> CreateAnnotation<T2>(string xmlPath) where T2 : Enum
+        {
+            return new Annotation<T2>(xmlPath);
         }
     }
 }

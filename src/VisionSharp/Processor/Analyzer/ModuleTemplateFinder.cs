@@ -7,7 +7,7 @@ namespace VisionSharp.Processor.Analyzer
     /// <summary>
     ///     模块轮廓模板生成器
     /// </summary>
-    public class ModuleTemplateFinder : Processor<Mat, DetectObject>
+    public class ModuleTemplateFinder : Processor<Mat, ObjRotatedrect>
 
     {
         /// <summary>
@@ -40,7 +40,7 @@ namespace VisionSharp.Processor.Analyzer
 
         public Point2f PE { set; get; }
 
-        internal override DetectObject Process(Mat input)
+        internal override ObjRotatedrect Process(Mat input)
         {
             var fps = ModuleFpFinder.Call(input);
 
@@ -56,7 +56,7 @@ namespace VisionSharp.Processor.Analyzer
             PE = rotatedRectPoints[2];
             var angle = CvMath.GetAngle(rotatedRectPoints[0], rotatedRectPoints[2]);
 
-            return new DetectObject(rotatedRect, angle);
+            return new ObjRotatedrect(rotatedRect, angle);
         }
 
         private List<Point2f> getRectPoint(List<Point2f> fps)
@@ -105,7 +105,7 @@ namespace VisionSharp.Processor.Analyzer
             return new List<Point2f> {topRight, topLeft, bottomRight, thirdSide};
         }
 
-        internal override bool GetReliability(DetectObject result)
+        internal override bool GetReliability(ObjRotatedrect result)
         {
             return CheckIsTargetRect(result.RotatedRect);
         }
@@ -122,7 +122,7 @@ namespace VisionSharp.Processor.Analyzer
                    h < RectSize.Height * 1.1;
         }
 
-        internal override Mat Draw(Mat mat, DetectObject result, bool reliability)
+        internal override Mat Draw(Mat mat, ObjRotatedrect result, bool reliability)
         {
             mat = DrawRotatedRect(mat, result.RotatedRect, PenColor);
             mat = DrawPoint(mat, PS.ToPoint(), PenColor);

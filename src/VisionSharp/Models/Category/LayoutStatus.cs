@@ -1,7 +1,7 @@
-﻿namespace VisionSharp.Models.Layout
+﻿namespace VisionSharp.Models.Category
 {
     /// <summary>
-    ///     分类结果
+    ///     用于布局的3分类
     /// </summary>
     public enum LayoutStatus
     {

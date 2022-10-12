@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
+using VisionSharp.Models.Category;
 
 namespace VisionSharp.Models.Layout
 {

@@ -9,7 +9,7 @@ namespace VisionSharp.Processor.Analyzer
     ///     指定图图像大小，格子划分行列数目，计算每个轮廓占用的格子数量
     /// </summary>
     public class DutyCovBoxCounter
-        : Processor<IEnumerable<DetectObject>, IEnumerable<DetectObject>>
+        : Processor<IEnumerable<ObjRotatedrect>, IEnumerable<ObjRotatedrect>>
     {
         public DutyCovBoxCounter(
             Size gridSize,
@@ -25,11 +25,11 @@ namespace VisionSharp.Processor.Analyzer
         public Size MatSize { get; }
         public Size GridSize { get; }
 
-        public List<DetectGridRect> GridRects { set; get; }
+        public List<GridRect> GridRects { set; get; }
 
-        internal override IEnumerable<DetectObject> Process(IEnumerable<DetectObject> input)
+        internal override IEnumerable<ObjRotatedrect> Process(IEnumerable<ObjRotatedrect> input)
         {
-            var dutStructs = (input as DetectObject[] ?? input.ToArray()).ToList();
+            var dutStructs = (input as ObjRotatedrect[] ?? input.ToArray()).ToList();
             dutStructs.ForEach(a =>
             {
                 var count = GridRects

@@ -2,7 +2,7 @@
 
 namespace VisionSharp.Processor
 {
-    public abstract class ObjectDetector : FeatureExtractor<DetectRectObject>
+    public abstract class ObjectDetector<T> : FeatureExtractor<ObjRect<T>> where T : Enum
     {
         /// <summary>
         ///     目标检测器
