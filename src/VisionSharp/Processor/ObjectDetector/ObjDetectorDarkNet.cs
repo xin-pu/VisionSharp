@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using OpenCvSharp;
 using OpenCvSharp.Dnn;
+using VisionSharp.Utils;
 
 namespace VisionSharp.Processor.ObjectDetector
 {
@@ -17,6 +18,7 @@ namespace VisionSharp.Processor.ObjectDetector
         {
             ModelWeights = modelWeights;
             ConfigFile = configFile;
+            Colors = CvBasic.GetColorDict<T>();
             Net = InitialNet();
         }
 
@@ -53,9 +55,6 @@ namespace VisionSharp.Processor.ObjectDetector
                 throw new FileNotFoundException();
             }
 
-            var labels = Enum.GetNames(typeof(T)).ToList();
-
-            Colors = labels.Select(_ => Scalar.RandomColor()).ToArray();
 
             var darknet = CvDnn.ReadNetFromDarknet(ConfigFile, ModelWeights);
             if (darknet == null)

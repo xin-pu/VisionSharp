@@ -26,7 +26,7 @@ namespace VisionSharp.Processor
         /// <summary>
         ///     用于标记分类的颜色字体
         /// </summary>
-        internal Scalar[] Colors { set; get; }
+        internal Dictionary<T, Scalar> Colors { set; get; }
 
         [Category("Option")]
         public float Confidence
@@ -91,6 +91,26 @@ namespace VisionSharp.Processor
                 .ToArray();
 
             return filter;
+        }
+
+        /// <summary>
+        ///     绘制最终预测框
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <returns></returns>
+        internal override Mat Draw(Mat mat, ObjRect<T>[] result, bool reliability)
+        {
+            result
+                .ToList()
+                .ForEach(a =>
+                {
+                    var info = $"{a.Category} {a.ObjectConfidence:P2}";
+                    var color = Colors[a.Category];
+                    var fontscale = 1d * mat.Height / 300;
+                    mat = DrawRect(mat, a.Rect, color, 1);
+                    mat = DrawText(mat, a.Rect.TopLeft, info, color, fontscale);
+                });
+            return mat;
         }
     }
 }

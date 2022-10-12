@@ -5,6 +5,14 @@ namespace VisionSharp.Utils
 {
     public class CvBasic
     {
+        public static Dictionary<T, Scalar> GetColorDict<T>() where T : Enum
+        {
+            var count = Enum.GetValues(typeof(T)).Length;
+            var hsv_Tuples = Enumerable.Range(0, count)
+                .Select(i => new Tuple<double, double, double>(1.0 / count, 1, 1));
+            return new Dictionary<T, Scalar>();
+        }
+
         /// <summary>
         ///     Get Detect Grid Size from size of mat, and target pattern size.
         /// </summary>
