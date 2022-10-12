@@ -124,12 +124,12 @@ namespace VisionSharp.Models.Layout
         }
 
 
-        public bool?[,] ToBoolLayout()
+        public LayoutStatus[,] ToLayoutStatus()
         {
-            var res = new bool?[Row, Column];
+            var res = new LayoutStatus[Row, Column];
             Enumerable.Range(0, Row).ToList()
                 .ForEach(r => Enumerable.Range(0, Column).ToList()
-                    .ForEach(c => res[r, c] = this[r, c].GetLayoutStatus()));
+                    .ForEach(c => res[r, c] = this[r, c].LayoutStatus));
             return res;
         }
 

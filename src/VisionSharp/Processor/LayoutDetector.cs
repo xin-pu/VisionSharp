@@ -5,7 +5,7 @@ using VisionSharp.Models.Layout;
 
 namespace VisionSharp.Processor
 {
-    public abstract class LayoutDetector : Processor<Mat, Layout>
+    public abstract class LayoutDetector : FeatureExtractor<Layout>
     {
         private LayoutArgument _layoutArgument;
 
@@ -17,7 +17,7 @@ namespace VisionSharp.Processor
         };
 
         /// <summary>
-        ///     布局检测器
+        ///     布局检测器,输入乳香，返回布局对象
         /// </summary>
         protected LayoutDetector(LayoutArgument layoutArgument)
             : base("LayoutDetector")
