@@ -1,4 +1,5 @@
 ﻿using OpenCvSharp;
+using VisionSharp.Processor.FeatureExtractors;
 
 namespace VisionSharp.Processor.Analyzer
 {
@@ -56,7 +57,7 @@ namespace VisionSharp.Processor.Analyzer
 
             Cv2.MorphologyEx(temp, temp, MorphTypes.Open, element2, new Point(-1, -1));
 
-            var circleFinder = new CircleFinder
+            var circleFinder = new CircleDetector
             {
                 BlobColor = 255,
                 FilterByCircularity = true,
