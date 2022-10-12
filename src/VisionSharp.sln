@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{571CF3D6-F838-49FC-ADBE-096DE133245D}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestImage", "TestImage", "{3F9B7AB0-EACD-421F-8E87-254EE585A992}"
@@ -19,9 +20,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestImage", "TestImage", "{
 		..\testimages\qrcode.png = ..\testimages\qrcode.png
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestOnnx", "TestOnnx", "{46C26380-B33A-4ACF-A6C1-168D1329CAAE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestModels", "TestModels", "{46C26380-B33A-4ACF-A6C1-168D1329CAAE}"
 	ProjectSection(SolutionItems) = preProject
 		..\testOnnx\load800.onnx = ..\testOnnx\load800.onnx
+		..\testModels\yolov3.cfg = ..\testModels\yolov3.cfg
+		..\testModels\yolov3.weights = ..\testModels\yolov3.weights
 	EndProjectSection
 EndProject
 Global

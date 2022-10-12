@@ -1,4 +1,5 @@
 ﻿using OpenCvSharp;
+using OpenCvSharp.Dnn;
 using VisionSharp.Models.Detect;
 
 namespace VisionSharp.Processor.ObjectDetector
@@ -13,7 +14,22 @@ namespace VisionSharp.Processor.ObjectDetector
         {
         }
 
-        internal override ObjRect<T> Process(Mat input)
+        internal override ObjRect<T>[] Process(Mat input)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal override Net InitialNet()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal override Mat[] FrontNet(Net net, Mat mat)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal override ObjRect<T>[] Decode(Mat[] mats, Size size)
         {
             throw new NotImplementedException();
         }
