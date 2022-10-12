@@ -4,18 +4,22 @@ using OpenCvSharp;
 
 namespace VisionSharp.Models.Base
 {
-    /// <summary>
-    ///     This is Point class for UI corresponding to point2d @ openCV
-    /// </summary>
     public class CvPoint : ObservableObject
     {
         private double _x;
         private double _y;
 
+        /// <summary>
+        ///     可观测的点对象
+        /// </summary>
         public CvPoint()
         {
         }
 
+        /// <summary>
+        ///     可观测的点对象
+        /// </summary>
+        /// <param name="p">浮点精度坐标</param>
         public CvPoint(Point2d p)
         {
             X = p.X;

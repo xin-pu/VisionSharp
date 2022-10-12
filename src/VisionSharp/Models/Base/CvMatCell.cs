@@ -3,15 +3,23 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace VisionSharp.Models.Base
 {
-    /// <summary>
-    ///     OpenCV中矩阵 Cell对象
-    /// </summary>
     public class CvMatCell : ObservableObject
     {
+        private int _column;
+        private int _row;
+
+        private double _value;
+
+        /// <summary>
+        ///     可观测的矩阵单元
+        /// </summary>
         public CvMatCell()
         {
         }
 
+        /// <summary>
+        ///     可观测的矩阵单元
+        /// </summary>
         public CvMatCell(int row, int column, double value)
         {
             Row = row;
@@ -19,9 +27,23 @@ namespace VisionSharp.Models.Base
             Value = value;
         }
 
-        public int Row { set; get; }
-        public int Column { set; get; }
-        public double Value { set; get; }
+        public int Row
+        {
+            set => SetProperty(ref _row, value);
+            get => _row;
+        }
+
+        public int Column
+        {
+            set => SetProperty(ref _column, value);
+            get => _column;
+        }
+
+        public double Value
+        {
+            set => SetProperty(ref _value, value);
+            get => _value;
+        }
 
         public override string ToString()
         {

@@ -12,14 +12,14 @@ namespace VisionSharp.Models.Base
         private int _y;
 
         /// <summary>
-        ///     拓展的矩形框
+        ///     可观则的矩形框
         /// </summary>
         public CvRect()
         {
         }
 
         /// <summary>
-        ///     从Rect构造
+        ///     可观则的矩形框
         /// </summary>
         /// <param name="rect"></param>
         public CvRect(Rect rect)

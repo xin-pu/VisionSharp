@@ -4,9 +4,6 @@ using OpenCvSharp;
 
 namespace VisionSharp.Models.Base
 {
-    /// <summary>
-    ///     对应OpenCV中RotatedRect
-    /// </summary>
     public class CvRotatedRect : ObservableObject
     {
         private double _angle;
@@ -16,10 +13,16 @@ namespace VisionSharp.Models.Base
         private double _x;
         private double _y;
 
+        /// <summary>
+        ///     可观测的旋转矩形框
+        /// </summary>
         public CvRotatedRect()
         {
         }
 
+        /// <summary>
+        ///     可观测的旋转矩形框
+        /// </summary>
         public CvRotatedRect(RotatedRect rotatedRect)
         {
             X = rotatedRect.Center.X;

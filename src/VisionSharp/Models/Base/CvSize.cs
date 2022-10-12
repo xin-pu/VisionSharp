@@ -9,10 +9,16 @@ namespace VisionSharp.Models.Base
         private double _height;
         private double _width;
 
+        /// <summary>
+        ///     可观测的尺度
+        /// </summary>
         public CvSize()
         {
         }
 
+        /// <summary>
+        ///     可观测的尺度
+        /// </summary>
         public CvSize(Size2f s)
         {
             Width = s.Width;
