@@ -69,9 +69,7 @@ namespace VisionSharp.Models.Base
         public override string ToString()
         {
             var str = new StringBuilder();
-            str.AppendLine("CvPoint");
-            str.AppendLine($"Location\t[{X:F4},{Y:F4}]");
-            str.AppendLine($"Size\t[{Width:F4}*{Height:F4}]");
+            str.AppendLine($"Rect:\t[{X:F4},{Y:F4}],[{Width:F4},{Height:F4}]");
             return str.ToString();
         }
     }
