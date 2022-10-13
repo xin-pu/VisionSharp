@@ -18,7 +18,7 @@ namespace VisionSharp.Processor.ObjectDetector
         {
             ModelWeights = modelWeights;
             ConfigFile = configFile;
-            Colors = CvBasic.GetColorDict<T>();
+            Colors = CvCvt.GetColorDict<T>();
             Net = InitialNet();
         }
 

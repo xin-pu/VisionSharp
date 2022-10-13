@@ -5,16 +5,8 @@ namespace VisionSharp.Utils
 {
     public class CvBasic
     {
-        public static Dictionary<T, Scalar> GetColorDict<T>() where T : Enum
-        {
-            var count = Enum.GetValues(typeof(T)).Length;
-            var hsv_Tuples = Enumerable.Range(0, count)
-                .Select(i => new Tuple<double, double, double>(1.0 / count, 1, 1));
-            return new Dictionary<T, Scalar>();
-        }
-
         /// <summary>
-        ///     Get Detect Grid Size from size of mat, and target pattern size.
+        ///     将图像划分为棋盘格
         /// </summary>
         /// <param name="matsize"></param>
         /// <param name="gridSize"></param>
@@ -42,7 +34,7 @@ namespace VisionSharp.Utils
 
 
         /// <summary>
-        ///     Get Mat from Original Mat by ROI Rect
+        ///     从图像中截取感兴趣区域
         /// </summary>
         /// <param name="mat">Original Mat</param>
         /// <param name="roiRect">Roi Rect</param>

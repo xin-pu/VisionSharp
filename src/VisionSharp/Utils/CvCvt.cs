@@ -472,5 +472,82 @@ namespace VisionSharp.Utils
         }
 
         #endregion
+
+        #region 颜色控件转换
+
+        /// <summary>
+        ///     将h,s,v转RGB颜色
+        /// </summary>
+        /// <param name="h"></param>
+        /// <param name="s"></param>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static Scalar CvtHsvToRgb(double h, double s, double v)
+        {
+            var hI = (int) (h * 6);
+            var f = h * 6 - hI;
+            var p = v * (1 - s);
+            var q = v * (1 - f * s);
+            var t = v * (1 - (1 - f) * s);
+            double r, g, b;
+            switch (hI)
+            {
+                case 0:
+                    r = v;
+                    g = t;
+                    b = p;
+                    break;
+                case 1:
+                    r = q;
+                    g = v;
+                    b = p;
+                    break;
+                case 2:
+                    r = p;
+                    g = v;
+                    b = t;
+                    break;
+                case 3:
+                    r = p;
+                    g = q;
+                    b = v;
+                    break;
+                case 4:
+                    r = t;
+                    g = p;
+                    b = v;
+                    break;
+                case 5:
+                    r = v;
+                    g = p;
+                    b = q;
+                    break;
+                default:
+                    r = 1;
+                    g = 1;
+                    b = 1;
+                    break;
+            }
+
+            return new Scalar(r * 255, g * 255, b * 255, 0);
+        }
+
+        /// <summary>
+        ///     生成分类枚举的颜色字典
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static Dictionary<T, Scalar> GetColorDict<T>() where T : Enum
+        {
+            var values = Enum.GetValues(typeof(T)).Cast<T>().ToList();
+
+            var pairSelect = values
+                .Select((a, b) => (a, CvtHsvToRgb(1.0 * b / values.Count, 1, 1)))
+                .ToList();
+            var colorDict = pairSelect.ToDictionary(p => p.a, p => p.Item2);
+            return colorDict;
+        }
+
+        #endregion
     }
 }
