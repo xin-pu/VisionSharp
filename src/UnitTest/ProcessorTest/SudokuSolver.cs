@@ -1,4 +1,5 @@
-﻿using VisionSharp.Models.Sudoku;
+﻿using FluentAssertions;
+using VisionSharp.Models.Sudoku;
 using VisionSharp.Processor.Slovers;
 using Xunit.Abstractions;
 
@@ -6,7 +7,7 @@ namespace UnitTest.ProcessorTest
 {
     public class SudokuSolverTest : AbstractTest
     {
-        private readonly byte[,] demo =
+        private readonly byte[,] _demo =
         {
             {5, 3, 0, 0, 7, 0, 0, 0, 0},
             {6, 0, 0, 1, 9, 5, 0, 0, 0},
@@ -27,17 +28,43 @@ namespace UnitTest.ProcessorTest
         [Fact]
         public void PrintSudoku()
         {
-            var sudokuSubject = new SudokuSubject(demo);
+            var sudokuSubject = new Sudoku(_demo);
             PrintObject(sudokuSubject);
         }
 
         [Fact]
         public void SolveSudoku()
         {
-            var sudokuSubject = new SudokuSubject(demo);
+            var sudokuSubject = new Sudoku(_demo);
+            PrintObject(sudokuSubject);
             var solve = new SudokuSolver();
             var s = solve.Call(sudokuSubject);
             PrintObject(s);
+        }
+
+        [Fact]
+        public void SolveSudoku2()
+        {
+            var s = "008317000004205109000040070327160904901450000045700800030001060872604000416070080";
+            var a = "298317645764285139153946278327168954981453726645792813539821467872634591416579382";
+
+            var sudokuSubject = new Sudoku(s);
+            PrintObject(sudokuSubject);
+            var solve = new SudokuSolver();
+            var res = solve.Call(sudokuSubject);
+            PrintObject(res);
+
+            res.Answer.Should().BeEquivalentTo(Sudoku.CvtSubject(a));
+        }
+
+        [Fact]
+        public void Verify()
+        {
+            var s = "008317000004205109000040070327160904901450000045700800030001060872604000416070080";
+            var a = "298317645764285139153946278327168954981453726645792813539821467872634591416579382";
+            var slove = new SudokuSolver();
+            var res = slove.Verify(s, a);
+            PrintObject(res);
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using VisionSharp.Models.Sudoku;
+﻿using FluentAssertions;
+using VisionSharp.Models.Sudoku;
 
 namespace VisionSharp.Processor.Slovers
 {
-    public class SudokuSolver : Processor<SudokuSubject, SudokuSubject>
+    public class SudokuSolver : Processor<Sudoku, Sudoku>
     {
         /// <summary>
         ///     数独解题器
@@ -11,7 +12,7 @@ namespace VisionSharp.Processor.Slovers
         {
         }
 
-        internal override SudokuSubject Process(SudokuSubject input)
+        internal override Sudoku Process(Sudoku input)
         {
             var row = new bool[9, 9]; // 行
             var col = new bool[9, 9]; // 列
@@ -48,7 +49,7 @@ namespace VisionSharp.Processor.Slovers
         /// <param name="i"></param>
         /// <param name="j"></param>
         /// <returns></returns>
-        private bool DepthFirstAlgorithm(SudokuSubject board, bool[,] row, bool[,] col, bool[,] block, int i, int j)
+        private bool DepthFirstAlgorithm(Sudoku board, bool[,] row, bool[,] col, bool[,] block, int i, int j)
         {
             // 结束条件
             while (board[i, j].Number != 0)
@@ -94,5 +95,24 @@ namespace VisionSharp.Processor.Slovers
 
             return false;
         }
+
+        #region Expand
+
+        /// <summary>
+        ///     TOdo
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="answer"></param>
+        /// <returns></returns>
+        public bool Verify(string subject, string answer)
+        {
+            var sub = new Sudoku(subject);
+            var answerPred = Call(sub).Answer;
+            var answerTrue = Sudoku.CvtSubject(answer);
+            var res = answerTrue.Should().BeEquivalentTo(answerPred);
+            return true;
+        }
+
+        #endregion
     }
 }

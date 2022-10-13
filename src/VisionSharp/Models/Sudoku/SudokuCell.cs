@@ -5,9 +5,9 @@ namespace VisionSharp.Models.Sudoku
     /// <summary>
     ///     数独单元格
     /// </summary>
-    public class SudokuBlock : ObservableObject
+    public class SudokuCell : ObservableObject
     {
-        public SudokuBlock(bool isCondition, byte number, byte column, byte row)
+        public SudokuCell(bool isCondition, byte number, byte column, byte row)
         {
             IsCondition = isCondition;
 
