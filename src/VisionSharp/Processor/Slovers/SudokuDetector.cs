@@ -3,7 +3,7 @@ using VisionSharp.Models.Sudoku;
 
 namespace VisionSharp.Processor.Slovers
 {
-    public class SudokuDetector : FeatureExtractor<SudokuSubject>
+    public class SudokuDetector : FeatureExtractor<Sudoku>
     {
         /// <summary>
         ///     数独检测器
@@ -12,7 +12,7 @@ namespace VisionSharp.Processor.Slovers
         {
         }
 
-        internal override SudokuSubject Process(Mat input)
+        internal override Sudoku Process(Mat input)
         {
             throw new NotImplementedException();
         }
