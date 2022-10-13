@@ -44,5 +44,10 @@ namespace UnitTest.ProcessorTest
             var res = barcodeDetector.Call(mat);
             PrintObject(res);
         }
+
+        [Fact]
+        public void LRPDetectotTest()
+        {
+        }
     }
 }
