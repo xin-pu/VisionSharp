@@ -265,11 +265,10 @@ namespace VisionSharp.Utils
 
         #endregion
 
-
-        #region Convert Mat to Bitmap
+        #region MAT转Bitmap
 
         /// <summary>
-        ///     Converts Mat to System.Drawing.Bitmap
+        ///     MAT转Bitmap
         /// </summary>
         /// <param name="src">Mat</param>
         /// <returns></returns>
@@ -473,7 +472,7 @@ namespace VisionSharp.Utils
 
         #endregion
 
-        #region 颜色控件转换
+        #region 颜色空间转换
 
         /// <summary>
         ///     将h,s,v转RGB颜色

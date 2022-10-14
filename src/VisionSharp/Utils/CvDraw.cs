@@ -39,7 +39,6 @@ namespace VisionSharp.Utils
             return mat;
         }
 
-
         /// <summary>
         ///     绘制矩形框
         /// </summary>
@@ -92,11 +91,11 @@ namespace VisionSharp.Utils
         }
 
         /// <summary>
+        ///     绘制旋转矩形框
         /// </summary>
         /// <param name="mat"></param>
         /// <param name="rotatedRect"></param>
         /// <param name="color"></param>
-        /// <param name="size"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
         public static Mat DrawRotatedRect(Mat mat, CvRotatedRect rotatedRect, Scalar color, int thickness = 3)
