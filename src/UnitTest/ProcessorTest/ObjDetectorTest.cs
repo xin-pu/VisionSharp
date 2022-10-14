@@ -32,11 +32,10 @@ namespace UnitTest.ProcessorTest
         [Fact]
         public void ObjDetectortTest()
         {
-            var model = @"F:\SaveModels\Yolo\raccoon.onnx";
-            var net = CvDnn.ReadNetFromOnnx(model);
-
-            var res = net.GetLayerNames();
-            PrintObject(string.Join("\r\n", res));
+            var model = @"F:\SaveModels\Yolo\qr.onnx";
+            var imageFilePath = @"..\..\..\..\testimages\002341.jpg";
+            var d = CvDnn.ReadNetFromOnnx(model).GetLayerNames();
+            PrintObject(string.Join("\r", d));
         }
     }
 }
