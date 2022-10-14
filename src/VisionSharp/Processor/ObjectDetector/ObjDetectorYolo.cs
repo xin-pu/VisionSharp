@@ -5,13 +5,37 @@ namespace VisionSharp.Processor.ObjectDetector
 {
     public abstract class ObjDetectorYolo<T> : ObjectDetector<T> where T : Enum
     {
+        private string _configFile;
+        private Size _inputPattern;
+        private string _modelWeights;
+
         /// <summary>
         ///     基于Yolo的目标检测器
         /// </summary>
-        protected ObjDetectorYolo() : base("ObjDetectorYolo")
+        protected ObjDetectorYolo(Size inputPattern)
+            : base("ObjDetectorYolo")
         {
+            InputPattern = inputPattern;
         }
 
+        public string ModelWeights
+        {
+            internal set => SetProperty(ref _modelWeights, value);
+            get => _modelWeights;
+        }
+
+
+        public string ConfigFile
+        {
+            internal set => SetProperty(ref _configFile, value);
+            get => _configFile;
+        }
+
+        public Size InputPattern
+        {
+            internal set => SetProperty(ref _inputPattern, value);
+            get => _inputPattern;
+        }
 
         internal override ObjRect<T>[] Process(Mat input)
         {
@@ -20,6 +44,7 @@ namespace VisionSharp.Processor.ObjectDetector
             var final = NonMaximalSuppression(candidate);
             return final;
         }
+
 
         /// <summary>
         ///     Yolo3以上的解码过程是一样的

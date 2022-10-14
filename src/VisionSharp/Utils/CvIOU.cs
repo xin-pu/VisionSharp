@@ -2,9 +2,9 @@
 
 namespace VisionSharp.Utils
 {
-    public class CvIOU
+    public class CvIou
     {
-        public static double getIoU(Rect rect1, Rect rect2)
+        public static double GetIoU(Rect rect1, Rect rect2)
         {
             var area1 = 1.0 * rect1.Width * rect1.Height;
             var area2 = 1.0 * rect2.Width * rect2.Height;
@@ -16,7 +16,9 @@ namespace VisionSharp.Utils
             var right = new[] {rect1.Right, rect2.Right}.Min();
 
             if (left > right || top > bottom)
+            {
                 return -1;
+            }
 
             var areaIn = 1.0 * (right - left) * (bottom - top);
 

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using OpenCvSharp;
+﻿using OpenCvSharp;
 using OpenCvSharp.Dnn;
 using VisionSharp.Utils;
 
@@ -11,10 +10,8 @@ namespace VisionSharp.Processor.ObjectDetector
     /// <typeparam name="T"></typeparam>
     public class ObjDetectorDarkNet<T> : ObjDetectorYolo<T> where T : Enum
     {
-        private string _configFile;
-        private string _modelWeights;
-
         public ObjDetectorDarkNet(string modelWeights, string configFile)
+            : base(new Size(416, 416))
         {
             ModelWeights = modelWeights;
             ConfigFile = configFile;
@@ -22,19 +19,14 @@ namespace VisionSharp.Processor.ObjectDetector
             Net = InitialNet();
         }
 
-        [Category("Option")]
-        public string ModelWeights
+        public ObjDetectorDarkNet(string onnxWeight, Size inputPattern)
+            : base(new Size(416, 416))
         {
-            internal set => SetProperty(ref _modelWeights, value);
-            get => _modelWeights;
+            ModelWeights = onnxWeight;
+            InputPattern = inputPattern;
+            Colors = CvCvt.GetColorDict<T>();
         }
 
-        [Category("Option")]
-        public string ConfigFile
-        {
-            internal set => SetProperty(ref _configFile, value);
-            get => _configFile;
-        }
 
         /// <summary>
         ///     加载网络
@@ -67,11 +59,42 @@ namespace VisionSharp.Processor.ObjectDetector
             return darknet;
         }
 
+        /// <summary>
+        ///     加载网络
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="FileNotFoundException"></exception>
+        /// <exception cref="NullReferenceException"></exception>
+        internal Net InitialOnnx()
+        {
+            if (ModelWeights == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (File.Exists(ModelWeights) == false || File.Exists(ConfigFile) == false)
+            {
+                throw new FileNotFoundException();
+            }
+
+
+            var darknet = CvDnn.ReadNetFromDarknet(ConfigFile, ModelWeights);
+            if (darknet == null)
+            {
+                throw new NullReferenceException("Can't Load Net");
+            }
+
+            darknet.SetPreferableBackend(Backend.OPENCV);
+            darknet.SetPreferableTarget(Target.CPU);
+            return darknet;
+        }
+
         internal override Mat[] FrontNet(Net net, Mat mat)
         {
             var inputBlob = CvDnn.BlobFromImage(mat,
                 1F / 255,
-                new Size(416, 416),
+                InputPattern,
                 new Scalar(0, 0, 0),
                 true,
                 false);

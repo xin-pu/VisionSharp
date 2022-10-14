@@ -21,7 +21,7 @@ namespace VisionSharp.Processor
         /// <summary>
         ///     预测网络，不需要观测
         /// </summary>
-        internal Net Net { set; get; }
+        public Net Net { internal set; get; }
 
         /// <summary>
         ///     用于标记分类的颜色字体
