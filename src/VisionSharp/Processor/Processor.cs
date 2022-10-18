@@ -17,6 +17,7 @@ namespace VisionSharp.Processor
         private bool _enableSaveMat = true;
         private string _fileName;
         private string _name;
+        private Scalar _pencolor = Scalar.OrangeRed;
 
         protected Processor(string name)
         {
@@ -24,7 +25,12 @@ namespace VisionSharp.Processor
         }
 
         public string OutPutDire => Path.Combine(Environment.CurrentDirectory, "Temp", Name);
-        public Scalar PenColor => Scalar.OrangeRed;
+
+        public Scalar PenColor
+        {
+            set => SetProperty(ref _pencolor, value);
+            get => _pencolor;
+        }
 
         public string Name
         {
@@ -190,6 +196,11 @@ namespace VisionSharp.Processor
         internal Mat DrawLine(Mat mat, Point pointStart, Point pointEnd, Scalar color, int thickness = 3)
         {
             return CvDraw.DrawLine(mat, pointStart, pointEnd, color, thickness);
+        }
+
+        internal Mat DrawCircle(Mat mat, Point centern, int size, Scalar color, int thickness = 1)
+        {
+            return CvDraw.DraCircle(mat, centern, color, size, thickness);
         }
 
         /// <summary>

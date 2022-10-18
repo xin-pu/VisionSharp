@@ -5,7 +5,7 @@ using VisionSharp.Utils;
 
 namespace VisionSharp.Processor.LayoutDetectors
 {
-    public class LayoutDlDetector : LayoutDetector
+    public class LayoutDlDetector<T> : LayoutDetector<T> where T : Enum
     {
         public LayoutDlDetector(string modelFile, LayoutArgument layoutArgument)
             : base(layoutArgument)
@@ -35,7 +35,7 @@ namespace VisionSharp.Processor.LayoutDetectors
         public Net Net { internal set; get; }
 
 
-        internal override Layout Process(Mat input)
+        internal override Layout<T> Process(Mat input)
         {
             var inputBlob = CvDnn.BlobFromImage(input,
                 1d / 255,
@@ -66,26 +66,28 @@ namespace VisionSharp.Processor.LayoutDetectors
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        internal Layout Decode(Mat result)
+        internal Layout<T> Decode(Mat result)
         {
             var height = LayoutArgument.LayoutPattern.Height;
             var width = LayoutArgument.LayoutPattern.Width;
-            var resultCh = result.Reshape(1, height * width, 2);
+            var resultCh = result.Reshape(1, height * width, 3);
             var array = CvCvt.CvtToArray(resultCh);
 
             resultCh.Dispose();
             GC.Collect();
             GC.WaitForFullGCComplete();
 
-            var res = new Layout(height, width, LayoutArgument.ScoreThreshold);
-
+            var res = new Layout<T>(height, width, LayoutArgument.ScoreThreshold);
+            var cateCount = res.CategoryCount;
             Enumerable.Range(0, height * width).ToList().ForEach(d =>
             {
-                var negativeScore = CvMath.Sigmoid(array[d, 0]);
-                var positiveScore = CvMath.Sigmoid(array[d, 1]);
-                res.UpdateScore(d / width, d % width, positiveScore, negativeScore);
+                var activeScores = Enumerable.Range(0, cateCount)
+                    .Select(c => CvMath.Sigmoid(array[d, c]))
+                    .ToArray();
+
+                res.UpdateScore(d / width, d % width, activeScores, LayoutArgument.ScoreThreshold);
             });
-            res.UpdateStatus();
+
             return res;
         }
     }

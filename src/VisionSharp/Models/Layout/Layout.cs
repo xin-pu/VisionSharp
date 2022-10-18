@@ -4,10 +4,10 @@ using VisionSharp.Models.Category;
 
 namespace VisionSharp.Models.Layout
 {
-    public class Layout : ObservableObject, IEquatable<Layout>
+    public class Layout<T> : ObservableObject, IEquatable<Layout<T>> where T : Enum
     {
         private int _column;
-        private List<LayoutCell> _layoutCells;
+        private List<LayoutCell<T>> _layoutCells;
         private int _row;
         private double _scoreThreshold;
 
@@ -23,13 +23,15 @@ namespace VisionSharp.Models.Layout
             Row = row;
             Column = column;
             ScoreThreshold = scoreThreshold;
-            LayoutCells = new List<LayoutCell>();
+            LayoutCells = new List<LayoutCell<T>>();
             foreach (var r in Enumerable.Range(0, row))
             foreach (var c in Enumerable.Range(0, column))
             {
-                LayoutCells.Add(new LayoutCell(r, c));
+                LayoutCells.Add(new LayoutCell<T>(r, c));
             }
         }
+
+        public int CategoryCount => Enum.GetValues(typeof(T)).Length;
 
         /// <summary>
         ///     行
@@ -61,7 +63,7 @@ namespace VisionSharp.Models.Layout
         /// <summary>
         ///     布局中所有单元,不公开给外部
         /// </summary>
-        internal List<LayoutCell> LayoutCells
+        internal List<LayoutCell<T>> LayoutCells
         {
             set => SetProperty(ref _layoutCells, value);
             get => _layoutCells;
@@ -73,7 +75,7 @@ namespace VisionSharp.Models.Layout
         /// <param name="row"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        public LayoutCell this[int row, int column] =>
+        public LayoutCell<T> this[int row, int column] =>
             LayoutCells.FirstOrDefault(a => a.Row == row && a.Column == column);
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace VisionSharp.Models.Layout
         /// </summary>
         /// <param name="row"></param>
         /// <returns></returns>
-        public LayoutCell[] this[int row] =>
+        public LayoutCell<T>[] this[int row] =>
             LayoutCells.Where(a => a.Row == row).OrderBy(a => a.Column).ToArray();
 
         /// <summary>
@@ -91,7 +93,7 @@ namespace VisionSharp.Models.Layout
         /// <returns></returns>
         public bool GetReliability()
         {
-            return LayoutCells.All(d => d.LayoutStatus != LayoutStatus.Unidentified);
+            return LayoutCells.All(d => d.Reliable == Reliable.Reliable);
         }
 
         /// <summary>
@@ -101,39 +103,43 @@ namespace VisionSharp.Models.Layout
         /// <param name="column"></param>
         /// <param name="score">sigmoid score</param>
         /// <exception cref="ArgumentException"></exception>
-        public void UpdateScore(int row, int column, double positiveScore, double negativeScore)
+        public void UpdateScore(int row, int column, double[] scores, double threshold = 0.7)
         {
-            this[row, column].PositiveScore = positiveScore;
-            this[row, column].NegativeScore = negativeScore;
+            var cell = this[row, column];
+            cell.UpdateScore(scores, threshold);
         }
+
 
         /// <summary>
-        ///     更新单元状态
+        ///     获取分类布局
         /// </summary>
-        public void UpdateStatus()
+        /// <returns></returns>
+        public T[,] ToLayoutStatus()
         {
-            LayoutCells.ForEach(cell =>
-            {
-                var positiveScore = cell.PositiveScore;
-                var negativeScore = cell.NegativeScore;
-                cell.LayoutStatus = positiveScore < ScoreThreshold && negativeScore < ScoreThreshold
-                    ? LayoutStatus.Unidentified
-                    : positiveScore > negativeScore
-                        ? LayoutStatus.Positive
-                        : LayoutStatus.Negative;
-            });
-        }
-
-
-        public LayoutStatus[,] ToLayoutStatus()
-        {
-            var res = new LayoutStatus[Row, Column];
+            var res = new T[Row, Column];
             Enumerable.Range(0, Row).ToList()
                 .ForEach(r => Enumerable.Range(0, Column).ToList()
                     .ForEach(c => res[r, c] = this[r, c].LayoutStatus));
             return res;
         }
 
+        /// <summary>
+        ///     获取可靠度布局
+        /// </summary>
+        /// <returns></returns>
+        public Reliable[,] ToReliables()
+        {
+            var res = new Reliable[Row, Column];
+            Enumerable.Range(0, Row).ToList()
+                .ForEach(r => Enumerable.Range(0, Column).ToList()
+                    .ForEach(c => res[r, c] = this[r, c].Reliable));
+            return res;
+        }
+
+        /// <summary>
+        ///     给该可靠度阈值
+        /// </summary>
+        /// <param name="scoreThreshold"></param>
         public void ChangeThreshold(double scoreThreshold)
         {
             ScoreThreshold = scoreThreshold;
@@ -162,8 +168,8 @@ namespace VisionSharp.Models.Layout
             str.AppendLine($"  \t{header}");
             foreach (var row in Enumerable.Range(0, Row))
             {
-                var status = string.Join("\t", this[row].Select(c => c.AsStrStatus()));
-                var score = string.Join("\t", this[row].Select(c => c.AsScoreStatus()));
+                var status = string.Join("\t", this[row].Select(c => c.ToValueStatus()));
+                var score = string.Join("\t", this[row].Select(c => c.ToScoreStatus()));
                 var line = $"{row:D2}|\t{status}\t{score}";
                 str.AppendLine(line);
             }
@@ -181,7 +187,7 @@ namespace VisionSharp.Models.Layout
             var str = new StringBuilder();
             foreach (var row in Enumerable.Range(0, Row))
             {
-                var line = string.Join(",", this[row].Select(c => c.AsAnnStatus()));
+                var line = string.Join(",", this[row].Select(c => c.ToValueStatus()));
                 str.AppendLine(line);
             }
 
@@ -191,7 +197,7 @@ namespace VisionSharp.Models.Layout
 
         #region 比较器
 
-        public bool Equals(Layout other)
+        public bool Equals(Layout<T> other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -216,14 +222,14 @@ namespace VisionSharp.Models.Layout
             if (Row == other.Row && Column == other.Column)
             {
                 var res = LayoutCells.All(d =>
-                    d.LayoutStatus == other[d.Row, d.Column].LayoutStatus);
+                    Convert.ToInt32(d.LayoutStatus) == Convert.ToInt32(other[d.Row, d.Column].LayoutStatus));
                 return res;
             }
 
             return false;
         }
 
-        public int GetHashCode(Layout obj)
+        public int GetHashCode(Layout<T> obj)
         {
             return HashCode.Combine(obj._column, obj._layoutCells, obj._row, obj._scoreThreshold);
         }
@@ -238,7 +244,7 @@ namespace VisionSharp.Models.Layout
         /// <param name="annfile">注释文件路径</param>
         /// <returns>平面</returns>
         /// <exception cref="FileLoadException"></exception>
-        public static Layout LoadFromAnnotation(string annfile)
+        public static Layout<T> LoadFromAnnotation(string annfile)
         {
             using var sr = new StreamReader(annfile);
             var lines = sr.ReadToEnd().Split('\r', '\n').Where(a => a != "").ToList();
@@ -250,17 +256,19 @@ namespace VisionSharp.Models.Layout
                 throw new FileLoadException();
             }
 
+            var cateCount = Enum.GetValues(typeof(T)).Length;
             var column = columnsRows[0];
 
-            var res = new Layout(rows, column);
+            var res = new Layout<T>(rows, column);
             foreach (var r in Enumerable.Range(0, rows))
             foreach (var c in Enumerable.Range(0, column))
             {
-                var resCell = rowlines[r][c] == "1";
-                res.UpdateScore(r, c, resCell ? 1 : 0, resCell ? 0 : 1);
+                var resCell = int.Parse(rowlines[r][c]);
+                var score = Enumerable.Range(0, cateCount).Select(a => (double) a).ToArray();
+                score[resCell] = 1;
+                res.UpdateScore(r, c, score);
             }
 
-            res.UpdateStatus();
             return res;
         }
 
@@ -269,7 +277,7 @@ namespace VisionSharp.Models.Layout
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="layout"></param>
-        public static void SaveAnnotation(string filename, Layout layout)
+        public static void SaveAnnotation(string filename, Layout<T> layout)
         {
             using var sw = new StreamWriter(filename, false);
             sw.Write(layout.ToAnnotationString());

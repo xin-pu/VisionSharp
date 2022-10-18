@@ -4,13 +4,14 @@ using VisionSharp.Models.Category;
 
 namespace VisionSharp.Models.Layout
 {
-    public class LayoutCell : ObservableObject
+    public class LayoutCell<T> : ObservableObject where T : Enum
     {
         private int _column;
-        private LayoutStatus _layoutStatus;
-        private double _negativeScore;
-        private double _positiveScore;
+        private Reliable _reliable;
         private int _row;
+        private double _score;
+        private double[] _scoreCategory;
+        private T _t;
 
         /// <summary>
         ///     布局预测每个位置的信息结构类
@@ -19,7 +20,7 @@ namespace VisionSharp.Models.Layout
         {
             Row = row;
             Column = column;
-            LayoutStatus = LayoutStatus.Unidentified;
+            Reliable = Reliable.Unreliable;
         }
 
         public int Row
@@ -35,101 +36,109 @@ namespace VisionSharp.Models.Layout
         }
 
         /// <summary>
-        ///     状态
+        ///     结果是否可靠
         /// </summary>
-        public LayoutStatus LayoutStatus
+        public Reliable Reliable
         {
-            set => SetProperty(ref _layoutStatus, value);
-            get => _layoutStatus;
+            protected set => SetProperty(ref _reliable, value);
+            get => _reliable;
+        }
+
+
+        /// <summary>
+        ///     分类
+        /// </summary>
+        public T LayoutStatus
+        {
+            internal set => SetProperty(ref _t, value);
+            get => _t;
+        }
+
+
+        /// <summary>
+        ///     激活后的分类分数
+        /// </summary>
+        public double[] ScoreCategory
+        {
+            internal set => SetProperty(ref _scoreCategory, value);
+            get => _scoreCategory;
         }
 
         /// <summary>
-        ///     置物的分数
+        ///     激活后的分类分数
         /// </summary>
-        public double PositiveScore
+        public double Score
         {
-            internal set => SetProperty(ref _positiveScore, value);
-            get => _positiveScore;
-        }
-
-        /// <summary>
-        ///     置空的分数
-        /// </summary>
-        public double NegativeScore
-        {
-            internal set => SetProperty(ref _negativeScore, value);
-            get => _negativeScore;
+            internal set => SetProperty(ref _score, value);
+            get => _score;
         }
 
 
-        public void UpdateScore(float[] score)
+        public void UpdateScore(double[] score, double threshold)
         {
-            PositiveScore = score[0];
-            NegativeScore = score[1];
+            ScoreCategory = score.ToArray();
+            Score = ScoreCategory.Max();
+            Reliable = Score >= threshold ? Reliable.Reliable : Reliable.Unreliable;
         }
 
         /// <summary>
         ///     获取单元状态，
         /// </summary>
         /// <returns>置物为True,置空为False,存疑的为空</returns>
-        public bool? GetLayoutStatus()
+        public T GetLayoutStatus()
         {
-            switch (LayoutStatus)
-            {
-                case LayoutStatus.Positive:
-                    return true;
-                case LayoutStatus.Negative:
-                    return false;
-                default:
-                    return null;
-            }
+            return Reliable == Reliable.Unreliable
+                ? default
+                : LayoutStatus;
         }
 
         /// <summary>
-        ///     返回激活后的分数
+        ///     返回激活后的分数中最大项
         /// </summary>
         /// <returns></returns>
         /// <remarks>如果没有激活，返回空</remarks>
         public double GetScore()
         {
-            return LayoutStatus switch
-            {
-                LayoutStatus.Positive => PositiveScore,
-                LayoutStatus.Negative => NegativeScore,
-                _ => double.NaN
-            };
+            return ScoreCategory.Max();
         }
 
         public override string ToString()
         {
             var str = new StringBuilder(
-                $"[{Row},{Column}]:{AsStrStatus()}\t{AsScoreStatus()}");
+                $"[{Row},{Column}]:{ToCategoryStatus()}");
             return str.ToString();
         }
 
-        public string AsScoreStatus()
+        /// <summary>
+        ///     转换成分数字符串
+        /// </summary>
+        /// <returns></returns>
+        public string ToScoreStatus()
         {
-            return $"[{PositiveScore:F4},{NegativeScore:F4}]";
+            var scoreStr = ScoreCategory.Select(s => $"[{s:F4}]");
+            return string.Join(",", scoreStr);
         }
 
-        public string AsStrStatus()
+        /// <summary>
+        ///     转换成枚举数值字符
+        /// </summary>
+        /// <returns></returns>
+        public string ToValueStatus()
         {
-            return LayoutStatus switch
-            {
-                LayoutStatus.Positive => "+",
-                LayoutStatus.Negative => "-",
-                _ => "?"
-            };
+            return Reliable == Reliable.Unreliable
+                ? "?"
+                : LayoutStatus.ToString("D");
         }
 
-        public string AsAnnStatus()
+        /// <summary>
+        ///     转换成枚举分类
+        /// </summary>
+        /// <returns></returns>
+        public string ToCategoryStatus()
         {
-            return LayoutStatus switch
-            {
-                LayoutStatus.Positive => "1",
-                LayoutStatus.Negative => "0",
-                _ => "?"
-            };
+            return Reliable == Reliable.Unreliable
+                ? "Unreliable"
+                : LayoutStatus.ToString();
         }
     }
 }
