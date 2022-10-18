@@ -1,18 +1,18 @@
 ﻿namespace VisionSharp.Models.Category
 {
     /// <summary>
-    ///     通用分类
+    ///     可靠分类
     /// </summary>
-    public enum ObjStatus
+    public enum Reliable
     {
         /// <summary>
-        ///     有物体
+        ///     不可靠
         /// </summary>
-        Object = 1,
+        Unreliable = 0,
 
         /// <summary>
-        ///     背景
+        ///     可靠
         /// </summary>
-        Background = 0
+        Reliable = 1
     }
 }

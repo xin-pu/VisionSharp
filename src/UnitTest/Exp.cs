@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OpenCvSharp;
+using VisionSharp.Processor.FeatureExtractors;
 using Xunit.Abstractions;
 
 namespace UnitTest
@@ -12,30 +14,6 @@ namespace UnitTest
         {
         }
 
-        [Fact]
-        public void TestRead()
-        {
-            using var stringReader = new StreamReader(@"F:\QR\Annotations\0050027974.json");
-            var str = stringReader.ReadToEnd();
-
-
-            var obj = JsonConvert.DeserializeObject(str) as JObject;
-
-            var width = obj["imageHeight"];
-            var height = obj["imageWidth"];
-            var shapes = obj["shapes"];
-            foreach (var jToken in shapes)
-            {
-                var a = jToken["points"];
-                var dd = a?.ToArray();
-                var x1 = dd?[0][0]?.Value<double>();
-                var y1 = dd?[0][1]?.Value<double>();
-                var x2 = dd?[1][0]?.Value<double>();
-                var y2 = dd?[1][1]?.Value<double>();
-            }
-
-            PrintObject(width);
-        }
 
         public string GetFormat(string jsonFile)
         {
@@ -89,6 +67,48 @@ namespace UnitTest
 
                 sw.Write(string.Join("\r\n", list));
             }
+        }
+
+        [Fact]
+        public void TestGetCircle()
+        {
+            var image = Cv2.ImRead(@"D:\Download\MicrosoftTeams-image.png");
+
+            var hsv = new Mat();
+            Cv2.CvtColor(image, hsv, ColorConversionCodes.BGR2HSV);
+
+            var outmat1 = new Mat();
+            Cv2.InRange(hsv, new Scalar(156, 43, 46), new Scalar(180, 255, 255), outmat1);
+
+
+            Cv2.ImWrite("test.jpg", outmat1);
+            var element = Cv2.GetStructuringElement(
+                MorphShapes.Ellipse,
+                new Size(3, 3),
+                new Point(-1, -1));
+
+            Cv2.MorphologyEx(outmat1, outmat1, MorphTypes.Close, element, new Point(-1, -1));
+            Cv2.MorphologyEx(outmat1, outmat1, MorphTypes.Open, element, new Point(-1, -1));
+
+
+            Cv2.ImShow("ori", outmat1);
+            Cv2.WaitKey();
+
+            var circleFinder = new CircleDetector
+            {
+                BlobColor = 255,
+                FilterByCircularity = true,
+                MinCircularity = 0.3,
+                MaxCircularity = 1,
+                FilterByArea = true,
+                MinArea = 10,
+                MaxArea = 200,
+                PenColor = new Scalar(255, 255, 255)
+            };
+            var final = circleFinder.Call(outmat1, image);
+
+            Cv2.ImShow("ori", final.OutMat);
+            Cv2.WaitKey();
         }
     }
 }

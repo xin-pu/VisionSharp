@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using OpenCvSharp;
+using VisionSharp.Models.Category;
 using VisionSharp.Models.Layout;
 using VisionSharp.Processor;
 using VisionSharp.Processor.LayoutDetectors;
@@ -17,7 +18,7 @@ namespace UnitTest.ProcessorTest
         [Fact]
         public void TestLayout()
         {
-            var layout = new Layout(3, 5);
+            var layout = new Layout<ObjCategory>(3, 5);
             PrintObject(layout);
             PrintObject(layout.ToAnnotationString());
         }
@@ -26,7 +27,7 @@ namespace UnitTest.ProcessorTest
         [Fact]
         public void TestLayoutSave()
         {
-            var layout = new Layout(3, 5);
+            var layout = new Layout<ObjCategory>(3, 5);
             layout.Save("save.txt");
             var res = File.Exists("save.txt");
             res.Should().BeTrue();
@@ -46,7 +47,21 @@ namespace UnitTest.ProcessorTest
             var testImage = @"F:\COC Tray\Union LoadTray\Images\1_0003.bmp";
 
             var argument = new LayoutArgument(new Size(2, 8), new Size(800, 800), 0.7);
-            var layoutDetector = new LayoutDlDetector(onnx, argument);
+            var layoutDetector = new LayoutDlDetector<ObjCategory>(onnx, argument);
+
+            var mat = Cv2.ImRead(testImage, ImreadModes.Grayscale);
+            var res = layoutDetector.Call(mat, mat);
+            PrintObject(res);
+        }
+
+        [Fact]
+        public void DumLayoutDetectorTest()
+        {
+            var onnx = @"F:\SaveModels\Yolo\mud.onnx";
+            var testImage = @"F:\CoolingMud\Images\00001.bmp";
+
+            var argument = new LayoutArgument(new Size(12, 3), new Size(640, 640), 0.7);
+            var layoutDetector = new LayoutDlDetector<ObjCategory>(onnx, argument);
 
             var mat = Cv2.ImRead(testImage, ImreadModes.Grayscale);
             var res = layoutDetector.Call(mat, mat);

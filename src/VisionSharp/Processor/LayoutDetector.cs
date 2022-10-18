@@ -3,19 +3,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 using VisionSharp.Models.Category;
 using VisionSharp.Models.Layout;
+using VisionSharp.Utils;
 
 namespace VisionSharp.Processor
 {
-    public abstract class LayoutDetector : FeatureExtractor<Layout>
+    public abstract class LayoutDetector<T> : FeatureExtractor<Layout<T>> where T : Enum
     {
         private LayoutArgument _layoutArgument;
 
-        internal Dictionary<LayoutStatus, Scalar> ColorDict = new()
-        {
-            [LayoutStatus.Positive] = new Scalar(0, 0, 255),
-            [LayoutStatus.Negative] = new Scalar(106, 255, 0),
-            [LayoutStatus.Unidentified] = new Scalar(0, 106, 255)
-        };
+        internal Scalar UnReliableScalar = new(0, 106, 255);
 
         /// <summary>
         ///     布局检测器,输入乳香，返回布局对象
@@ -24,7 +20,10 @@ namespace VisionSharp.Processor
             : base("LayoutDetector")
         {
             LayoutArgument = layoutArgument;
+            Colors = CvCvt.GetColorDict<T>();
         }
+
+        internal Dictionary<T, Scalar> Colors { set; get; }
 
         public LayoutArgument LayoutArgument
         {
@@ -32,12 +31,13 @@ namespace VisionSharp.Processor
             get => _layoutArgument;
         }
 
+
         /// <summary>
         ///     返回布局是否可靠
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        internal override bool GetReliability(Layout result)
+        internal override bool GetReliability(Layout<T> result)
         {
             return result.GetReliability();
         }
@@ -49,7 +49,7 @@ namespace VisionSharp.Processor
         /// <param name="result"></param>
         /// <param name="reliability"></param>
         /// <returns></returns>
-        internal override Mat Draw(Mat mat, Layout result, bool reliability)
+        internal override Mat Draw(Mat mat, Layout<T> result, bool reliability)
         {
             var patternSize = new Size(result.Column, result.Row);
             var space = mat.Height / 100;
@@ -64,9 +64,15 @@ namespace VisionSharp.Processor
             Enumerable.Range(0, patternSize.Height).ToList().ForEach(r =>
                 Enumerable.Range(0, patternSize.Width).ToList().ForEach(c =>
                 {
-                    var status = result[r, c];
-                    var color = ColorDict[status.LayoutStatus];
-                    var info = $"{status.LayoutStatus}:{status.GetScore():F4}";
+                    var cell = result[r, c];
+                    var color = cell.Reliable == Reliable.Reliable
+                        ? Colors[cell.LayoutStatus]
+                        : UnReliableScalar;
+                    var info = cell.Reliable == Reliable.Reliable
+                        ? $"{cell.LayoutStatus}:{cell.GetScore():F4}"
+                        : $"{cell.Reliable}:{cell.GetScore():F4}";
+
+
                     var currentPoint = pointStart +
                                        new Point(gridWidth * c, gridHeight * r) +
                                        new Point(space / 2, space / 2);

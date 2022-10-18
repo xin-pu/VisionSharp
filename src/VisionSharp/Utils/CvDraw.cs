@@ -48,6 +48,21 @@ namespace VisionSharp.Utils
         /// <param name="size"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
+        public static Mat DraCircle(Mat mat, Point center, Scalar color, int size = 10, int thickness = 3)
+        {
+            Cv2.Circle(mat, center, size, color, thickness);
+            return mat;
+        }
+
+        /// <summary>
+        ///     绘制矩形框
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="rect"></param>
+        /// <param name="color"></param>
+        /// <param name="size"></param>
+        /// <param name="thickness"></param>
+        /// <returns></returns>
         public static Mat DrawRect(Mat mat, Rect rect, Scalar color, int size = 10, int thickness = 3)
         {
             var topRight = new Point(rect.Right, rect.Top);

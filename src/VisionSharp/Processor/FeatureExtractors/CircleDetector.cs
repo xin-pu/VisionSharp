@@ -132,8 +132,8 @@ namespace VisionSharp.Processor.FeatureExtractors
             foreach (var keyPoint in result)
             {
                 var point = keyPoint.Pt.ToPoint();
-                mat = DrawPoint(mat, point, PenColor);
-                mat = DrawText(mat, point, $"[{point.X:D},{point.Y:D}]", PenColor);
+                mat = DrawCircle(mat, point, (int) keyPoint.Size, PenColor);
+                //mat = DrawText(mat, point, $"[{point.X:D},{point.Y:D}]", PenColor);
             }
 
             return mat;
