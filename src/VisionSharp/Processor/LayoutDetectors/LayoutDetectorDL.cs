@@ -70,22 +70,27 @@ namespace VisionSharp.Processor.LayoutDetectors
         {
             var height = LayoutArgument.LayoutPattern.Height;
             var width = LayoutArgument.LayoutPattern.Width;
-            var resultCh = result.Reshape(1, height * width, 3);
+            var scoreThreshold = LayoutArgument.ScoreThreshold;
+
+            var res = new Layout<T>(height, width, scoreThreshold);
+            var cateCount = res.CategoryCount;
+
+            var resultCh = result.Reshape(1, height * width, cateCount);
             var array = CvCvt.CvtToArray(resultCh);
 
             resultCh.Dispose();
             GC.Collect();
             GC.WaitForFullGCComplete();
 
-            var res = new Layout<T>(height, width, LayoutArgument.ScoreThreshold);
-            var cateCount = res.CategoryCount;
+
             Enumerable.Range(0, height * width).ToList().ForEach(d =>
             {
+                var row = d / width;
+                var col = d % width;
                 var activeScores = Enumerable.Range(0, cateCount)
                     .Select(c => CvMath.Sigmoid(array[d, c]))
                     .ToArray();
-
-                res.UpdateScore(d / width, d % width, activeScores, LayoutArgument.ScoreThreshold);
+                res.UpdateScore(row, col, activeScores, scoreThreshold);
             });
 
             return res;

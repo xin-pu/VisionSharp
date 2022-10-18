@@ -36,7 +36,10 @@ namespace UnitTest.ProcessorTest
         [Fact]
         public void TestLayoutArgument()
         {
-            var argument = new LayoutArgument(new Size(2, 8), new Size(800, 800), 0.7);
+            var argument = new LayoutArgument(
+                new Size(2, 8),
+                new Size(800, 800),
+                0.7);
             PrintObject(argument);
         }
 
@@ -50,7 +53,7 @@ namespace UnitTest.ProcessorTest
             var layoutDetector = new LayoutDlDetector<ObjCategory>(onnx, argument);
 
             var mat = Cv2.ImRead(testImage, ImreadModes.Grayscale);
-            var res = layoutDetector.Call(mat, mat);
+            var res = layoutDetector.Call(mat, mat).Result;
             PrintObject(res);
         }
 
@@ -58,13 +61,13 @@ namespace UnitTest.ProcessorTest
         public void DumLayoutDetectorTest()
         {
             var onnx = @"F:\SaveModels\Yolo\mud.onnx";
-            var testImage = @"F:\CoolingMud\Images\00001.bmp";
+            var testImage = @"F:\CoolingMud\Images\00109.bmp";
 
             var argument = new LayoutArgument(new Size(12, 3), new Size(640, 640), 0.7);
-            var layoutDetector = new LayoutDlDetector<ObjCategory>(onnx, argument);
+            var layoutDetector = new LayoutDlDetector<MudCategory>(onnx, argument);
 
             var mat = Cv2.ImRead(testImage, ImreadModes.Grayscale);
-            var res = layoutDetector.Call(mat, mat);
+            var res = layoutDetector.Call(mat, mat).Result;
             PrintObject(res);
         }
     }

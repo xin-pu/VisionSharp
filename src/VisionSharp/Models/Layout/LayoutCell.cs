@@ -15,12 +15,14 @@ namespace VisionSharp.Models.Layout
 
         /// <summary>
         ///     布局预测每个位置的信息结构类
+        ///     初始非可靠
         /// </summary>
         public LayoutCell(int row, int column)
         {
             Row = row;
             Column = column;
             Reliable = Reliable.Unreliable;
+            Category = default;
         }
 
         public int Row
@@ -48,7 +50,7 @@ namespace VisionSharp.Models.Layout
         /// <summary>
         ///     分类
         /// </summary>
-        public T LayoutStatus
+        public T Category
         {
             internal set => SetProperty(ref _t, value);
             get => _t;
@@ -73,12 +75,17 @@ namespace VisionSharp.Models.Layout
             get => _score;
         }
 
-
+        /// <summary>
+        ///     更新状态，唯一入口可更新分数
+        /// </summary>
+        /// <param name="score"></param>
+        /// <param name="threshold"></param>
         public void UpdateScore(double[] score, double threshold)
         {
             ScoreCategory = score.ToArray();
             Score = ScoreCategory.Max();
             Reliable = Score >= threshold ? Reliable.Reliable : Reliable.Unreliable;
+            Category = (T) Enum.ToObject(typeof(T), ScoreCategory.ToList().IndexOf(Score));
         }
 
         /// <summary>
@@ -89,7 +96,7 @@ namespace VisionSharp.Models.Layout
         {
             return Reliable == Reliable.Unreliable
                 ? default
-                : LayoutStatus;
+                : Category;
         }
 
         /// <summary>
@@ -105,7 +112,7 @@ namespace VisionSharp.Models.Layout
         public override string ToString()
         {
             var str = new StringBuilder(
-                $"[{Row},{Column}]:{ToCategoryStatus()}");
+                $"[{Row},{Column}]:{ToCategoryStatus()})");
             return str.ToString();
         }
 
@@ -115,8 +122,13 @@ namespace VisionSharp.Models.Layout
         /// <returns></returns>
         public string ToScoreStatus()
         {
-            var scoreStr = ScoreCategory.Select(s => $"[{s:F4}]");
-            return string.Join(",", scoreStr);
+            if (ScoreCategory != null)
+            {
+                var scoreStr = ScoreCategory.Select(s => $"[{s:F4}]");
+                return string.Join(",", scoreStr);
+            }
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -127,7 +139,7 @@ namespace VisionSharp.Models.Layout
         {
             return Reliable == Reliable.Unreliable
                 ? "?"
-                : LayoutStatus.ToString("D");
+                : Convert.ToInt32(Category).ToString("D");
         }
 
         /// <summary>
@@ -138,7 +150,7 @@ namespace VisionSharp.Models.Layout
         {
             return Reliable == Reliable.Unreliable
                 ? "Unreliable"
-                : LayoutStatus.ToString();
+                : Category.ToString();
         }
     }
 }
