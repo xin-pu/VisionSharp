@@ -31,6 +31,9 @@ namespace VisionSharp.Models.Layout
             }
         }
 
+        /// <summary>
+        ///     获取分类数目
+        /// </summary>
         public int CategoryCount => Enum.GetValues(typeof(T)).Length;
 
         /// <summary>
@@ -119,7 +122,7 @@ namespace VisionSharp.Models.Layout
             var res = new T[Row, Column];
             Enumerable.Range(0, Row).ToList()
                 .ForEach(r => Enumerable.Range(0, Column).ToList()
-                    .ForEach(c => res[r, c] = this[r, c].LayoutStatus));
+                    .ForEach(c => res[r, c] = this[r, c].Category));
             return res;
         }
 
@@ -137,10 +140,10 @@ namespace VisionSharp.Models.Layout
         }
 
         /// <summary>
-        ///     给该可靠度阈值
+        ///     修改可靠度阈值
         /// </summary>
         /// <param name="scoreThreshold"></param>
-        public void ChangeThreshold(double scoreThreshold)
+        public void UpdateThreshold(double scoreThreshold)
         {
             ScoreThreshold = scoreThreshold;
         }
@@ -169,8 +172,15 @@ namespace VisionSharp.Models.Layout
             foreach (var row in Enumerable.Range(0, Row))
             {
                 var status = string.Join("\t", this[row].Select(c => c.ToValueStatus()));
+                var line = $"{row:D2}|\t{status}";
+                str.AppendLine(line);
+            }
+
+            str.AppendLine("");
+            foreach (var row in Enumerable.Range(0, Row))
+            {
                 var score = string.Join("\t", this[row].Select(c => c.ToScoreStatus()));
-                var line = $"{row:D2}|\t{status}\t{score}";
+                var line = $"{row:D2}|\t{score}";
                 str.AppendLine(line);
             }
 
@@ -204,12 +214,7 @@ namespace VisionSharp.Models.Layout
                 return true;
             }
 
-            if (ReferenceEquals(this, null))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(other, null))
+            if (other is null)
             {
                 return false;
             }
@@ -222,7 +227,7 @@ namespace VisionSharp.Models.Layout
             if (Row == other.Row && Column == other.Column)
             {
                 var res = LayoutCells.All(d =>
-                    Convert.ToInt32(d.LayoutStatus) == Convert.ToInt32(other[d.Row, d.Column].LayoutStatus));
+                    Convert.ToInt32(d.Category) == Convert.ToInt32(other[d.Row, d.Column].Category));
                 return res;
             }
 
@@ -244,11 +249,19 @@ namespace VisionSharp.Models.Layout
         /// <param name="annfile">注释文件路径</param>
         /// <returns>平面</returns>
         /// <exception cref="FileLoadException"></exception>
-        public static Layout<T> LoadFromAnnotation(string annfile)
+        public static Layout<T> LoadFromAnnotation(string annfile, char split = ',')
         {
+            var cateCount = Enum.GetValues(typeof(T)).Length;
+
             using var sr = new StreamReader(annfile);
-            var lines = sr.ReadToEnd().Split('\r', '\n').Where(a => a != "").ToList();
-            var rowlines = lines.Select(r => r.Split(',').Where(a => a != "").ToList()).ToList();
+            var lines = sr.ReadToEnd()
+                .Split('\r', '\n')
+                .Where(a => a != "")
+                .ToList();
+
+            var rowlines = lines
+                .Select(r => r.Split(split).Where(a => a != "").ToList())
+                .ToList();
             var rows = rowlines.Count;
             var columnsRows = rowlines.Select(a => a.Count).Distinct().ToList();
             if (columnsRows.Count != 1)
@@ -256,7 +269,6 @@ namespace VisionSharp.Models.Layout
                 throw new FileLoadException();
             }
 
-            var cateCount = Enum.GetValues(typeof(T)).Length;
             var column = columnsRows[0];
 
             var res = new Layout<T>(rows, column);

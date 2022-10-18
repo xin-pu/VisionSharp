@@ -66,10 +66,10 @@ namespace VisionSharp.Processor
                 {
                     var cell = result[r, c];
                     var color = cell.Reliable == Reliable.Reliable
-                        ? Colors[cell.LayoutStatus]
+                        ? Colors[cell.Category]
                         : UnReliableScalar;
                     var info = cell.Reliable == Reliable.Reliable
-                        ? $"{cell.LayoutStatus}:{cell.GetScore():F4}"
+                        ? $"{cell.Category}:{cell.GetScore():F4}"
                         : $"{cell.Reliable}:{cell.GetScore():F4}";
 
 
