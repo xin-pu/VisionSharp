@@ -90,6 +90,8 @@ namespace VisionSharp.Processor.LayoutDetectors
                 var activeScores = Enumerable.Range(0, cateCount)
                     .Select(c => CvMath.Sigmoid(array[d, c]))
                     .ToArray();
+                var summ = activeScores.Sum();
+                activeScores = activeScores.Select(s => s / summ).ToArray();
                 res.UpdateScore(row, col, activeScores, scoreThreshold);
             });
 

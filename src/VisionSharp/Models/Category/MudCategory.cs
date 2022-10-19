@@ -13,11 +13,11 @@
         /// <summary>
         ///     位置有产品，但丢失散热泥
         /// </summary>
-        DutMissMud = 1,
+        MissMud = 1,
 
         /// <summary>
         ///     位置有产品，并且有散热泥
         /// </summary>
-        DutWithMud = 2
+        WithMud = 2
     }
 }
