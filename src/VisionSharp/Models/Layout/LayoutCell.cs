@@ -124,8 +124,9 @@ namespace VisionSharp.Models.Layout
         {
             if (ScoreCategory != null)
             {
-                var scoreStr = ScoreCategory.Select(s => $"[{s:F4}]");
-                return string.Join(",", scoreStr);
+                var scoreStr = ScoreCategory.Select(s => $"{s:F2}");
+                var scores = string.Join(",", scoreStr);
+                return $"[{scores}]";
             }
 
             return string.Empty;

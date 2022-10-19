@@ -23,7 +23,7 @@ namespace VisionSharp.Processor
             Colors = CvCvt.GetColorDict<T>();
         }
 
-        internal Dictionary<T, Scalar> Colors { set; get; }
+        public Dictionary<T, Scalar> Colors { set; get; }
 
         public LayoutArgument LayoutArgument
         {
@@ -53,8 +53,8 @@ namespace VisionSharp.Processor
         {
             var patternSize = new Size(result.Column, result.Row);
             var space = mat.Height / 100;
-            var fontscale = 2 * mat.Height / 1000;
-            var thickness = 5;
+            var fontscale = 2 * mat.Height / 1500;
+            var thickness = 2;
             var gridWidth = mat.Size().Width / patternSize.Width;
             var gridHeight = mat.Size().Height / patternSize.Height;
             var gridSize = new Size(gridWidth - space, gridHeight - space);
@@ -68,9 +68,11 @@ namespace VisionSharp.Processor
                     var color = cell.Reliable == Reliable.Reliable
                         ? Colors[cell.Category]
                         : UnReliableScalar;
+                    var cate = $"{cell.Category}".Substring(0, 3);
+                    var reli = $"{cell.Reliable}".Substring(0, 3);
                     var info = cell.Reliable == Reliable.Reliable
-                        ? $"{cell.Category}:{cell.GetScore():F4}"
-                        : $"{cell.Reliable}:{cell.GetScore():F4}";
+                        ? $"{cate}:{cell.GetScore():F3}"
+                        : $"{reli}:{cell.GetScore():F3}";
 
 
                     var currentPoint = pointStart +
@@ -79,9 +81,15 @@ namespace VisionSharp.Processor
 
                     mat = DrawRect(mat, new Rect(currentPoint, gridSize), color, thickness);
 
-                    DrawText(mat, currentPoint, info, color, fontscale, thickness);
+                    mat = DrawText(mat, currentPoint, info, color, fontscale, thickness = 2);
                 }));
             return mat;
+        }
+
+
+        public Mat DrawLayout(Mat mat, Layout<T> result)
+        {
+            return Draw(mat, result, true);
         }
     }
 

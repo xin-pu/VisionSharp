@@ -226,9 +226,7 @@ namespace VisionSharp.Models.Layout
 
             if (Row == other.Row && Column == other.Column)
             {
-                var res = LayoutCells.All(d =>
-                    Convert.ToInt32(d.Category) == Convert.ToInt32(other[d.Row, d.Column].Category));
-                return res;
+                return ToAnnotationString().Equals(other.ToAnnotationString());
             }
 
             return false;
@@ -276,7 +274,7 @@ namespace VisionSharp.Models.Layout
             foreach (var c in Enumerable.Range(0, column))
             {
                 var resCell = int.Parse(rowlines[r][c]);
-                var score = Enumerable.Range(0, cateCount).Select(a => (double) a).ToArray();
+                var score = new double[cateCount];
                 score[resCell] = 1;
                 res.UpdateScore(r, c, score);
             }
