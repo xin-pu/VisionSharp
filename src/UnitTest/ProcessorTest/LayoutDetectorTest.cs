@@ -61,9 +61,9 @@ namespace UnitTest.ProcessorTest
         public void MudLayoutDetectorTest()
         {
             var onnx = @"F:\SaveModels\Yolo\mud640.onnx";
-            var testImage = @"F:\CoolingMud\Verify\00012.bmp";
+            var testImage = @"F:\CoolingMud\Verify\00005.bmp";
 
-            var argument = new LayoutArgument(new Size(6, 3), new Size(640, 640), 0.6);
+            var argument = new LayoutArgument(new Size(6, 3), new Size(640, 640), 0.7);
             var layoutDetector = new LayoutDlDetector<MudCategory>(onnx, argument);
 
             var mat = Cv2.ImRead(testImage, ImreadModes.Grayscale);
