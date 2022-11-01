@@ -24,4 +24,9 @@
     <Folder Include="Processor\ImageProcessors\Enhance\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
 </Project>

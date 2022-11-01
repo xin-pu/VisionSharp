@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
+using System.Windows.Media.Imaging;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
@@ -299,6 +300,19 @@ namespace VisionSharp.Utils
             return ToBitmap(src, pf);
         }
 
+        public static BitmapFrame CvtToBitmapSource(Mat src)
+        {
+            var bitmap = CvtToBitmap(src);
+            var bitmapImage = new BitmapImage();
+            using var ms = new MemoryStream();
+            bitmap.Save(ms, ImageFormat.Bmp);
+            bitmapImage.BeginInit();
+            bitmapImage.StreamSource = ms;
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+            return BitmapFrame.Create(bitmapImage);
+        }
 
         /// <summary>
         ///     Converts Mat to System.Drawing.Bitmap

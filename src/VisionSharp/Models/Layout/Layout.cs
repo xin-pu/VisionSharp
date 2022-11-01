@@ -66,9 +66,9 @@ namespace VisionSharp.Models.Layout
         /// <summary>
         ///     布局中所有单元,不公开给外部
         /// </summary>
-        internal List<LayoutCell<T>> LayoutCells
+        public List<LayoutCell<T>> LayoutCells
         {
-            set => SetProperty(ref _layoutCells, value);
+            internal set => SetProperty(ref _layoutCells, value);
             get => _layoutCells;
         }
 
@@ -125,6 +125,7 @@ namespace VisionSharp.Models.Layout
                     .ForEach(c => res[r, c] = this[r, c].Category));
             return res;
         }
+
 
         /// <summary>
         ///     获取可靠度布局
