@@ -8,11 +8,11 @@
         /// <summary>
         ///     位置没有产品
         /// </summary>
-        Other = 0,
+        Other = 1,
 
         /// <summary>
         ///     位置有产品，但丢失散热泥
         /// </summary>
-        MissMud = 1
+        MissMud = 0
     }
 }
