@@ -13,6 +13,15 @@ namespace VisionSharp.Utils
     /// </summary>
     public class CvCvt
     {
+        #region Cut Point
+
+        public static Point2d CutZToPoint2d(Point3d point3ds)
+        {
+            return new Point2d(point3ds.X, point3ds.Y);
+        }
+
+        #endregion
+
         #region Convert Mat to float[,]
 
         public static float[,] CvtToArray(Mat mat)
@@ -23,17 +32,24 @@ namespace VisionSharp.Utils
             }
 
             var final = new Mat<float>();
+
             mat.ConvertTo(final, MatType.CV_32F);
+
             return final.ToRectangularArray();
         }
 
-        #endregion
-
-        #region Cut Point
-
-        public static Point2d CutZToPoint2d(Point3d point3ds)
+        public static float[] CvtToFloatArray(Mat mat)
         {
-            return new Point2d(point3ds.X, point3ds.Y);
+            if (mat.Type() != MatType.CV_8UC1)
+            {
+                throw new ArgumentException();
+            }
+
+            var final = new Mat<byte>();
+
+            mat.ConvertTo(final, MatType.CV_8UC1);
+            var res = final.ToArray().Select(a => a / 255F).ToArray();
+            return res;
         }
 
         #endregion

@@ -54,7 +54,7 @@ namespace VisionSharp.Processor
             var patternSize = new Size(result.Column, result.Row);
             var space = mat.Height / 100;
             var fontscale = 2 * mat.Height / 1500;
-            var thickness = 2;
+
             var gridWidth = mat.Size().Width / patternSize.Width;
             var gridHeight = mat.Size().Height / patternSize.Height;
             var gridSize = new Size(gridWidth - space, gridHeight - space);
@@ -68,6 +68,7 @@ namespace VisionSharp.Processor
                     var color = cell.Reliable == Reliable.Reliable
                         ? Colors[cell.Category]
                         : UnReliableScalar;
+
                     var cate = $"{cell.Category}".Substring(0, 3);
                     var reli = $"{cell.Reliable}".Substring(0, 3);
                     var info = cell.Reliable == Reliable.Reliable
@@ -79,9 +80,9 @@ namespace VisionSharp.Processor
                                        new Point(gridWidth * c, gridHeight * r) +
                                        new Point(space / 2, space / 2);
 
-                    mat = DrawRect(mat, new Rect(currentPoint, gridSize), color, thickness);
+                    mat = DrawRect(mat, new Rect(currentPoint, gridSize), color, 10);
 
-                    mat = DrawText(mat, currentPoint, info, color, fontscale, thickness = 2);
+                    mat = DrawText(mat, currentPoint, info, color, fontscale, 2);
                 }));
             return mat;
         }

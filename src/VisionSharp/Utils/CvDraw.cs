@@ -63,13 +63,13 @@ namespace VisionSharp.Utils
         /// <param name="size"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
-        public static Mat DrawRect(Mat mat, Rect rect, Scalar color, int size = 10, int thickness = 3)
+        public static Mat DrawRect(Mat mat, Rect rect, Scalar color, int thickness = 3)
         {
             var topRight = new Point(rect.Right, rect.Top);
             var bottomLeft = new Point(rect.Left, rect.Bottom);
             var points = new[] {rect.TopLeft, rect.BottomRight, topRight, bottomLeft};
             var rotatcedRect = Cv2.MinAreaRect(points);
-            return DrawRotatedRect(mat, rotatcedRect, color, size);
+            return DrawRotatedRect(mat, rotatcedRect, color, thickness);
         }
 
         /// <summary>
@@ -81,9 +81,9 @@ namespace VisionSharp.Utils
         /// <param name="size"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
-        public static Mat DrawRect(Mat mat, CvRect rect, Scalar color, int size = 10, int thickness = 3)
+        public static Mat DrawRect(Mat mat, CvRect rect, Scalar color, int thickness = 3)
         {
-            return DrawRect(mat, rect.Rect, color, size, thickness);
+            return DrawRect(mat, rect.Rect, color, thickness);
         }
 
         /// <summary>
