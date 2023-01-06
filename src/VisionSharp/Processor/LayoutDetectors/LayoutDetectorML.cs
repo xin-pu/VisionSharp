@@ -1,23 +1,22 @@
 ﻿using OpenCvSharp;
 using OpenCvSharp.ML;
-using VisionSharp.Models.Category;
 using VisionSharp.Models.Layout;
 using VisionSharp.Utils;
 
 namespace VisionSharp.Processor.LayoutDetectors
 {
-    public class LayoutDetectorMl : LayoutDetector<MudCategory>
+    public class LayoutDetectorMl<T> : LayoutDetector<T> where T : Enum
     {
         public LayoutDetectorMl(string modelfile, LayoutArgument layoutArgument) : base(layoutArgument)
         {
-            Model = RTrees.Load(modelfile);
+            Model = SVM.Load(modelfile);
         }
 
-        public RTrees Model { get; }
+        public SVM Model { get; }
         public int Row1St { set; get; } = 100;
         public int Row2Nd { set; get; } = 1420;
 
-        internal override Layout<MudCategory> Process(Mat input)
+        internal override Layout<T> Process(Mat input)
         {
             var height = LayoutArgument.LayoutPattern.Height;
             var width = LayoutArgument.LayoutPattern.Width;
@@ -26,7 +25,7 @@ namespace VisionSharp.Processor.LayoutDetectors
             var mat = GetFeatures(input);
             var predict = mat.Select(m => Predict(m)).ToList();
 
-            var res = new Layout<MudCategory>(LayoutArgument.LayoutPattern.Height,
+            var res = new Layout<T>(LayoutArgument.LayoutPattern.Height,
                 LayoutArgument.LayoutPattern.Width, 1);
 
             Enumerable.Range(0, height * width).ToList().ForEach(d =>
@@ -75,7 +74,7 @@ namespace VisionSharp.Processor.LayoutDetectors
                 : new double[] {0, 1};
         }
 
-        internal override Mat Draw(Mat mat, Layout<MudCategory> result, bool reliability)
+        internal override Mat Draw(Mat mat, Layout<T> result, bool reliability)
         {
             var height = LayoutArgument.InputPattern.Height;
             mat = DrawRect(mat, new Rect(0, Row1St, mat.Width, height), Scalar.OrangeRed);
