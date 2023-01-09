@@ -126,6 +126,17 @@ namespace VisionSharp.Models.Layout
             return res;
         }
 
+        public Layout<T> Rotate()
+        {
+            var layout = new Layout<T>(Column, Row, ScoreThreshold);
+            foreach (var r in Enumerable.Range(0, Column))
+            foreach (var c in Enumerable.Range(0, Row))
+            {
+                layout.UpdateScore(r, Row - 1 - c, this[c, r].ScoreCategory);
+            }
+
+            return layout;
+        }
 
         /// <summary>
         ///     获取可靠度布局
@@ -139,6 +150,7 @@ namespace VisionSharp.Models.Layout
                     .ForEach(c => res[r, c] = this[r, c].Reliable));
             return res;
         }
+
 
         /// <summary>
         ///     修改可靠度阈值
@@ -274,10 +286,17 @@ namespace VisionSharp.Models.Layout
             foreach (var r in Enumerable.Range(0, rows))
             foreach (var c in Enumerable.Range(0, column))
             {
-                var resCell = int.Parse(rowlines[r][c]);
-                var score = new double[cateCount];
-                score[resCell] = 1;
-                res.UpdateScore(r, c, score);
+                if (rowlines[r][c] == "?")
+                {
+                    res.UpdateScore(r, c, new double[] {1, 0});
+                }
+                else
+                {
+                    var resCell = int.Parse(rowlines[r][c]);
+                    var score = new double[cateCount];
+                    score[resCell] = 1;
+                    res.UpdateScore(r, c, score);
+                }
             }
 
             return res;
