@@ -70,5 +70,30 @@ namespace UnitTest.ProcessorTest
             var res = layoutDetector.Call(mat, mat).Result;
             PrintObject(res);
         }
+
+
+        [Fact]
+        // Mark DR8
+        public void TestMultiLayout()
+        {
+            var onnx = @"F:\SaveModels\Yolo\dr8_9x3.onnx";
+            var layout = new LayoutArgument(new Size(9, 3), new Size(640, 640), 0.7);
+
+
+            var rotatedRect = new[]
+            {
+                new RotatedRect(new Point2f(1444.8f, 1854.5f), new Size2f(2613.57, 2442.35), 89.62553f),
+                new RotatedRect(new Point2f(3907.0f, 1837.4f), new Size2f(2602.95, 2406.13), 89.63036f)
+            };
+            var detector = new MultiLayoutDetectorDl<ObjCategory>(onnx, layout, rotatedRect);
+
+            var mat = Cv2.ImRead(@"F:\Layout\DR8_3x9\Orginal DataSource\2023-01-06_13_24_24_491.bmp",
+                ImreadModes.Grayscale);
+            var res = detector.Call(mat);
+            foreach (var l in res)
+            {
+                PrintObject(l.ToAnnotationString());
+            }
+        }
     }
 }
