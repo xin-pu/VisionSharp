@@ -27,8 +27,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestModels", "TestModels", 
 		..\testModels\yolov3.weights = ..\testModels\yolov3.weights
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CvExperiment", "..\..\..\Code AuteMated\AutoTester-CV\src\CvExperiment\CvExperiment.csproj", "{F4732794-132E-4A7D-883A-39082CD87AC0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
