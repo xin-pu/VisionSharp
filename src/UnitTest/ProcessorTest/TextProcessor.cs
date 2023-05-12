@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using OpenCvSharp;
+using VisionSharp.Processor.FeatureExtractors;
 using VisionSharp.Processor.TextDetectors;
 using Xunit.Abstractions;
 
@@ -49,6 +50,11 @@ namespace UnitTest.ProcessorTest
         [Fact]
         public void LRPDetectotTest()
         {
+            var image = Cv2.ImRead(@"D:\Download\MicrosoftTeams-image (2).png", ImreadModes.Unchanged);
+            var outMat = new DiameterDetector().Call(image);
+
+            Cv2.ImShow("d", outMat);
+            Cv2.WaitKey();
         }
     }
 }
