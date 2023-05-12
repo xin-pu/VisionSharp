@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Processor\Aggregate\**" />
+    <EmbeddedResource Remove="Processor\Aggregate\**" />
+    <None Remove="Processor\Aggregate\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageReference Include="CsvHelper" Version="29.0.0" />
     <PackageReference Include="FluentAssertions" Version="6.7.0" />
@@ -22,7 +28,6 @@
   <ItemGroup>
     <Folder Include="Calibration\" />
     <Folder Include="Processor\ImageProcessors\Enhance\" />
-    <Folder Include="Processor\Aggregate\" />
   </ItemGroup>
 
   <ItemGroup>
