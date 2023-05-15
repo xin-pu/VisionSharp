@@ -37,5 +37,18 @@ namespace UnitTest.ProcessorTest
             var d = CvDnn.ReadNetFromOnnx(model).GetLayerNames();
             PrintObject(string.Join("\r", d));
         }
+
+
+        [Fact]
+        public void QrTest()
+        {
+            var model = @"F:\SaveModels\Yolo\voc.onnx";
+            var mat = Cv2.ImRead(@"F:\QR\JPEGImages\3043837346.jpg");
+
+
+            var predictor = new ObjDetectorYoloOnnx<ObjCategory>(model);
+            var res = predictor.Call(mat);
+            PrintObject(res);
+        }
     }
 }

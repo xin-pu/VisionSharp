@@ -45,7 +45,7 @@ namespace VisionSharp.Processor.ObjectDetector
                 true,
                 false);
 
-            Net.SetInput(inputBlob, "data");
+            Net.SetInput(inputBlob);
             var mats = new Mat[] {new(), new(), new()};
             Net.Forward(mats, new[] {"yolo_head_P3", "yolo_head_P4", "yolo_head_P5"});
             return mats;
