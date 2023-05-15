@@ -18,14 +18,16 @@ namespace UnitTest.ProcessorTest
         {
             var model = @"..\..\..\..\testModels\yolov3.weights";
             var cfg = @"..\..\..\..\testModels\yolov3.cfg";
-            var objDetector = new ObjDetectorDarkNet<VocCategory>(model, cfg);
+            var objDetector = new ObjDetectorDarkNet<CocoCategory>(model, cfg);
             PrintObject(objDetector);
 
 
-            var image = @"..\..\..\..\testimages\002341.jpg";
+            var image = @"E:\OneDrive - II-VI Incorporated\Pictures\Saved Pictures\voc\004545.jpg";
             var mat = Cv2.ImRead(image);
             var objRects = objDetector.Call(mat, mat);
             PrintObject(objRects);
+            Cv2.ImShow("Result", objRects.OutMat);
+            Cv2.WaitKey();
         }
 
 
@@ -36,6 +38,15 @@ namespace UnitTest.ProcessorTest
             var imageFilePath = @"..\..\..\..\testimages\002341.jpg";
             var d = CvDnn.ReadNetFromOnnx(model).GetLayerNames();
             PrintObject(string.Join("\r", d));
+        }
+
+        [Fact]
+        public void ObjDetectortTestID()
+        {
+            var model = @"F:\SaveModels\Yolo\raccoon-tiny.onnx";
+            var imageFilePath = @"..\..\..\..\testimages\002341.jpg";
+            var d = CvDnn.ReadNetFromOnnx(model).GetLayerId("532");
+            PrintObject(d);
         }
 
 

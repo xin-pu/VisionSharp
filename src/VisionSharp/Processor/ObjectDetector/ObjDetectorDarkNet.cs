@@ -59,36 +59,6 @@ namespace VisionSharp.Processor.ObjectDetector
             return darknet;
         }
 
-        /// <summary>
-        ///     加载网络
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="FileNotFoundException"></exception>
-        /// <exception cref="NullReferenceException"></exception>
-        internal Net InitialOnnx()
-        {
-            if (ModelWeights == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (File.Exists(ModelWeights) == false || File.Exists(ConfigFile) == false)
-            {
-                throw new FileNotFoundException();
-            }
-
-
-            var darknet = CvDnn.ReadNetFromDarknet(ConfigFile, ModelWeights);
-            if (darknet == null)
-            {
-                throw new NullReferenceException("Can't Load Net");
-            }
-
-            darknet.SetPreferableBackend(Backend.OPENCV);
-            darknet.SetPreferableTarget(Target.CPU);
-            return darknet;
-        }
 
         internal override Mat[] FrontNet(Net net, Mat mat)
         {
