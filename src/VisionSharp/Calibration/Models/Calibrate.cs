@@ -185,14 +185,14 @@ namespace VisionSharp.Calibration
             Point2d imageUv,
             double z)
         {
-            var B = CvCvt.CvtToMat(new[] {imageUv}).Transpose();
-            var M01 = tranform[0, 2, 0, 2];
-            var M23 = tranform[0, 2, 2, 4];
-            var P = Mat.FromArray(new[,] {{z}, {1}});
-            var D = (B - M23 * P).ToMat();
-            var A = new Mat();
-            Cv2.Solve(M01, D, A, DecompTypes.SVD);
-            var point = new Point3d(A.At<double>(0, 0), A.At<double>(1, 0), z);
+            var b = CvCvt.CvtToMat(new[] {imageUv}).Transpose();
+            var m01 = tranform[0, 2, 0, 2];
+            var m23 = tranform[0, 2, 2, 4];
+            var p = Mat.FromArray(new[,] {{z}, {1}});
+            var d = (b - m23 * p).ToMat();
+            var a = new Mat();
+            Cv2.Solve(m01, d, a, DecompTypes.SVD);
+            var point = new Point3d(a.At<double>(0, 0), a.At<double>(1, 0), z);
             return point;
         }
     }

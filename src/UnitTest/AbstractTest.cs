@@ -18,6 +18,14 @@ namespace UnitTest
             TestOutputHelper.WriteLine(obj.ToString());
         }
 
+        public virtual void PrintObject(IEnumerable<object> objs)
+        {
+            foreach (var o in objs)
+            {
+                PrintObject(o);
+            }
+        }
+
 
         #region System ¥Ú”°
 
