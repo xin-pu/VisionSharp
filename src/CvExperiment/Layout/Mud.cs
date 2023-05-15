@@ -34,9 +34,8 @@ namespace CvExperiment.Layout
             var layoutDlDetector = new LayoutDlDetector<MudCategory>(onnx, argument);
             layoutDlDetector.Colors = new Dictionary<MudCategory, Scalar>
             {
-                [MudCategory.Empty] = Scalar.White,
-                [MudCategory.DutWithMud] = Scalar.Green,
-                [MudCategory.DutMissMud] = Scalar.DarkRed
+                [MudCategory.MissMud] = Scalar.White,
+                [MudCategory.Other] = Scalar.Green
             };
             return layoutDlDetector;
         }
