@@ -19,14 +19,6 @@ namespace VisionSharp.Processor.ObjectDetector
             Net = InitialNet();
         }
 
-        public ObjDetectorDarkNet(string onnxWeight, Size inputPattern)
-            : base(new Size(416, 416))
-        {
-            ModelWeights = onnxWeight;
-            InputPattern = inputPattern;
-            Colors = CvCvt.GetColorDict<T>();
-        }
-
 
         /// <summary>
         ///     加载网络
@@ -35,7 +27,7 @@ namespace VisionSharp.Processor.ObjectDetector
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         /// <exception cref="NullReferenceException"></exception>
-        internal override Net InitialNet()
+        internal sealed override Net InitialNet()
         {
             if (ModelWeights == null || ConfigFile == null)
             {
