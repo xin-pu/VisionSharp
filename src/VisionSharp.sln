@@ -23,8 +23,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestModels", "TestModels", "{46C26380-B33A-4ACF-A6C1-168D1329CAAE}"
 	ProjectSection(SolutionItems) = preProject
 		..\testOnnx\load800.onnx = ..\testOnnx\load800.onnx
-		..\testModels\yolov3.cfg = ..\testModels\yolov3.cfg
-		..\testModels\yolov3.weights = ..\testModels\yolov3.weights
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CvExperiment", "CvExperiment\CvExperiment.csproj", "{A48FA04D-0BBB-45DA-BACA-3AFD86BD5250}"
