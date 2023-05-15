@@ -56,9 +56,14 @@ namespace VisionSharp.Processor.ObjectDetector
         {
             var list = new List<ObjRect<T>>();
 
-            mats.AsParallel().ToList().ForEach(m =>
+            foreach (var mat in mats)
             {
-                m[new Rect(4, 0, 1, m.Height)].GetArray(out float[] confidence);
+                if (mat.Height < 0)
+                {
+                    continue;
+                }
+
+                mat[new Rect(4, 0, 1, mat.Height)].GetArray(out float[] confidence);
 
                 var conList = confidence
                     .Select((c, i) => (c, i))
@@ -68,7 +73,7 @@ namespace VisionSharp.Processor.ObjectDetector
 
                 conList.AsParallel().ToList().ForEach(i =>
                 {
-                    var _ = m[new Rect(0, i, m.Width, 1)].GetArray(out float[] rowdata);
+                    var _ = mat[new Rect(0, i, mat.Width, 1)].GetArray(out float[] rowdata);
                     var rowInfo = rowdata.ToList();
 
                     var classify = rowInfo.Skip(5).ToList();
@@ -98,7 +103,8 @@ namespace VisionSharp.Processor.ObjectDetector
                     };
                     list.Add(detectRectObject);
                 });
-            });
+            }
+
 
             return list.ToArray();
         }

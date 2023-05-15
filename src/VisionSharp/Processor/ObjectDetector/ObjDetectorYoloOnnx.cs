@@ -9,10 +9,10 @@ namespace VisionSharp.Processor.ObjectDetector
         {
             ModelWeights = onnxFile;
 
-            InitialNet();
+            Net = InitialNet();
         }
 
-        internal override Net InitialNet()
+        internal sealed override Net InitialNet()
         {
             if (ModelWeights == null)
             {
@@ -46,8 +46,9 @@ namespace VisionSharp.Processor.ObjectDetector
                 false);
 
             Net.SetInput(inputBlob);
+            var dd = net.GetUnconnectedOutLayersNames();
             var mats = new Mat[] {new(), new(), new()};
-            Net.Forward(mats, new[] {"yolo_head_P3", "yolo_head_P4", "yolo_head_P5"});
+            Net.Forward(mats, dd);
             return mats;
         }
     }

@@ -15,4 +15,12 @@
         /// </summary>
         MissMud = 0
     }
+
+    /// <summary>
+    ///     散热泥项目分类
+    /// </summary>
+    public enum QrCategory
+    {
+        QrcOde
+    }
 }

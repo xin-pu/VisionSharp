@@ -26,7 +26,7 @@ namespace UnitTest.ProcessorTest.Yolo
             PrintObject(objDetector);
 
 
-            var image = @"E:\OneDrive - II-VI Incorporated\Pictures\Saved Pictures\voc\004545.jpg";
+            var image = @"..\..\..\..\testimages\002341.jpg";
             var mat = Cv2.ImRead(image);
             var objRects = objDetector.Call(mat, mat);
             PrintObject(objRects.Result);
@@ -39,7 +39,7 @@ namespace UnitTest.ProcessorTest.Yolo
             PrintObject(objDetector);
 
 
-            var image = @"E:\OneDrive - II-VI Incorporated\Pictures\Saved Pictures\voc\004545.jpg";
+            var image = @"..\..\..\..\testimages\002341.jpg";
             var mat = Cv2.ImRead(image);
             var objRects = objDetector.Call(mat, mat);
             PrintObject(objRects.Result);
