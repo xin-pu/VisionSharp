@@ -5,24 +5,23 @@ using Xunit.Abstractions;
 
 namespace UnitTest.ProcessorTest.Yolo
 {
-    public class Yolo3DarkNetTest : AbstractTest
+    public class Yolo3Test : AbstractTest
     {
-        public Yolo3DarkNetTest(ITestOutputHelper testOutputHelper)
+        internal string CocoCfg = @"F:\SaveModels\DarkNet\yolov3_coco\yolov3.cfg";
+        internal string CocoWeights = @"F:\SaveModels\DarkNet\yolov3_coco\yolov3.weights";
+
+        internal string VocCfg = @"F:\SaveModels\DarkNet\yolov3_voc\yolov3.cfg";
+        internal string VocWeights = @"F:\SaveModels\DarkNet\yolov3_voc\yolov3.weights";
+
+        public Yolo3Test(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
         }
 
-        internal string CocoWeights = @"F:\SaveModels\DarkNet\yolov3_coco\yolov3.weights";
-        internal string CocoCfg = @"F:\SaveModels\DarkNet\yolov3_coco\yolov3.cfg";
-
-
-        internal string VocWeights = @"F:\SaveModels\DarkNet\yolov3_voc\yolov3.weights";
-        internal string VocCfg = @"F:\SaveModels\DarkNet\yolov3_voc\yolov3.cfg";
-
         [Fact]
         public void CocoTest()
         {
-            var objDetector = new ObjDetectorDarkNet<CocoCategory>(CocoWeights, CocoCfg);
+            var objDetector = new ObjDetYolo3<CocoCategory>(CocoWeights, CocoCfg);
             PrintObject(objDetector);
 
 
@@ -35,7 +34,7 @@ namespace UnitTest.ProcessorTest.Yolo
         [Fact]
         public void VocTest()
         {
-            var objDetector = new ObjDetectorDarkNet<VocCategory>(VocWeights, VocCfg);
+            var objDetector = new ObjDetYolo3<VocCategory>(VocWeights, VocCfg);
             PrintObject(objDetector);
 
 

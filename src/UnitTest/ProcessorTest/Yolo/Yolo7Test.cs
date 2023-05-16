@@ -6,14 +6,14 @@ using Xunit.Abstractions;
 
 namespace UnitTest.ProcessorTest.Yolo
 {
-    public class Yolo3OnnxTest : AbstractTest
+    public class Yolo7Test : AbstractTest
     {
-        public Yolo3OnnxTest(ITestOutputHelper testOutputHelper)
+        public Yolo7Test(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
         }
 
-        internal string ModelPath = @"F:\SaveModels\Yolo\voc.onnx";
+        internal string ModelPath = @"F:\SaveModels\Yolo\qr.onnx";
 
         [Fact]
         public void ObjDetectortTest()
@@ -37,12 +37,17 @@ namespace UnitTest.ProcessorTest.Yolo
         [Fact]
         public void QrDetectortTest()
         {
-            var image = @"..\..\..\..\testimages\002341.jpg";
+            var image = @"E:\OneDrive - II-VI Incorporated\Pictures\Saved Pictures\QR.png";
             var mat = Cv2.ImRead(image);
 
-            var d = new ObjDetectorYoloOnnx<QrCategory>(ModelPath);
-            var res = d.Call(mat);
-            PrintObject(res);
+            var d = new ObjDetYolo7<QrCategory>(ModelPath)
+            {
+                Confidence = 0.5f,
+                IouThreshold = 0.3f
+            };
+            var res = d.Call(mat, mat);
+            Cv2.ImShow("1", res.OutMat);
+            Cv2.WaitKey();
         }
     }
 }
