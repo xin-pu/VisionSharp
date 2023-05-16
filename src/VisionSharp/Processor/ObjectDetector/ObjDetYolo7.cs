@@ -1,50 +1,57 @@
 ﻿using OpenCvSharp;
+using OpenCvSharp.Dnn;
 using VisionSharp.Models.Detect;
 
 namespace VisionSharp.Processor.ObjectDetector
 {
-    public abstract class ObjDetectorYolo<T> : ObjectDetector<T> where T : Enum
+    public class ObjDetYolo7<T> : ObjDetYolo<T> where T : Enum
     {
-        private string _configFile;
-        private Size _inputPattern;
-        private string _modelWeights;
-
-        /// <summary>
-        ///     基于Yolo的目标检测器
-        /// </summary>
-        protected ObjDetectorYolo(Size inputPattern)
-            : base("ObjDetectorYolo")
+        public ObjDetYolo7(string onnxFile) : base(new Size(640, 640))
         {
-            InputPattern = inputPattern;
+            ModelWeights = onnxFile;
+
+            Net = InitialNet();
         }
 
-        public string ModelWeights
+        internal sealed override Net InitialNet()
         {
-            internal set => SetProperty(ref _modelWeights, value);
-            get => _modelWeights;
+            if (ModelWeights == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (File.Exists(ModelWeights) == false)
+            {
+                throw new FileNotFoundException();
+            }
+
+
+            var darknet = CvDnn.ReadNetFromOnnx(ModelWeights);
+            if (darknet == null)
+            {
+                throw new NullReferenceException("Can't Load Net");
+            }
+
+            darknet.SetPreferableBackend(Backend.OPENCV);
+            darknet.SetPreferableTarget(Target.CPU);
+            return darknet;
         }
 
-
-        public string ConfigFile
+        internal override Mat[] FrontNet(Net net, Mat mat)
         {
-            internal set => SetProperty(ref _configFile, value);
-            get => _configFile;
-        }
+            var inputBlob = CvDnn.BlobFromImage(mat,
+                1F / 255,
+                InputPattern,
+                new Scalar(0, 0, 0),
+                true,
+                false);
 
-        public Size InputPattern
-        {
-            internal set => SetProperty(ref _inputPattern, value);
-            get => _inputPattern;
+            Net.SetInput(inputBlob);
+            var dd = net.GetUnconnectedOutLayersNames();
+            var mats = new Mat[] {new(), new(), new()};
+            Net.Forward(mats, dd);
+            return mats;
         }
-
-        internal override ObjRect<T>[] Process(Mat input)
-        {
-            var mats = FrontNet(Net, input);
-            var candidate = Decode(mats, input.Size());
-            var final = NonMaximalSuppression(candidate);
-            return final;
-        }
-
 
         /// <summary>
         ///     Yolo3以上的解码过程是一样的
@@ -58,11 +65,6 @@ namespace VisionSharp.Processor.ObjectDetector
 
             foreach (var mat in mats)
             {
-                if (mat.Height < 0)
-                {
-                    continue;
-                }
-
                 mat[new Rect(4, 0, 1, mat.Height)].GetArray(out float[] confidence);
 
                 var conList = confidence
