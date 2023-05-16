@@ -30,5 +30,13 @@ namespace UnitTest.ProcessorTest
             var rotated = new Rotator(RotateDeg.Deg90);
             var r = rotated.Call(mat, mat);
         }
+
+        [Fact]
+        public void RotatedTestLoad()
+        {
+            var input = Cv2.ImRead(@"F:\QR\JPEGImages\0179583169.jpg");
+            var letter = new LetterBox();
+            var res = letter.Call(input);
+        }
     }
 }
