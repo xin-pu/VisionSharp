@@ -43,12 +43,11 @@ namespace UnitTest.ProcessorTest.Yolo
 
             var d = new ObjDetYolo7<QrCategory>(ModelPath)
             {
-                Confidence = 0.5f,
-                IouThreshold = 0.3f
+                Confidence = 0.7f,
+                IouThreshold = 0.5f
             };
             var res = d.Call(mat, mat);
-            Cv2.ImShow("1", res.OutMat);
-            Cv2.WaitKey();
+            PrintObject(res.Result);
         }
 
         [Fact]

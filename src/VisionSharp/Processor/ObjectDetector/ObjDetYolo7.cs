@@ -1,6 +1,8 @@
 ﻿using OpenCvSharp;
 using OpenCvSharp.Dnn;
 using VisionSharp.Models.Detect;
+using VisionSharp.Processor.Transform;
+using VisionSharp.Utils;
 
 namespace VisionSharp.Processor.ObjectDetector
 {
@@ -10,22 +12,10 @@ namespace VisionSharp.Processor.ObjectDetector
             : base(new Size(640, 640))
         {
             ModelWeights = onnxFile;
+            Colors = CvCvt.GetColorDict<T>();
             Net = InitialNet();
-            Anchors = new Point2f[]
-            {
-                new(142, 110),
-                new(192, 243),
-                new(459, 401),
-                new(36, 75),
-                new(76, 55),
-                new(72, 146),
-                new(12, 16),
-                new(19, 36),
-                new(40, 28)
-            };
         }
 
-        public Point2f[] Anchors { set; get; }
 
         internal sealed override Net InitialNet()
         {
@@ -51,9 +41,15 @@ namespace VisionSharp.Processor.ObjectDetector
             return darknet;
         }
 
+        internal Size SrcSize { set; get; }
+
         internal override Mat[] FrontNet(Net net, Mat mat)
         {
-            var inputBlob = CvDnn.BlobFromImage(mat,
+            SrcSize = mat.Size();
+            var matLetter = new LetterBox().Call(mat);
+            SrcSize = matLetter.Size();
+
+            var inputBlob = CvDnn.BlobFromImage(matLetter,
                 1F / 255,
                 InputPattern,
                 new Scalar(0, 0, 0),
@@ -76,40 +72,71 @@ namespace VisionSharp.Processor.ObjectDetector
         /// <param name="mats"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        internal override ObjRect<T>[] Decode(Mat[] mats, Size size)
+        internal override unsafe ObjRect<T>[] Decode(Mat[] mats, Size size)
         {
             var list = new List<ObjRect<T>>();
-            //mats = mats.Where(a => a.Size(0) == 1).ToArray();
-            //var i = 0;
-            //foreach (var mat in mats)
-            //{
-            //    var input_width = mat.Size(2);
-            //    var input_height = mat.Size(3);
+            var netStride = new float[] {8, 16, 32, 64};
+            var NetAnchors = new float[3, 6]
+            {
+                {12, 16, 19, 36, 40, 28},
+                {36, 75, 76, 55, 72, 146},
+                {142, 110, 192, 243, 459, 401}
+            };
+            var netHeight = InputPattern.Height;
+            var netWidth = InputPattern.Width;
+            var ratioH = (float) SrcSize.Height / netHeight;
+            var ratioW = (float) SrcSize.Width / netWidth;
+            const int net_width = 1 + 5;
 
-            //    var stride_h = InputPattern.Height / input_height;
-            //    var stride_w = InputPattern.Width / input_width;
+
+            for (var stride = 0; stride < 3; stride++)
+            {
+                var pdata = (float*) mats[stride].Data;
+                var grid_x = netWidth / netStride[stride];
+                var grid_y = netHeight / netStride[stride];
 
 
-            //    var netsize = Enum.GetNames(typeof(T)).Length + 5;
+                for (var anchor = 0; anchor < 3; anchor++)
+                {
+                    var anchor_w = NetAnchors[stride, anchor * 2];
+                    var anchor_h = NetAnchors[stride, anchor * 2 + 1];
 
-            //    var r1 = mat.Reshape(0, 3, netsize, input_width * input_height);
-            //    var r2=r1.Reshape(0, 3, 6, input_width, input_height);
-            //    var j = 0;
+                    for (var i = 0; i < grid_y; i++)
+                    {
+                        for (var j = 0; j < grid_x; j++)
+                        {
+                            var box_score = (float) CvMath.Sigmoid(pdata[4]); //获取每一行的box框中含有某个物体的概率
+                            if (box_score >= Confidence)
+                            {
+                                var scores = new List<float> {pdata[5]};
 
-            //    foreach (var VARIABLE in Enumerable.Range(0, 3))
-            //    {
-            //        var anchorWidth = Anchors[i * 3 + j].X / stride_w;
-            //        var anchorHeight = Anchors[i * 3 + j].Y / stride_h;
+                                var classProb = scores.Max() * box_score;
+                                var classIndex = scores.IndexOf(classProb);
+                                var category = (T) Enum.ToObject(typeof(T), classIndex);
 
-            //        var gridX = (int) (input_width / anchorWidth);
-            //        var gridY = (int) (input_height / anchorHeight);
+                                if (classProb >= Confidence)
+                                {
+                                    var x = (int) ((CvMath.Sigmoid(pdata[0]) * 2 - 0.5f + j) * netStride[stride]); //x
+                                    var y = (int) ((CvMath.Sigmoid(pdata[1]) * 2 - 0.5f + i) * netStride[stride]); //y
+                                    var w = (int) (Math.Pow(CvMath.Sigmoid(pdata[2]) * 2, 2) * anchor_w); //w
+                                    var h = (int) (Math.Pow(CvMath.Sigmoid(pdata[3]) * 2, 2) * anchor_h); //h
 
-            //        j++;
-            //    }
+                                    var rect = new Rect(x, y, w, h);
 
-            //    i++;
-            //}
+                                    var detectRectObject = new ObjRect<T>(rect)
+                                    {
+                                        Category = category,
+                                        ObjectConfidence = classProb
+                                    };
+                                    list.Add(detectRectObject);
+                                }
+                            }
 
+                            pdata += net_width; //下一行
+                        }
+                    }
+                }
+            }
 
             return list.ToArray();
         }
