@@ -1,5 +1,6 @@
 ﻿using OpenCvSharp;
 using VisionSharp.Models.Detect;
+using VisionSharp.Models.EnumType;
 
 namespace VisionSharp.Processor.ObjectDetector
 {
@@ -17,6 +18,8 @@ namespace VisionSharp.Processor.ObjectDetector
         {
             InputPattern = inputPattern;
         }
+
+        public YoloModel YoloModel { protected set; get; }
 
         public string ModelWeights
         {

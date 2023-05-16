@@ -6,12 +6,26 @@ namespace VisionSharp.Processor.ObjectDetector
 {
     public class ObjDetYolo7<T> : ObjDetYolo<T> where T : Enum
     {
-        public ObjDetYolo7(string onnxFile) : base(new Size(640, 640))
+        public ObjDetYolo7(string onnxFile)
+            : base(new Size(640, 640))
         {
             ModelWeights = onnxFile;
-
             Net = InitialNet();
+            Anchors = new Point2f[]
+            {
+                new(142, 110),
+                new(192, 243),
+                new(459, 401),
+                new(36, 75),
+                new(76, 55),
+                new(72, 146),
+                new(12, 16),
+                new(19, 36),
+                new(40, 28)
+            };
         }
+
+        public Point2f[] Anchors { set; get; }
 
         internal sealed override Net InitialNet()
         {
@@ -54,7 +68,10 @@ namespace VisionSharp.Processor.ObjectDetector
         }
 
         /// <summary>
-        ///     Yolo3以上的解码过程是一样的
+        ///     Yolo7以上的解码过程是一样的
+        ///     Batch Size * (3 * ([x,y,w,h] + conf + Pred classes),20,20 )
+        ///     Batch Size * (3 * ([x,y,w,h] + conf + Pred classes),40,40 )
+        ///     Batch Size * (3 * ([x,y,w,h] + conf + Pred classes),80,80 )
         /// </summary>
         /// <param name="mats"></param>
         /// <param name="size"></param>
@@ -62,50 +79,36 @@ namespace VisionSharp.Processor.ObjectDetector
         internal override ObjRect<T>[] Decode(Mat[] mats, Size size)
         {
             var list = new List<ObjRect<T>>();
+            //mats = mats.Where(a => a.Size(0) == 1).ToArray();
+            //var i = 0;
+            //foreach (var mat in mats)
+            //{
+            //    var input_width = mat.Size(2);
+            //    var input_height = mat.Size(3);
 
-            foreach (var mat in mats)
-            {
-                mat[new Rect(4, 0, 1, mat.Height)].GetArray(out float[] confidence);
+            //    var stride_h = InputPattern.Height / input_height;
+            //    var stride_w = InputPattern.Width / input_width;
 
-                var conList = confidence
-                    .Select((c, i) => (c, i))
-                    .Where(p => p.c > Confidence)
-                    .Select(p => p.i)
-                    .ToList();
 
-                conList.AsParallel().ToList().ForEach(i =>
-                {
-                    var _ = mat[new Rect(0, i, mat.Width, 1)].GetArray(out float[] rowdata);
-                    var rowInfo = rowdata.ToList();
+            //    var netsize = Enum.GetNames(typeof(T)).Length + 5;
 
-                    var classify = rowInfo.Skip(5).ToList();
-                    var classProb = classify.Max();
-                    var classIndex = classify.IndexOf(classProb);
-                    var category = (T) Enum.ToObject(typeof(T), classIndex);
+            //    var r1 = mat.Reshape(0, 3, netsize, input_width * input_height);
+            //    var r2=r1.Reshape(0, 3, 6, input_width, input_height);
+            //    var j = 0;
 
-                    if (classProb < Confidence)
-                    {
-                        return;
-                    }
+            //    foreach (var VARIABLE in Enumerable.Range(0, 3))
+            //    {
+            //        var anchorWidth = Anchors[i * 3 + j].X / stride_w;
+            //        var anchorHeight = Anchors[i * 3 + j].Y / stride_h;
 
-                    var centerX = rowInfo[0] * size.Width;
-                    var centerY = rowInfo[1] * size.Height;
+            //        var gridX = (int) (input_width / anchorWidth);
+            //        var gridY = (int) (input_height / anchorHeight);
 
-                    var w = (int) (rowInfo[2] * size.Width);
-                    var h = (int) (rowInfo[3] * size.Height);
-                    var x = (int) (centerX - w / 2F);
-                    var y = (int) (centerY - h / 2F);
+            //        j++;
+            //    }
 
-                    var rect = new Rect(x, y, w, h);
-
-                    var detectRectObject = new ObjRect<T>(rect)
-                    {
-                        Category = category,
-                        ObjectConfidence = classProb
-                    };
-                    list.Add(detectRectObject);
-                });
-            }
+            //    i++;
+            //}
 
 
             return list.ToArray();
