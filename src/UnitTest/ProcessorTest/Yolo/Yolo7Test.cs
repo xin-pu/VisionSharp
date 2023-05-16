@@ -2,6 +2,7 @@
 using OpenCvSharp.Dnn;
 using VisionSharp.Models.Category;
 using VisionSharp.Processor.ObjectDetector;
+using VisionSharp.Utils;
 using Xunit.Abstractions;
 
 namespace UnitTest.ProcessorTest.Yolo
@@ -37,7 +38,7 @@ namespace UnitTest.ProcessorTest.Yolo
         [Fact]
         public void QrDetectortTest()
         {
-            var image = @"E:\OneDrive - II-VI Incorporated\Pictures\Saved Pictures\QR.png";
+            var image = @"F:\QR\JPEGImages\0179583169.jpg";
             var mat = Cv2.ImRead(image);
 
             var d = new ObjDetYolo7<QrCategory>(ModelPath)
@@ -48,6 +49,16 @@ namespace UnitTest.ProcessorTest.Yolo
             var res = d.Call(mat, mat);
             Cv2.ImShow("1", res.OutMat);
             Cv2.WaitKey();
+        }
+
+        [Fact]
+        public void TestSigmoid()
+        {
+            var a = new Mat(2, 2, MatType.CV_64F);
+            a.At<double>(0, 0) = 2;
+            PrintMatrix(a);
+            CvBasic.Sigmoid(a);
+            PrintMatrix(a);
         }
     }
 }

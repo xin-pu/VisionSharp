@@ -74,5 +74,16 @@ namespace VisionSharp.Utils
 
             return mat[newRect];
         }
+
+
+        public static unsafe void Sigmoid(Mat mat)
+        {
+            void SigmoidForeach(double* v, int* position)
+            {
+                *v = 1 / (1 + Math.Exp(-*v));
+            }
+
+            mat.ForEachAsDouble(SigmoidForeach);
+        }
     }
 }

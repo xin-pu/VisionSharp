@@ -1,6 +1,7 @@
 ﻿using OpenCvSharp;
 using OpenCvSharp.Dnn;
 using VisionSharp.Models.Detect;
+using VisionSharp.Models.EnumType;
 using VisionSharp.Utils;
 
 namespace VisionSharp.Processor.ObjectDetector
@@ -33,8 +34,6 @@ namespace VisionSharp.Processor.ObjectDetector
             Net = InitialNet();
         }
 
-
-        public YoloModel YoloModel { protected set; get; }
 
         /// <summary>
         ///     加载网络
@@ -172,11 +171,5 @@ namespace VisionSharp.Processor.ObjectDetector
 
             return list.ToArray();
         }
-    }
-
-    public enum YoloModel
-    {
-        DarkNet,
-        Onnx
     }
 }
