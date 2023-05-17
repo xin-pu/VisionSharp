@@ -2,6 +2,7 @@
 using System.Drawing.Imaging;
 using System.Text;
 using System.Windows.Media.Imaging;
+using Numpy;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
 using Size = OpenCvSharp.Size;
@@ -575,6 +576,26 @@ namespace VisionSharp.Utils
                 .ToList();
             var colorDict = pairSelect.ToDictionary(p => p.a, p => p.Item2);
             return colorDict;
+        }
+
+        #endregion
+
+
+        #region Convert to NDArray
+
+        public static NDarray CvtToNDarray(Mat mat)
+        {
+            var dims = Enumerable.Range(0, mat.Dims)
+                .Select(a => mat.Size(a))
+                .ToArray();
+
+            var length = dims.Aggregate(1, (a, b) => a * b);
+
+            mat.Reshape(0, length).GetArray(out float[] arr);
+
+            var singleDim = new NDarray<float>(arr);
+            var final = singleDim.reshape(dims);
+            return final;
         }
 
         #endregion

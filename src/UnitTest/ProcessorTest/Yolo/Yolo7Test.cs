@@ -43,7 +43,7 @@ namespace UnitTest.ProcessorTest.Yolo
         [Fact]
         public void QrDetectortTest()
         {
-            var image = @"F:\QR\JPEGImages\1134131119.jpg";
+            var image = @"F:\QR\JPEGImages\0179583169.jpg";
             var mat = Cv2.ImRead(image);
 
             var d = new ObjDetYolo7<QrCategory>(ModelPath)
