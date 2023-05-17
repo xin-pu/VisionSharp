@@ -70,8 +70,9 @@ namespace VisionSharp.Processor.ObjectDetector
 
         internal override Mat[] FrontNet(Net net, Mat mat)
         {
-            var matLetter = new LetterBox(InputPattern).Call(mat, mat).Result;
-            SourceSize = matLetter.Size();
+            SourceSize = mat.Size();
+            var matLetter = new LetterBox(InputPattern).Call(mat.Clone());
+
 
             var inputBlob = CvDnn.BlobFromImage(matLetter,
                 1F / 255,
@@ -95,7 +96,7 @@ namespace VisionSharp.Processor.ObjectDetector
         /// <returns></returns>
         internal override ObjRect<T>[] Decode(Mat[] mats, Size size)
         {
-            var list = new List<ObjRect<T>>();
+            var results = new List<float[]>();
 
             var i = 0;
             foreach (var mat in mats)
@@ -125,40 +126,42 @@ namespace VisionSharp.Processor.ObjectDetector
                 preBoxes[":,:,:,3"] = (predInfo.H * 2).power(np.array(2)) * anchorH / gridSize.Height;
                 preBoxes = preBoxes.reshape(-1, 4);
 
-                /// 置信度 和 
+                /// 置信度 和 分类
                 var confR = predInfo.Confidence.reshape(-1, 1);
-                var confClass = predInfo.Labels.max(new[] {-1}).reshape(-1, 1); // Todo
-                var id = predInfo.Labels.argmax(-1).reshape(-1, 1);
+                var confClass = predInfo.Labels.max(new[] {-1}).reshape(-1, 1);
+                var id = predInfo.Labels.argmax(-1).reshape(-1, 1).astype(np.float32);
 
-                var res = np.concatenate(new[] {preBoxes, confR, confClass}, -1);
-
+                var res = np.concatenate(new[] {preBoxes, confR, confClass, id}, -1);
                 var confidencePred = res[(res[":,4"] > Confidence).where()];
 
                 var len = confidencePred.shape[0];
-                foreach (var l in Enumerable.Range(0, len))
-                {
-                    var rowData = confidencePred[l].GetData<float>();
-                    if (rowData[4] > Confidence)
-                    {
-                        var rect = Restore(rowData, InputPattern, SourceSize);
-                        var detectRectObject = new ObjRect<T>(rect)
-                        {
-                            Category = (T) Enum.ToObject(typeof(T), 0),
-                            ObjectConfidence = rowData[4]
-                        };
-                        list.Add(detectRectObject);
-                    }
-                }
 
+                results.AddRange(Enumerable.Range(0, len)
+                    .Select(l => confidencePred[l].GetData<float>())
+                    .Where(rowData => rowData[4] > Confidence));
 
                 i++;
             }
 
-            return list.ToArray();
+            var allBox = results
+                .Select(r =>
+                {
+                    var rect = CorrectBoxes(r, InputPattern, SourceSize);
+                    var obj = new ObjRect<T>(rect)
+                    {
+                        ObjectConfidence = r[4],
+                        CategoryConfidence = r[5],
+                        Category = (T) Enum.ToObject(typeof(T), (int) r[6])
+                    };
+                    return obj;
+                }).ToArray();
+
+
+            return allBox;
         }
 
 
-        private Rect Restore(float[] xywh, Size inputShape, Size orginalShape)
+        private Rect CorrectBoxes(float[] xywh, Size inputShape, Size orginalShape)
         {
             var d = new[]
             {
@@ -168,8 +171,8 @@ namespace VisionSharp.Processor.ObjectDetector
             var newsize = new Size(Math.Round(orginalShape.Width * d, MidpointRounding.AwayFromZero),
                 Math.Round(orginalShape.Height * d, MidpointRounding.AwayFromZero));
 
-            var offsetX = (inputShape.Width - newsize.Width) / 2 / inputShape.Width;
-            var offsetY = (inputShape.Height - newsize.Height) / 2 / inputShape.Height;
+            var offsetX = (inputShape.Width - newsize.Width) / 2f / inputShape.Width;
+            var offsetY = (inputShape.Height - newsize.Height) / 2f / inputShape.Height;
 
             var scaleX = 1f * inputShape.Width / newsize.Width;
             var scaleY = 1f * inputShape.Height / newsize.Height;
@@ -183,9 +186,9 @@ namespace VisionSharp.Processor.ObjectDetector
             var top = y - h / 2;
 
             return new Rect((int) (left * orginalShape.Width),
-                (int) (top * orginalShape.Width),
+                (int) (top * orginalShape.Height),
                 (int) (w * orginalShape.Width),
-                (int) (h * orginalShape.Width));
+                (int) (h * orginalShape.Height));
         }
 
         private DecodeInfo SplitDecodeInfo(NDarray pred)
@@ -204,7 +207,6 @@ namespace VisionSharp.Processor.ObjectDetector
                 Labels = predCLs
             };
         }
-
 
         private Tuple<NDarray, NDarray> GetAnchorGridWidth(NDarray w, NDarray h, Size strideSize,
             Size gridSize, int[] anchorMask)
