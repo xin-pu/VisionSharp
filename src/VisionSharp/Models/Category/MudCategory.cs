@@ -23,4 +23,12 @@
     {
         QrcOde
     }
+
+    /// <summary>
+    ///     散热泥项目分类
+    /// </summary>
+    public enum Raccoon
+    {
+        Raccoon
+    }
 }

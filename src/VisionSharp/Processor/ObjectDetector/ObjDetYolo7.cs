@@ -99,9 +99,11 @@ namespace VisionSharp.Processor.ObjectDetector
             var results = new List<float[]>();
 
             var i = 0;
+            mats = mats.OrderBy(a => a.Size(2)).ToArray();
             foreach (var mat in mats)
             {
                 /// 20x20,40x40,80*80
+
                 var gridSize = new Size(mat.Size(3), mat.Size(2));
                 ///32*32,16*16,8*8
                 var strideSize = CvBasic.Div(InputPattern, gridSize);

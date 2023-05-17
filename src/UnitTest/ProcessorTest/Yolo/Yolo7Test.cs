@@ -2,7 +2,6 @@
 using OpenCvSharp.Dnn;
 using VisionSharp.Models.Category;
 using VisionSharp.Processor.ObjectDetector;
-using VisionSharp.Utils;
 using Xunit.Abstractions;
 
 namespace UnitTest.ProcessorTest.Yolo
@@ -14,12 +13,14 @@ namespace UnitTest.ProcessorTest.Yolo
         {
         }
 
-        internal string ModelPath = @"F:\SaveModels\Yolo\qr.onnx";
+        internal string QRModelPath = @"F:\SaveModels\Yolo\qr_best.onnx";
+        internal string VocModelPath = @"F:\SaveModels\Yolo\voc.onnx";
+        internal string RaccoonTinyModelPath = @"E:\ObjectDetect\yolov7_pytorch\logs\best_epoch_weights.onnx";
 
         [Fact]
         public void ObjDetectortTest()
         {
-            var net = CvDnn.ReadNetFromOnnx(ModelPath);
+            var net = CvDnn.ReadNetFromOnnx(QRModelPath);
 
             if (net == null)
             {
@@ -43,28 +44,52 @@ namespace UnitTest.ProcessorTest.Yolo
         [Fact]
         public void QrDetectortTest()
         {
-            var image = @"F:\QR\JPEGImages\0179583169.jpg";
-            var mat = Cv2.ImRead(image);
-
-            var d = new ObjDetYolo7<QrCategory>(ModelPath)
+            var d = new ObjDetYolo7<QrCategory>(QRModelPath)
             {
                 Confidence = 0.6f,
                 IouThreshold = 0.5f
             };
+            var image = @"F:\QR\JPEGImages\0179583169.jpg";
+            var mat = Cv2.ImRead(image);
             var res = d.Call(mat, mat);
             PrintObject(res.Result);
-            Cv2.ImShow("T", res.OutMat);
+
+            Cv2.ImShow("result", res.OutMat);
             Cv2.WaitKey();
         }
 
         [Fact]
-        public void TestSigmoid()
+        public void RaccoonDetectortTest()
         {
-            var a = new Mat(2, 2, MatType.CV_64F);
-            a.At<double>(0, 0) = 2;
-            PrintMatrix(a);
-            CvBasic.Sigmoid(a);
-            PrintMatrix(a);
+            var d = new ObjDetYolo7<Raccoon>(RaccoonTinyModelPath)
+            {
+                Confidence = 0.5f,
+                IouThreshold = 0.5f
+            };
+            var image = @"E:\OneDrive - II-VI Incorporated\Pictures\Saved Pictures\raccoon\Racccon (1).jpg";
+            var mat = Cv2.ImRead(image);
+            var res = d.Call(mat, mat);
+            PrintObject(res.Result);
+
+            Cv2.ImShow("result", res.OutMat);
+            Cv2.WaitKey();
+        }
+
+        [Fact]
+        public void VocDetectortTest()
+        {
+            var d = new ObjDetYolo7<VocCategory>(VocModelPath)
+            {
+                Confidence = 0.4f,
+                IouThreshold = 0.5f
+            };
+            var image = @"E:\OneDrive - II-VI Incorporated\Pictures\Saved Pictures\voc\004545.jpg";
+            var mat = Cv2.ImRead(image);
+            var res = d.Call(mat, mat);
+            PrintObject(res.Result);
+
+            Cv2.ImShow("result", res.OutMat);
+            Cv2.WaitKey();
         }
     }
 }
