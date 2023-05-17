@@ -9,6 +9,13 @@ namespace VisionSharp.Processor.ObjectDetector
 {
     public class ObjDetYolo7<T> : ObjDetYolo<T> where T : Enum
     {
+        internal List<int[]> AnchorMaskLayer = new()
+        {
+            new[] {6, 7, 8},
+            new[] {3, 4, 5},
+            new[] {0, 1, 2}
+        };
+
         public ObjDetYolo7(string onnxFile)
             : base(new Size(640, 640))
         {
@@ -16,6 +23,25 @@ namespace VisionSharp.Processor.ObjectDetector
             Colors = CvCvt.GetColorDict<T>();
             Net = InitialNet();
         }
+
+
+        internal Size SourceSize { set; get; }
+
+        public Anchor[] Anchors { internal set; get; } =
+        {
+            new(12, 16),
+            new(19, 36),
+            new(40, 28),
+            new(36, 75),
+            new(76, 55),
+            new(72, 146),
+            new(142, 110),
+            new(192, 243),
+            new(459, 401)
+        };
+
+        internal int NetInputWidth => InputPattern.Width;
+        internal int NetInputHeight => InputPattern.Height;
 
 
         internal sealed override Net InitialNet()
@@ -42,13 +68,10 @@ namespace VisionSharp.Processor.ObjectDetector
             return darknet;
         }
 
-        internal Size SrcSize { set; get; }
-
         internal override Mat[] FrontNet(Net net, Mat mat)
         {
-            SrcSize = mat.Size();
             var matLetter = new LetterBox(InputPattern).Call(mat, mat).Result;
-            SrcSize = matLetter.Size();
+            SourceSize = matLetter.Size();
 
             var inputBlob = CvDnn.BlobFromImage(matLetter,
                 1F / 255,
@@ -65,10 +88,7 @@ namespace VisionSharp.Processor.ObjectDetector
         }
 
         /// <summary>
-        ///     Yolo7以上的解码过程是一样的
-        ///     Batch Size * (3 * ([x,y,w,h] + conf + Pred classes),20,20 )
-        ///     Batch Size * (3 * ([x,y,w,h] + conf + Pred classes),40,40 )
-        ///     Batch Size * (3 * ([x,y,w,h] + conf + Pred classes),80,80 )
+        ///     输入Mats
         /// </summary>
         /// <param name="mats"></param>
         /// <param name="size"></param>
@@ -76,95 +96,51 @@ namespace VisionSharp.Processor.ObjectDetector
         internal override ObjRect<T>[] Decode(Mat[] mats, Size size)
         {
             var list = new List<ObjRect<T>>();
-            var netAnchors = new List<float[]>
-            {
-                new float[] {12, 16},
-                new float[] {19, 36},
-                new float[] {40, 28},
 
-                new float[] {36, 75},
-                new float[] {76, 55},
-                new float[] {72, 146},
-
-                new float[] {142, 110},
-                new float[] {192, 243},
-                new float[] {459, 401}
-            };
-            var anchorMaskLayer = new List<int[]>
-            {
-                new[] {6, 7, 8},
-                new[] {3, 4, 5},
-                new[] {0, 1, 2}
-            };
-
-            var netHeight = InputPattern.Height;
-            var netWidth = InputPattern.Width;
-
-            var categoryCount = CategoryCount + 5;
             var i = 0;
             foreach (var mat in mats)
             {
-                var inputHeight = mat.Size(2);
-                var inputWidth = mat.Size(3);
-                var strideHeight = netHeight / inputHeight;
-                var strideWidth = netWidth / inputWidth;
-
-                var anchorMask = anchorMaskLayer[i];
-
-                var ancors = anchorMask.Select(d => netAnchors[d])
-                    .Select(p => new {A = p[0] / strideWidth, B = p[1] / strideHeight})
-                    .ToList();
-
-                mat.Reshape(0, 3 * categoryCount * inputHeight * inputWidth).GetArray(out float[] data);
-
-                var dim = new NDarray<float>(data);
-                var reshape = dim.reshape(3, categoryCount, inputHeight, inputWidth);
-                var prediction = reshape.transpose(0, 2, 3, 1);
-                prediction = 1.0 / (1 + (-prediction).exp());
-
-                var x = prediction[":,:,:,0"];
-                var y = prediction[":,:,:,1"];
-                var w = prediction[":,:,:,2"];
-                var h = prediction[":,:,:,3"];
-                var conf = prediction[":,:,:,4"];
-                var predCLs = prediction[":,:,:,5:"];
+                /// 20x20,40x40,80*80
+                var gridSize = new Size(mat.Size(3), mat.Size(2));
+                ///32*32,16*16,8*8
+                var strideSize = CvBasic.Div(InputPattern, gridSize);
 
 
-                var gridX = CvBasic.CreateGridX(inputWidth, inputHeight, 3);
-                var gridY = CvBasic.CreateGridY(inputWidth, inputHeight, 3);
+                var pred = CvCvt.CvtToNDarray(mat).reshape(3, -1, gridSize.Height, gridSize.Width);
+                pred = CvBasic.Sigmoid(pred.transpose(0, 2, 3, 1)); // sigmoid
 
-                var anchorW = ancors.Select(a => a.A).ToArray();
-                var anchorH = ancors.Select(a => a.B).ToArray();
-                var anchor_W = np.array(anchorW).expand_dims(0).expand_dims(-1)
-                    .repeat(new[] {inputHeight * inputWidth}, -1)
-                    .reshape(w.shape);
-                var anchor_H = np.array(anchorH).expand_dims(0).expand_dims(-1)
-                    .repeat(new[] {inputHeight * inputWidth}, -1)
-                    .reshape(h.shape);
+                /// 拆分数据
+                var predInfo = SplitDecodeInfo(pred);
 
-                var preBoxes = np.empty_like(prediction[":,:,:,:4"]);
-                preBoxes[":,:,:,0"] = x * 2f - 0.5 + gridX;
-                preBoxes[":,:,:,1"] = y * 2f - 0.5 + gridY;
-                preBoxes[":,:,:,2"] = (w * 2).power(np.array(2)) * anchor_W;
-                preBoxes[":,:,:,3"] = (h * 2).power(np.array(2)) * anchor_H;
-                var _scale = np.array(new float[] {inputWidth, inputHeight, inputWidth, inputHeight});
+                var gridX = CvBasic.CreateGridX(gridSize, 3);
+                var gridY = CvBasic.CreateGridY(gridSize, 3);
+                var (anchorW, anchorH) =
+                    GetAnchorGridWidth(predInfo.W, predInfo.H, strideSize, gridSize, AnchorMaskLayer[i]);
 
+                ///归一化
+                var preBoxes = np.empty_like(pred[":,:,:,:4"]);
+                preBoxes[":,:,:,0"] = (predInfo.X * 2f - 0.5 + gridX) / gridSize.Width;
+                preBoxes[":,:,:,1"] = (predInfo.Y * 2f - 0.5 + gridY) / gridSize.Height;
+                preBoxes[":,:,:,2"] = (predInfo.W * 2).power(np.array(2)) * anchorW / gridSize.Width;
+                preBoxes[":,:,:,3"] = (predInfo.H * 2).power(np.array(2)) * anchorH / gridSize.Height;
+                preBoxes = preBoxes.reshape(-1, 4);
 
-                var final = preBoxes.reshape(-1, 4) / _scale;
-                var confR = conf.reshape(-1, 1);
-                var confClass = predCLs.max(new[] {-1}).reshape(-1, 1);
+                /// 置信度 和 
+                var confR = predInfo.Confidence.reshape(-1, 1);
+                var confClass = predInfo.Labels.max(new[] {-1}).reshape(-1, 1); // Todo
+                var id = predInfo.Labels.argmax(-1).reshape(-1, 1);
 
-                var res = np.concatenate(new[] {final, confR, confClass}, -1);
+                var res = np.concatenate(new[] {preBoxes, confR, confClass}, -1);
 
-                var ress = res.GetData<float>();
-                var len = ress.Length / 6;
+                var confidencePred = res[(res[":,4"] > Confidence).where()];
+
+                var len = confidencePred.shape[0];
                 foreach (var l in Enumerable.Range(0, len))
                 {
-                    var row = res[$"{l},:"];
-                    var rowData = row.GetData<float>();
+                    var rowData = confidencePred[l].GetData<float>();
                     if (rowData[4] > Confidence)
                     {
-                        var rect = Restore(rowData, InputPattern, SrcSize);
+                        var rect = Restore(rowData, InputPattern, SourceSize);
                         var detectRectObject = new ObjRect<T>(rect)
                         {
                             Category = (T) Enum.ToObject(typeof(T), 0),
@@ -210,6 +186,57 @@ namespace VisionSharp.Processor.ObjectDetector
                 (int) (top * orginalShape.Width),
                 (int) (w * orginalShape.Width),
                 (int) (h * orginalShape.Width));
+        }
+
+        private DecodeInfo SplitDecodeInfo(NDarray pred)
+        {
+            var (x, y, w, h) =
+                (pred[":,:,:,0"], pred[":,:,:,1"], pred[":,:,:,2"], pred[":,:,:,3"]);
+            var conf = pred[":,:,:,4"];
+            var predCLs = pred[":,:,:,5:"];
+            return new DecodeInfo
+            {
+                X = x,
+                Y = y,
+                W = w,
+                H = h,
+                Confidence = conf,
+                Labels = predCLs
+            };
+        }
+
+
+        private Tuple<NDarray, NDarray> GetAnchorGridWidth(NDarray w, NDarray h, Size strideSize,
+            Size gridSize, int[] anchorMask)
+        {
+            var gridArea = gridSize.Width * gridSize.Height;
+            var anchors = anchorMask.Select(d => Anchors[d])
+                .Select(p => new Anchor(p.Width / strideSize.Width, p.Height / strideSize.Height))
+                .ToList();
+
+            var anchorWidth = np.array(anchors.Select(a => a.Width).ToArray());
+            var anchorHeight = np.array(anchors.Select(a => a.Height).ToArray());
+
+            var anchorW = anchorWidth
+                .expand_dims(0).expand_dims(-1)
+                .repeat(new[] {gridArea}, -1)
+                .reshape(w.shape);
+            var anchorH = anchorHeight
+                .expand_dims(0).expand_dims(-1)
+                .repeat(new[] {gridArea}, -1)
+                .reshape(h.shape);
+            return new Tuple<NDarray, NDarray>(anchorW, anchorH);
+        }
+
+
+        public struct DecodeInfo
+        {
+            public NDarray X { set; get; }
+            public NDarray Y { set; get; }
+            public NDarray W { set; get; }
+            public NDarray H { set; get; }
+            public NDarray Confidence { set; get; }
+            public NDarray Labels { set; get; }
         }
     }
 }
