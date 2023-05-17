@@ -42,6 +42,7 @@ namespace VisionSharp.Processor
             get => _iouThreshold;
         }
 
+        public int CategoryCount => Enum.GetNames(typeof(T)).Length;
 
         internal override ObjRect<T>[] Process(Mat input)
         {

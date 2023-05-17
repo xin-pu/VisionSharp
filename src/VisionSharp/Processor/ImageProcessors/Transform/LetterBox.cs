@@ -4,30 +4,46 @@ namespace VisionSharp.Processor.Transform
 {
     public class LetterBox : ImageProcessor
     {
-        public LetterBox(string name = "LetterBox")
+        public LetterBox(Size targetSize, string name = "LetterBox")
             : base(name)
         {
+            TargetSize = targetSize;
         }
 
-        internal Size SrcSize { set; get; }
+        public Size TargetSize { internal set; get; }
+
+        internal int OriginalHeight { set; get; }
+        internal int OriginalWidth { set; get; }
+
+        public Scalar FillColor { set; get; } = new(255, 255, 255);
 
         internal override Mat Process(Mat input)
         {
-            SrcSize = input.Size();
-            var netInputImage = input.Clone();
-
-            var col = SrcSize.Width;
-            var row = SrcSize.Height;
-            var maxLen = new[] {col, row}.Max();
-
-            if (maxLen > 1.2 * col || maxLen > 1.2 * row)
+            OriginalHeight = input.Size().Height;
+            OriginalWidth = input.Size().Width;
+            var ratio = new[]
             {
-                var resizeImage = Mat.Zeros(maxLen, maxLen, input.Type()).ToMat();
-                input.CopyTo(resizeImage[new Rect(0, 0, col, row)]);
-                netInputImage = resizeImage;
+                1d * TargetSize.Width / OriginalWidth,
+                1d * TargetSize.Height / OriginalHeight
+            };
+            var minRatio = ratio.Min();
+            var resizeWidth = (int) Math.Round(OriginalWidth * minRatio);
+            var resizeHeight = (int) Math.Round(OriginalHeight * minRatio);
+            var dw = (TargetSize.Width - resizeWidth) / 2;
+            var dh = (TargetSize.Height - resizeHeight) / 2;
+
+            var resizeSize = new Size(resizeWidth, resizeHeight);
+            if (TargetSize != resizeSize)
+            {
+                Cv2.Resize(input, input, resizeSize, interpolation: InterpolationFlags.Linear);
             }
 
-            return netInputImage;
+            var top = (int) Math.Round(dh - 0.1);
+            var bottom = (int) Math.Round(dh + 0.1);
+            var left = (int) Math.Round(dw - 0.1);
+            var right = (int) Math.Round(dw + 0.1);
+            Cv2.CopyMakeBorder(input, input, top, bottom, left, right, BorderTypes.Constant, FillColor);
+            return input;
         }
     }
 }

@@ -30,6 +30,11 @@ namespace UnitTest.ProcessorTest.Yolo
 
             foreach (var layerName in layersNames)
             {
+                if (layerName == null)
+                {
+                    continue;
+                }
+
                 var id = net.GetLayerId(layerName);
                 PrintObject($"{id}:\t{layerName}");
             }
@@ -38,16 +43,18 @@ namespace UnitTest.ProcessorTest.Yolo
         [Fact]
         public void QrDetectortTest()
         {
-            var image = @"F:\QR\JPEGImages\0179583169.jpg";
+            var image = @"F:\QR\JPEGImages\1134131119.jpg";
             var mat = Cv2.ImRead(image);
 
             var d = new ObjDetYolo7<QrCategory>(ModelPath)
             {
-                Confidence = 0.7f,
+                Confidence = 0.6f,
                 IouThreshold = 0.5f
             };
             var res = d.Call(mat, mat);
             PrintObject(res.Result);
+            Cv2.ImShow("T", res.OutMat);
+            Cv2.WaitKey();
         }
 
         [Fact]

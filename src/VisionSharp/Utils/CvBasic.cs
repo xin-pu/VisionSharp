@@ -1,4 +1,5 @@
-﻿using OpenCvSharp;
+﻿using Numpy;
+using OpenCvSharp;
 using VisionSharp.Models.Detect;
 
 namespace VisionSharp.Utils
@@ -84,6 +85,30 @@ namespace VisionSharp.Utils
             }
 
             mat.ForEachAsDouble(SigmoidForeach);
+        }
+
+
+        public static NDarray CreateGridX(int width, int height, int layer)
+        {
+            var basic = np.linspace(0, width - 1, width, dtype: np.float32);
+            var final = basic
+                .expand_dims(0)
+                .repeat(new[] {height}, 0)
+                .expand_dims(0)
+                .repeat(new[] {layer}, 0);
+            return final;
+        }
+
+
+        public static NDarray CreateGridY(int width, int height, int layer)
+        {
+            var basic = np.linspace(0, height - 1, height, dtype: np.float32);
+            var final = basic
+                .expand_dims(1)
+                .repeat(new[] {width}, 1)
+                .expand_dims(0)
+                .repeat(new[] {layer}, 0);
+            return final;
         }
     }
 }
