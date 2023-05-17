@@ -107,7 +107,7 @@ namespace VisionSharp.Processor
                 {
                     var info = $"{a.Category} {a.ObjectConfidence:P2}";
                     var color = Colors[a.Category];
-                    var fontscale = 1d * mat.Height / 300;
+                    var fontscale = 1d * mat.Height / 500;
                     mat = DrawRect(mat, a.Rect, color, 1);
                     mat = DrawText(mat, a.Rect.TopLeft, info, color, fontscale);
                 });
