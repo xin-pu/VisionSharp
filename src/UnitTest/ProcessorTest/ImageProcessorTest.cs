@@ -32,11 +32,13 @@ namespace UnitTest.ProcessorTest
         }
 
         [Fact]
-        public void RotatedTestLoad()
+        public void LetterBoxTest()
         {
             var input = Cv2.ImRead(@"F:\QR\JPEGImages\0179583169.jpg");
-            var letter = new LetterBox();
+            var letter = new LetterBox(new Size(640, 640));
             var res = letter.Call(input);
+            Cv2.ImShow("Letter", res);
+            Cv2.WaitKey();
         }
     }
 }

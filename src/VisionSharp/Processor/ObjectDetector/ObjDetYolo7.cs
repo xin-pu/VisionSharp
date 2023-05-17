@@ -1,4 +1,5 @@
-﻿using OpenCvSharp;
+﻿using Numpy;
+using OpenCvSharp;
 using OpenCvSharp.Dnn;
 using VisionSharp.Models.Detect;
 using VisionSharp.Processor.Transform;
@@ -46,7 +47,7 @@ namespace VisionSharp.Processor.ObjectDetector
         internal override Mat[] FrontNet(Net net, Mat mat)
         {
             SrcSize = mat.Size();
-            var matLetter = new LetterBox().Call(mat);
+            var matLetter = new LetterBox(InputPattern).Call(mat, mat).Result;
             SrcSize = matLetter.Size();
 
             var inputBlob = CvDnn.BlobFromImage(matLetter,
@@ -72,73 +73,143 @@ namespace VisionSharp.Processor.ObjectDetector
         /// <param name="mats"></param>
         /// <param name="size"></param>
         /// <returns></returns>
-        internal override unsafe ObjRect<T>[] Decode(Mat[] mats, Size size)
+        internal override ObjRect<T>[] Decode(Mat[] mats, Size size)
         {
             var list = new List<ObjRect<T>>();
-            var netStride = new float[] {8, 16, 32, 64};
-            var NetAnchors = new float[3, 6]
+            var netAnchors = new List<float[]>
             {
-                {12, 16, 19, 36, 40, 28},
-                {36, 75, 76, 55, 72, 146},
-                {142, 110, 192, 243, 459, 401}
+                new float[] {12, 16},
+                new float[] {19, 36},
+                new float[] {40, 28},
+
+                new float[] {36, 75},
+                new float[] {76, 55},
+                new float[] {72, 146},
+
+                new float[] {142, 110},
+                new float[] {192, 243},
+                new float[] {459, 401}
             };
+            var anchorMaskLayer = new List<int[]>
+            {
+                new[] {6, 7, 8},
+                new[] {3, 4, 5},
+                new[] {0, 1, 2}
+            };
+
             var netHeight = InputPattern.Height;
             var netWidth = InputPattern.Width;
-            var ratioH = (float) SrcSize.Height / netHeight;
-            var ratioW = (float) SrcSize.Width / netWidth;
-            const int net_width = 1 + 5;
 
-
-            for (var stride = 0; stride < 3; stride++)
+            var categoryCount = CategoryCount + 5;
+            var i = 0;
+            foreach (var mat in mats)
             {
-                var pdata = (float*) mats[stride].Data;
-                var grid_x = netWidth / netStride[stride];
-                var grid_y = netHeight / netStride[stride];
+                var inputHeight = mat.Size(2);
+                var inputWidth = mat.Size(3);
+                var strideHeight = netHeight / inputHeight;
+                var strideWidth = netWidth / inputWidth;
+
+                var anchorMask = anchorMaskLayer[i];
+
+                var ancors = anchorMask.Select(d => netAnchors[d])
+                    .Select(p => new {A = p[0] / strideWidth, B = p[1] / strideHeight})
+                    .ToList();
+
+                mat.Reshape(0, 3 * categoryCount * inputHeight * inputWidth).GetArray(out float[] data);
+
+                var dim = new NDarray<float>(data);
+                var reshape = dim.reshape(3, categoryCount, inputHeight, inputWidth);
+                var prediction = reshape.transpose(0, 2, 3, 1);
+                prediction = 1.0 / (1 + (-prediction).exp());
+
+                var x = prediction[":,:,:,0"];
+                var y = prediction[":,:,:,1"];
+                var w = prediction[":,:,:,2"];
+                var h = prediction[":,:,:,3"];
+                var conf = prediction[":,:,:,4"];
+                var predCLs = prediction[":,:,:,5:"];
 
 
-                for (var anchor = 0; anchor < 3; anchor++)
+                var gridX = CvBasic.CreateGridX(inputWidth, inputHeight, 3);
+                var gridY = CvBasic.CreateGridY(inputWidth, inputHeight, 3);
+
+                var anchorW = ancors.Select(a => a.A).ToArray();
+                var anchorH = ancors.Select(a => a.B).ToArray();
+                var anchor_W = np.array(anchorW).expand_dims(0).expand_dims(-1)
+                    .repeat(new[] {inputHeight * inputWidth}, -1)
+                    .reshape(w.shape);
+                var anchor_H = np.array(anchorH).expand_dims(0).expand_dims(-1)
+                    .repeat(new[] {inputHeight * inputWidth}, -1)
+                    .reshape(h.shape);
+
+                var preBoxes = np.empty_like(prediction[":,:,:,:4"]);
+                preBoxes[":,:,:,0"] = x * 2f - 0.5 + gridX;
+                preBoxes[":,:,:,1"] = y * 2f - 0.5 + gridY;
+                preBoxes[":,:,:,2"] = (w * 2).power(np.array(2)) * anchor_W;
+                preBoxes[":,:,:,3"] = (h * 2).power(np.array(2)) * anchor_H;
+                var _scale = np.array(new float[] {inputWidth, inputHeight, inputWidth, inputHeight});
+
+
+                var final = preBoxes.reshape(-1, 4) / _scale;
+                var confR = conf.reshape(-1, 1);
+                var confClass = predCLs.max(new[] {-1}).reshape(-1, 1);
+
+                var res = np.concatenate(new[] {final, confR, confClass}, -1);
+
+                var ress = res.GetData<float>();
+                var len = ress.Length / 6;
+                foreach (var l in Enumerable.Range(0, len))
                 {
-                    var anchor_w = NetAnchors[stride, anchor * 2];
-                    var anchor_h = NetAnchors[stride, anchor * 2 + 1];
-
-                    for (var i = 0; i < grid_y; i++)
+                    var row = res[$"{l},:"];
+                    var rowData = row.GetData<float>();
+                    if (rowData[4] > Confidence)
                     {
-                        for (var j = 0; j < grid_x; j++)
+                        var rect = Restore(rowData, InputPattern, SrcSize);
+                        var detectRectObject = new ObjRect<T>(rect)
                         {
-                            var box_score = (float) CvMath.Sigmoid(pdata[4]); //获取每一行的box框中含有某个物体的概率
-                            if (box_score >= Confidence)
-                            {
-                                var scores = new List<float> {pdata[5]};
-
-                                var classProb = scores.Max() * box_score;
-                                var classIndex = scores.IndexOf(classProb);
-                                var category = (T) Enum.ToObject(typeof(T), classIndex);
-
-                                if (classProb >= Confidence)
-                                {
-                                    var x = (int) ((CvMath.Sigmoid(pdata[0]) * 2 - 0.5f + j) * netStride[stride]); //x
-                                    var y = (int) ((CvMath.Sigmoid(pdata[1]) * 2 - 0.5f + i) * netStride[stride]); //y
-                                    var w = (int) (Math.Pow(CvMath.Sigmoid(pdata[2]) * 2, 2) * anchor_w); //w
-                                    var h = (int) (Math.Pow(CvMath.Sigmoid(pdata[3]) * 2, 2) * anchor_h); //h
-
-                                    var rect = new Rect(x, y, w, h);
-
-                                    var detectRectObject = new ObjRect<T>(rect)
-                                    {
-                                        Category = category,
-                                        ObjectConfidence = classProb
-                                    };
-                                    list.Add(detectRectObject);
-                                }
-                            }
-
-                            pdata += net_width; //下一行
-                        }
+                            Category = (T) Enum.ToObject(typeof(T), 0),
+                            ObjectConfidence = rowData[4]
+                        };
+                        list.Add(detectRectObject);
                     }
                 }
+
+
+                i++;
             }
 
             return list.ToArray();
+        }
+
+
+        private Rect Restore(float[] xywh, Size inputShape, Size orginalShape)
+        {
+            var d = new[]
+            {
+                1f * inputShape.Width / orginalShape.Width,
+                1f * inputShape.Height / orginalShape.Height
+            }.Min();
+            var newsize = new Size(Math.Round(orginalShape.Width * d, MidpointRounding.AwayFromZero),
+                Math.Round(orginalShape.Height * d, MidpointRounding.AwayFromZero));
+
+            var offsetX = (inputShape.Width - newsize.Width) / 2 / inputShape.Width;
+            var offsetY = (inputShape.Height - newsize.Height) / 2 / inputShape.Height;
+
+            var scaleX = 1f * inputShape.Width / newsize.Width;
+            var scaleY = 1f * inputShape.Height / newsize.Height;
+
+            var x = (xywh[0] - offsetX) * scaleX;
+            var y = (xywh[1] - offsetY) * scaleY;
+            var w = xywh[2] * scaleX;
+            var h = xywh[3] * scaleY;
+
+            var left = x - w / 2;
+            var top = y - h / 2;
+
+            return new Rect((int) (left * orginalShape.Width),
+                (int) (top * orginalShape.Width),
+                (int) (w * orginalShape.Width),
+                (int) (h * orginalShape.Width));
         }
     }
 }
