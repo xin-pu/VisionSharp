@@ -1,10 +1,52 @@
 # vision_sharp
-»ùÓÚOpencvÄ£¿é·â×°µÄµÄ»úÆ÷ÊÓ¾õ¿â
+åŸºäºOpencvæ¨¡å—å°è£…çš„çš„æœºå™¨è§†è§‰åº“
+
+
+## Object Detector
+
+### Yolo7 VOC
+
+``` C#
+var d = new ObjDetYolo7<VocCategory>(VocModelPath)
+{
+    Confidence = 0.4f,
+    IouThreshold = 0.5f
+};
+var image = @"E:\OneDrive - II-VI Incorporated\Pictures\Saved Pictures\voc\dog.jpg";
+var mat = Cv2.ImRead(image);
+var res = d.Call(mat, mat);
+PrintObject(res.Result);
+
+Cv2.ImShow("result", res.OutMat);
+Cv2.WaitKey();
+ ```
+
+![](testimages/dog.png)
+
+### Yolo7 QRCode
+
+``` C#
+var d = new ObjDetYolo7<QrCategory>(QRModelPath)
+{
+    Confidence = 0.6f,
+    IouThreshold = 0.5f
+};
+var image = @"F:\QR\JPEGImages\0179583169.jpg";
+var mat = Cv2.ImRead(image);
+var res = d.Call(mat, mat);
+PrintObject(res.Result);
+
+Cv2.ImShow("result", res.OutMat);
+Cv2.WaitKey();
+
+ ```
+![](testimages/qr.png)
+
 
 
 ## TextDetector
 
-### ¶şÎ¬Âë¼ì²âÆ÷ BarcodeDetector
+### äºŒç»´ç æ£€æµ‹å™¨ BarcodeDetector
 
 ```C#
 var barcodeDetector = new BarcodeDetector();
@@ -14,7 +56,7 @@ var code = barcodeDetector.Call(mat);
 
 ## Slover
 
-### Êı¶À½â´ğÆ÷ SudokuSolver
+###  æ•°ç‹¬è§£ç­”å™¨ SudokuSolver
 
 ```C#
 byte[,] _demo =   {

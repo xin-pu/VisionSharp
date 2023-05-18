@@ -13,9 +13,9 @@ namespace UnitTest.ProcessorTest.Yolo
         {
         }
 
-        internal string QRModelPath = @"F:\SaveModels\Yolo\qr_best.onnx";
-        internal string VocModelPath = @"F:\SaveModels\Yolo\voc.onnx";
-        internal string RaccoonTinyModelPath = @"E:\ObjectDetect\yolov7_pytorch\logs\best_epoch_weights.onnx";
+        internal string QRModelPath = @"F:\SaveModels\Yolo\qr\qr_best.onnx";
+        internal string VocModelPath = @"F:\SaveModels\Yolo\Voc\voc.onnx";
+        internal string RaccoonTinyModelPath = @"F:\SaveModels\Yolo\raccoon\raccoon.onnx";
 
         [Fact]
         public void ObjDetectortTest()
@@ -61,7 +61,7 @@ namespace UnitTest.ProcessorTest.Yolo
         [Fact]
         public void RaccoonDetectortTest()
         {
-            var d = new ObjDetYolo7<Raccoon>(RaccoonTinyModelPath)
+            var d = new ObjDetYolo7<Raccoon>(@"E:\ObjectDetect\yolov7_pytorch\logs\best_epoch_weights.onnx")
             {
                 Confidence = 0.5f,
                 IouThreshold = 0.5f
@@ -83,7 +83,7 @@ namespace UnitTest.ProcessorTest.Yolo
                 Confidence = 0.4f,
                 IouThreshold = 0.5f
             };
-            var image = @"E:\OneDrive - II-VI Incorporated\Pictures\Saved Pictures\voc\004545.jpg";
+            var image = @"E:\OneDrive - II-VI Incorporated\Pictures\Saved Pictures\voc\dog.jpg";
             var mat = Cv2.ImRead(image);
             var res = d.Call(mat, mat);
             PrintObject(res.Result);

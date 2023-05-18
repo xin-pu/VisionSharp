@@ -139,7 +139,7 @@ namespace VisionSharp.Utils
             Cv2.Rectangle(mat, new Rect(point, rectSize), color, -1);
             Cv2.PutText(mat, info, newpoint, HersheyFonts.HersheyPlain,
                 fontScale,
-                new Scalar(255, 255, 255),
+                new Scalar(0, 0, 0),
                 thickness);
             return mat;
         }
