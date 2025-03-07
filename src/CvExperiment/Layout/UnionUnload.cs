@@ -20,8 +20,8 @@ namespace CvExperiment.Layout
         public override LayoutDetector<ObjCategory> InitialPreidctor()
         {
             return new LayoutDlDetector<ObjCategory>(
-                @"F:\SaveModels\Yolo\unload.onnx",
-                new Size(3, 8),
+                @"F:\SaveModels\Yolo\unload_2024.onnx",
+                new Size(3,   8),
                 new Size(640, 640),
                 0.7);
         }
@@ -79,7 +79,7 @@ namespace CvExperiment.Layout
         [Fact]
         public void PredictByFolder()
         {
-            var workfolder = @"E:\My Temp\unload";
+            var workfolder = @"F:\COC Tray\New 2024\unloading\Images";
             predictFolder(workfolder);
         }
 

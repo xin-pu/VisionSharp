@@ -63,8 +63,9 @@ namespace VisionSharp.Processor.ObjectDetector
                 throw new NullReferenceException("Can't Load Net");
             }
 
-            darknet.SetPreferableBackend(Backend.OPENCV);
-            darknet.SetPreferableTarget(Target.CPU);
+            darknet.SetPreferableTarget(Target.CUDA);
+            darknet.SetPreferableBackend(Backend.CUDA);
+
             return darknet;
         }
 

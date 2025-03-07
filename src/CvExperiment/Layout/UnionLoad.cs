@@ -20,16 +20,16 @@ namespace CvExperiment.Layout
         public override LayoutDetector<ObjCategory> InitialPreidctor()
         {
             return new LayoutDlDetector<ObjCategory>(
-                @"F:\SaveModels\Yolo\load416.onnx",
-                new Size(2, 8),
-                new Size(416, 416),
-                0.7);
+                @"F:\SaveModels\Yolo\load_2024.onnx",
+                new Size(2,   8),
+                new Size(640, 640),
+                0.6);
         }
 
         [Fact]
         public void load()
         {
-            var p = new LayoutDlDetector<ObjCategory>("load.onnx", new Size(2, 8), new Size(416, 416));
+            var p = new LayoutDlDetector<ObjCategory>("load.onnx", new Size(2, 8), new Size(416, 416), 0.6);
             var res = Cv2.ImRead(@"F:\COC Tray\Union LoadTray\Images\1_0001.bmp", ImreadModes.Grayscale);
             var d = p.Call(res);
         }
@@ -40,9 +40,9 @@ namespace CvExperiment.Layout
         [Fact]
         public void RenameFolderFiles()
         {
-            var workfolder = @"F:\COC Tray\Union UnloadTray\5291\Images";
+            var workfolder = @"F:\COC Tray\New 2024\loading";
             var searchPattern = "*.bmp";
-            var preName = "";
+            var preName = "4";
             RenameFiles(workfolder, searchPattern, preName);
         }
 
@@ -53,7 +53,7 @@ namespace CvExperiment.Layout
         [Fact]
         public void ChangeImageFormat()
         {
-            ChangeImagePNG2BMP(@"F:\COC Tray\Union UnloadTray\5291\Images");
+            ChangeImagePNG2BMP(@"F:\COC Tray\New 2024\loading");
         }
 
 
@@ -63,7 +63,7 @@ namespace CvExperiment.Layout
         [Fact]
         public void CheckDataSet()
         {
-            GeneraitAnnToImage(@"F:\COC Tray\Union UnloadTray");
+            GeneraitAnnToImage(@"F:\COC Tray\New 2024\loading");
         }
 
         #endregion
@@ -87,7 +87,7 @@ namespace CvExperiment.Layout
         [Fact]
         public void PredictByFolder()
         {
-            var workfolder = @"E:\My Temp\unload";
+            var workfolder = @"F:\COC Tray\New 2024\loading";
             predictFolder(workfolder);
         }
 
