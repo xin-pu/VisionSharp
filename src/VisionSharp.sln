@@ -16,6 +16,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestImage", "TestImage", "{3F9B7AB0-EACD-421F-8E87-254EE585A992}"
 	ProjectSection(SolutionItems) = preProject
 		..\testimages\002341.jpg = ..\testimages\002341.jpg
+		..\testimages\300K 1.bmp = ..\testimages\300K 1.bmp
+		..\testimages\50K 1.bmp = ..\testimages\50K 1.bmp
 		..\testimages\barcode.png = ..\testimages\barcode.png
 		..\testimages\qrcode.png = ..\testimages\qrcode.png
 	EndProjectSection
