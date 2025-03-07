@@ -93,8 +93,6 @@ namespace UnitTest.ProcessorTest
             Cv2.Line(orginalMat, new Point(0, minHeight), new Point(imageWidth, minHeight), Scalar.DarkRed, 3);
 
             orginalMat.SaveImage($"{++index}.png");
-
-      
         }
     }
 }
