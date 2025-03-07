@@ -7,9 +7,7 @@ namespace UnitTest.ProcessorTest
     public class ImageProcessorTest : AbstractTest
     {
         public ImageProcessorTest(ITestOutputHelper testOutputHelper)
-            : base(testOutputHelper)
-        {
-        }
+            : base(testOutputHelper) { }
 
         [Fact]
         public void RotatedTest()
