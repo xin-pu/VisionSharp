@@ -87,7 +87,7 @@ namespace CvExperiment.Layout
         [Fact]
         public void GetRotatedRect()
         {
-            var mat = Cv2.ImRead(@"F:\COC Tray\Union LoadTray\back5291.png", ImreadModes.Grayscale);
+            var mat = Cv2.ImRead(@"E:\My Temp\WUX-E80016940\load.png", ImreadModes.Grayscale);
             Cv2.Threshold(mat, mat, 100, 255, ThresholdTypes.Otsu);
             Cv2.FindContours(mat, out var contours, new Mat(), RetrievalModes.List,
                 ContourApproximationModes.ApproxSimple);

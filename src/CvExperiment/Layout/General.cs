@@ -38,10 +38,10 @@ namespace CvExperiment.Layout
             {
                 i++;
                 var newname = f.Replace(new FileInfo(f).Name,
-                    prename == ""
-                        ? ""
-                        : prename + "_"
-                                  + $"{i}.{searchPattern}");
+                                        prename == ""
+                                            ? ""
+                                            : prename + "_"
+                                                      + $"{i}.bmp");
                 File.Copy(f, newname);
             });
         }
@@ -79,7 +79,7 @@ namespace CvExperiment.Layout
                     var img = Path.Combine(imgFolder, $"{id}.bmp");
                     var detectLayer = Layout<ObjCategory>.LoadFromAnnotation(ann.FullName);
                     var mat = Cv2.ImRead(img);
-                    //Todo
+
                     PrintObject(detectLayer);
                     mat.Dispose();
                     GC.Collect();
@@ -95,7 +95,7 @@ namespace CvExperiment.Layout
         {
             var id = Path.GetFileNameWithoutExtension(image_path.Name);
             var input = Cv2.ImRead(image_path.FullName, ImreadModes.Grayscale);
-            var res = Predictor.Call(input, input).Result;
+            var res = Predictor.Call(input, input, id).Result;
             return res;
         }
 
@@ -121,7 +121,7 @@ namespace CvExperiment.Layout
             var i = 0;
             allann.ForEach(ann =>
             {
-                PrintObject(i++);
+                //PrintObject(i++);
                 var id = Path.GetFileNameWithoutExtension(ann.Name);
                 var annfile = ann.FullName;
                 var imgFile = Path.Combine(imgFolder, $"{id}.bmp");

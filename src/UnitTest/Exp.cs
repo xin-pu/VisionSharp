@@ -110,5 +110,33 @@ namespace UnitTest
             Cv2.ImShow("ori", final.OutMat);
             Cv2.WaitKey();
         }
+
+
+        [Fact]
+        public void ImRead()
+        {
+            var res = Cv2.ImRead(@"F:\DogsCats\train\cat.36.jpg");
+            var mat2 = new Mat();
+            Cv2.CvtColor(res, mat2, ColorConversionCodes.RGB2GRAY);
+
+
+            Cv2.Threshold(mat2, mat2, 127, 255, ThresholdTypes.Binary);
+
+            var a = new Mat();
+            Cv2.FindContours(mat2,
+                out var cors,
+                a,
+                RetrievalModes.List,
+                ContourApproximationModes.ApproxSimple);
+            Cv2.ImShow("Hello", mat2);
+            Cv2.PutText(mat2, "123", new Point(3, 4), HersheyFonts.HersheySimplex, 1, Scalar.Red, 2);
+            Cv2.DrawContours(mat2, cors, -1, Scalar.Red);
+
+
+            var rect = cors[190].MinAreaRect();
+            PrintRotatedRects(new[] {rect});
+
+            Cv2.WaitKey();
+        }
     }
 }

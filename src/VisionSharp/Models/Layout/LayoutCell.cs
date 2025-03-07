@@ -6,24 +6,12 @@ namespace VisionSharp.Models.Layout
 {
     public class LayoutCell<T> : ObservableObject where T : Enum
     {
-        private int _column;
+        private int      _column;
         private Reliable _reliable;
-        private int _row;
-        private double _score;
+        private int      _row;
+        private double   _score;
         private double[] _scoreCategory;
-        private T _t;
-
-        /// <summary>
-        ///     布局预测每个位置的信息结构类
-        ///     初始非可靠
-        /// </summary>
-        public LayoutCell(int row, int column)
-        {
-            Row = row;
-            Column = column;
-            Reliable = Reliable.Unreliable;
-            Category = default;
-        }
+        private T        _t;
 
         public int Row
         {
@@ -76,6 +64,18 @@ namespace VisionSharp.Models.Layout
         }
 
         /// <summary>
+        ///     布局预测每个位置的信息结构类
+        ///     初始非可靠
+        /// </summary>
+        public LayoutCell(int row, int column)
+        {
+            Row      = row;
+            Column   = column;
+            Reliable = Reliable.Unreliable;
+            Category = default;
+        }
+
+        /// <summary>
         ///     更新状态，唯一入口可更新分数
         /// </summary>
         /// <param name="score"></param>
@@ -83,9 +83,9 @@ namespace VisionSharp.Models.Layout
         public void UpdateScore(double[] score, double threshold)
         {
             ScoreCategory = score.ToArray();
-            Score = ScoreCategory.Max();
-            Reliable = Score >= threshold ? Reliable.Reliable : Reliable.Unreliable;
-            Category = (T) Enum.ToObject(typeof(T), ScoreCategory.ToList().IndexOf(Score));
+            Score         = ScoreCategory.Max();
+            Reliable      = Score >= threshold ? Reliable.Reliable : Reliable.Unreliable;
+            Category      = (T) Enum.ToObject(typeof(T), ScoreCategory.ToList().IndexOf(Score));
         }
 
         /// <summary>
@@ -95,8 +95,8 @@ namespace VisionSharp.Models.Layout
         public T GetLayoutStatus()
         {
             return Reliable == Reliable.Unreliable
-                ? default
-                : Category;
+                       ? default
+                       : Category;
         }
 
         /// <summary>
@@ -139,8 +139,8 @@ namespace VisionSharp.Models.Layout
         public string ToValueStatus()
         {
             return Reliable == Reliable.Unreliable
-                ? "?"
-                : Convert.ToInt32(Category).ToString("D");
+                       ? "?"
+                       : Convert.ToInt32(Category).ToString("D");
         }
 
         /// <summary>
@@ -150,8 +150,8 @@ namespace VisionSharp.Models.Layout
         public string ToCategoryStatus()
         {
             return Reliable == Reliable.Unreliable
-                ? "Unreliable"
-                : Category.ToString();
+                       ? "Unreliable"
+                       : Category.ToString();
         }
     }
 }

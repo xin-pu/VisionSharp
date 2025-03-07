@@ -30,7 +30,7 @@ namespace UnitTest.ProcessorTest
         {
             var barcodeDetector = new BarcodeDetector();
             var mat = Cv2.ImRead(
-                @"F:\QR\JPEGImages\2127267576.jpg");
+                @"E:\OneDriver Core\OneDrive - Coherent Corporation\Documents\ShareX\Screenshots\2023-12\OUTLOOK_c0OEMa3p2K.png");
             mat.Should().NotBeNull();
             var res = barcodeDetector.Call(mat);
             PrintObject(res);

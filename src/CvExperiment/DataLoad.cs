@@ -25,7 +25,7 @@ namespace CvExperiment
         public void Run()
         {
             /// 转换图像格式
-            ChangeImagePNG2BMP(@"F:\COC Tray\Union UnloadTray\Images");
+            ChangeImagePNG2BMP(@"F:\COC Tray\New 2024\unloading");
         }
 
         [Fact]
@@ -57,13 +57,13 @@ namespace CvExperiment
         [Fact]
         public void RenameFiles()
         {
-            var trainfolder = @"F:\CoolingMud\Images";
+            var trainfolder = @"F:\COC Tray\New 2024\unloading";
             var files = Directory.GetFiles(trainfolder, "*.png").ToList();
             var i = 0;
             files.ForEach(f =>
             {
                 i++;
-                var newname = f.Replace(new FileInfo(f).Name, $"{i:D5}.bmp");
+                var newname = f.Replace(new FileInfo(f).Name, $"5_{i:D5}.png");
                 File.Copy(f, newname);
             });
         }
@@ -77,9 +77,33 @@ namespace CvExperiment
             files.ForEach(f =>
             {
                 i++;
+
                 var res = CVT(f.FullName);
                 using var sw = new StreamWriter(f.FullName, false);
                 sw.Write(res);
+            });
+        }
+
+        [Fact]
+        public void CheckAnnFiles()
+        {
+            var trainfolder = @"F:\COC Tray\New 2024\unloading\Annotations";
+            var files = new DirectoryInfo(trainfolder).GetFiles("*.txt").ToList();
+            var i = 0;
+            files.ForEach(f =>
+            {
+                i++;
+
+
+                using var sw = new StreamReader(f.FullName);
+                var all = sw.ReadToEnd();
+                if (all.Contains("?"))
+                {
+                    PrintObject(f.Name);
+                }
+
+                var d = all.Replace("\r\n", ",");
+                PrintObject($"{f.Name}\t{d.Length}");
             });
         }
 
