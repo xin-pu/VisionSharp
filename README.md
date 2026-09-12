@@ -4,7 +4,7 @@
 
 ## 构建与依赖
 
-- 目标框架：net48 / net10.0（SDK 风式项目，`dotnet build src/VisionSharp/VisionSharp.csproj`）
+- 目标框架：net48 / net10.0-windows（SDK 风式项目，`dotnet build src/VisionSharp.sln`）
 - 主要依赖：OpenCvSharp4、Numpy（**需要本机安装 Python 运行时**，用于 YOLO7 解码）、CommunityToolkit.Mvvm、ZXing.Net
 - 测试：`dotnet test src/UnitTest/UnitTest.csproj`（依赖本机模型与图像的测试需要本地资产）
 

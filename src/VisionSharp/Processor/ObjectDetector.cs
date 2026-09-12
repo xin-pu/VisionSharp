@@ -21,12 +21,12 @@ namespace VisionSharp.Processor
         /// <summary>
         ///     预测网络，不需要观测
         /// </summary>
-        public Net Net { internal set; get; }
+        public Net Net { internal set; get; } = null!;
 
         /// <summary>
         ///     用于标记分类的颜色字体
         /// </summary>
-        internal Dictionary<T, Scalar> Colors { set; get; }
+        internal Dictionary<T, Scalar> Colors { set; get; } = null!;
 
         [Category("Option")]
         public float Confidence

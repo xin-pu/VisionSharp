@@ -5,7 +5,7 @@ namespace VisionSharp.Models.Sudoku
 {
     public class Sudoku : ObservableObject
     {
-        private List<SudokuCell> _cellList;
+        private List<SudokuCell> _cellList = null!;
 
         /// <summary>
         ///     九宫数独题

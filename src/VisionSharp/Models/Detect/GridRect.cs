@@ -27,7 +27,7 @@ namespace VisionSharp.Models.Detect
 
         public int DutyCount { set; get; }
 
-        public List<RotatedRect> DutyRect { set; get; }
+        public List<RotatedRect> DutyRect { set; get; } = null!;
 
         public override string ToString()
         {

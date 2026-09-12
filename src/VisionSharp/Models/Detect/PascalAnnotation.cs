@@ -20,15 +20,15 @@ namespace VisionSharp.Models.Detect
         }
 
 
-        public string Folder { set; get; }
+        public string Folder { set; get; } = null!;
 
-        public string FileName { set; get; }
+        public string FileName { set; get; } = null!;
 
         public string FullPath => Path.Combine(Folder, FileName);
 
         public Size Size { set; get; }
 
-        public List<ObjRect<T>> ObjectInfos { set; get; }
+        public List<ObjRect<T>> ObjectInfos { set; get; } = null!;
 
         public void Dispose()
         {
@@ -78,7 +78,7 @@ namespace VisionSharp.Models.Detect
                         var xmax = d.SelectSingleNode(@"bndbox/xmax")?.InnerText;
                         var ymax = d.SelectSingleNode(@"bndbox/ymax")?.InnerText;
 
-                        var cate = (T) Enum.Parse(typeof(T), name);
+                        var cate = (T) Enum.Parse(typeof(T), name!);
                         var ptopleft = new Point(int.Parse(xmin!), int.Parse(ymin!));
                         var size = new Size(int.Parse(xmax!) - int.Parse(xmin!), int.Parse(ymax!) - int.Parse(ymin!));
                         var rect = new Rect(ptopleft, size);

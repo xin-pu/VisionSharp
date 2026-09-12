@@ -6,7 +6,7 @@ namespace VisionSharp.Models.Base
 {
     public class CvTransform : ObservableObject
     {
-        private List<CvMatCell> _arrayCells;
+        private List<CvMatCell> _arrayCells = null!;
 
         /// <summary>
         ///     可观测的矩阵

@@ -7,9 +7,9 @@ namespace VisionSharp.Processor.ObjectDetector
 {
     public abstract class ObjDetYolo<T> : ObjectDetector<T> where T : Enum
     {
-        private string _configFile;
+        private string _configFile = null!;
         private Size _inputPattern;
-        private string _modelWeights;
+        private string _modelWeights = null!;
 
         /// <summary>
         ///     基于Yolo的目标检测器

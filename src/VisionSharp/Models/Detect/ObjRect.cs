@@ -6,7 +6,7 @@ namespace VisionSharp.Models.Detect
 {
     public class ObjRect<T> : CvRect where T : Enum
     {
-        private T _category;
+        private T _category = default!;
 
         private float _categoryConfidence;
         private float _objectConfidence;

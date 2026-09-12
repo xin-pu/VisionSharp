@@ -8,7 +8,7 @@ namespace VisionSharp.Models.Layout
     {
         private LayoutCell<T>[,] _cellMatrix;
         private int _column;
-        private List<LayoutCell<T>> _layoutCells;
+        private List<LayoutCell<T>> _layoutCells = null!;
         private int _row;
         private double _scoreThreshold;
 
@@ -223,7 +223,7 @@ namespace VisionSharp.Models.Layout
 
         #region 比较器
 
-        public bool Equals(Layout<T> other)
+        public bool Equals(Layout<T>? other)
         {
             if (ReferenceEquals(this, other))
             {

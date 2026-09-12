@@ -21,7 +21,7 @@ namespace VisionSharp.Calibration
         }
 
 
-        public Mat Model { set; get; }
+        public Mat Model { set; get; } = null!;
 
         public Evaluate Eva { set; get; }
 

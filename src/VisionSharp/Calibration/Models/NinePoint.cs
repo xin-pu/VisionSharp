@@ -117,8 +117,8 @@ namespace VisionSharp.Calibration
             Point2d cameraCoord)
         {
             var b = CvCvt.CvtToMat(new[] {cameraCoord}).Transpose();
-            var xr = transform[new Range(0, 2), new Range(0, 2)];
-            var xt = transform[new Range(0, 2), new Range(2, 3)];
+            var xr = transform[new OpenCvSharp.Range(0, 2), new OpenCvSharp.Range(0, 2)];
+            var xt = transform[new OpenCvSharp.Range(0, 2), new OpenCvSharp.Range(2, 3)];
 
             var d = (b - xt).ToMat();
 

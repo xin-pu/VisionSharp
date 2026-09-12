@@ -11,7 +11,7 @@ namespace VisionSharp.Models.Detect
     public class ObjRotatedrect<T> : CvRotatedRect where T : Enum
     {
         private double _angleFix;
-        private T _category;
+        private T _category = default!;
 
         private float _categoryConfidence;
         private float _objectConfidence;

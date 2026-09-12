@@ -22,17 +22,17 @@ namespace UnitTest
             var obj = JsonConvert.DeserializeObject(stringReader.ReadToEnd()) as JObject;
 
             var str = new StringBuilder();
-            str.Append(obj?["imagePath"].Value<string>().Replace("./", imageFolder));
+            str.Append(obj?["imagePath"]!.Value<string>()!.Replace("./", imageFolder));
             str.Append(" ");
-            var shapes = obj["shapes"];
+            var shapes = obj!["shapes"]!;
             foreach (var jToken in shapes)
             {
                 var a = jToken["points"];
-                var dd = a?.ToArray();
-                var x1 = dd[0][0].Value<double>();
-                var y1 = dd[0][1].Value<double>();
-                var x2 = dd[1][0].Value<double>();
-                var y2 = dd[1][1].Value<double>();
+                var dd = a?.ToArray()!;
+                var x1 = dd![0]![0]!.Value<double>();
+                var y1 = dd![0]![1]!.Value<double>();
+                var x2 = dd![1]![0]!.Value<double>();
+                var y2 = dd![1]![1]!.Value<double>();
                 var aray = new[]
                 {
                     (int) Math.Round(x1, MidpointRounding.AwayFromZero),

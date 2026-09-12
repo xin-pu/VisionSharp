@@ -10,7 +10,7 @@ namespace VisionSharp.Processor.LayoutDetectors
         public LayoutDlDetector(string modelFile, LayoutArgument layoutArgument)
             : base(layoutArgument)
         {
-            Net = Net.ReadNetFromONNX(modelFile);
+            Net = Net.ReadNetFromONNX(modelFile)!;
         }
 
 
@@ -101,7 +101,7 @@ namespace VisionSharp.Processor.LayoutDetectors
             if (disposing)
             {
                 Net?.Dispose();
-                Net = null;
+                Net = null!;
             }
 
             base.Dispose(disposing);

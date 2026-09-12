@@ -14,8 +14,8 @@ namespace VisionSharp.Processor
     public abstract class Processor<T1, T2> : ObservableObject, IDisposable
     {
         private bool _enableSaveMat = false;
-        private string _fileName;
-        private string _name;
+        private string _fileName = null!;
+        private string _name = null!;
         private Scalar _penColor = Scalar.OrangeRed;
 
         protected Processor(string name)
@@ -255,9 +255,9 @@ namespace VisionSharp.Processor
     public class RichInfo<T> : ObservableObject, IDisposable
     {
         private bool _confidence;
-        private string _errorMessage;
-        private Mat _outMat;
-        private T _result;
+        private string _errorMessage = null!;
+        private Mat _outMat = null!;
+        private T _result = default!;
 
         /// <summary>
         ///     正常时的富信息

@@ -10,8 +10,8 @@ namespace VisionSharp.Models.Layout
         private Reliable _reliable;
         private int      _row;
         private double   _score;
-        private double[] _scoreCategory;
-        private T        _t;
+        private double[] _scoreCategory = null!;
+        private T        _t = default!;
 
         public int Row
         {
@@ -72,7 +72,7 @@ namespace VisionSharp.Models.Layout
             Row      = row;
             Column   = column;
             Reliable = Reliable.Unreliable;
-            Category = default;
+            Category = default!;
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace VisionSharp.Models.Layout
         public T GetLayoutStatus()
         {
             return Reliable == Reliable.Unreliable
-                       ? default
+                       ? default!
                        : Category;
         }
 

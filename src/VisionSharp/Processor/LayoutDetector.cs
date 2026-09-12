@@ -9,7 +9,7 @@ namespace VisionSharp.Processor
 {
     public abstract class LayoutDetector<T> : FeatureExtractor<Layout<T>> where T : Enum
     {
-        private LayoutArgument _layoutArgument;
+        private LayoutArgument _layoutArgument = null!;
 
         internal Scalar UnReliableScalar = new(0, 106, 255);
 

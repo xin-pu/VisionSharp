@@ -1,4 +1,5 @@
-﻿using OpenCvSharp;
+﻿using System.Drawing;
+using OpenCvSharp;
 using VisionSharp.Utils;
 using ZXing;
 
@@ -13,7 +14,7 @@ namespace VisionSharp.Processor.TextDetectors
         internal override string Process(Mat input)
         {
             var bitmap = CvCvt.CvtToBitmap(input);
-            var reader = new BarcodeReader();
+            var reader = new ZXing.Windows.Compatibility.BarcodeReader();
             var result = reader.Decode(bitmap);
             return result != null ? result.Text : string.Empty;
         }

@@ -66,7 +66,7 @@ namespace VisionSharp.Processor.ObjectDetector
             using (inputBlob)
             {
                 Net.SetInput(inputBlob);
-                var dd = net.GetUnconnectedOutLayersNames();
+                var dd = net.GetUnconnectedOutLayersNames().Select(s => s!).ToArray();
                 var mats = new Mat[] {new(), new(), new()};
                 Net.Forward(mats, dd);
                 return mats;

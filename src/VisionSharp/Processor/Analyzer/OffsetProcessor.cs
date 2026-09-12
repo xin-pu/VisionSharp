@@ -14,11 +14,11 @@ namespace VisionSharp.Processor.Analyzer
         {
         }
 
-        public Point2d[] OriginalFeatures { set; get; }
+        public Point2d[] OriginalFeatures { set; get; } = null!;
 
-        public Point2d[] MovedFeatures { set; get; }
+        public Point2d[] MovedFeatures { set; get; } = null!;
 
-        public Point2d[] AdjustFeatures { set; get; }
+        public Point2d[] AdjustFeatures { set; get; } = null!;
 
         public double Threshold { set; get; } = 5;
 

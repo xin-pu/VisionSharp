@@ -29,7 +29,7 @@ namespace VisionSharp.Processor.ObjectDetector
             YoloModel = YoloModel.Onnx;
 
             ModelWeights = weightOnnx;
-            ConfigFile = null;
+            ConfigFile = null!;
             Colors = CvCvt.GetColorDict<T>();
             Net = InitialNet();
         }

@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
-using System.Windows.Media.Imaging;
 using Numpy;
 using OpenCvSharp;
 using Point = OpenCvSharp.Point;
@@ -285,19 +284,6 @@ namespace VisionSharp.Utils
             return ToBitmap(src, pf);
         }
 
-        public static BitmapFrame CvtToBitmapSource(Mat src)
-        {
-            var bitmap = CvtToBitmap(src);
-            var bitmapImage = new BitmapImage();
-            using var ms = new MemoryStream();
-            bitmap.Save(ms, ImageFormat.Bmp);
-            bitmapImage.BeginInit();
-            bitmapImage.StreamSource = ms;
-            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-            bitmapImage.EndInit();
-            bitmapImage.Freeze();
-            return BitmapFrame.Create(bitmapImage);
-        }
 
         /// <summary>
         ///     Converts Mat to System.Drawing.Bitmap
@@ -371,7 +357,7 @@ namespace VisionSharp.Utils
             var w = src.Width;
             var h = src.Height;
             var rect = new Rectangle(0, 0, w, h);
-            BitmapData bd = null;
+            BitmapData? bd = null;
 
             var submat = src.IsSubmatrix();
             var continuous = src.IsContinuous();
@@ -385,7 +371,7 @@ namespace VisionSharp.Utils
                 var pDst = (byte*) bd.Scan0.ToPointer();
                 var ch = src.Channels();
                 var srcStep = (int) src.Step();
-                var dstStep = (src.Width * ch + 3) / 4 * 4; // 4の倍数に揃える
+                var dstStep = (src.Width * ch + 3) / 4 * 4; // 对齐到 4 字节倍数
                 var stride = bd.Stride;
 
                 switch (pf)
