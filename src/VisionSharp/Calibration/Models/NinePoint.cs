@@ -91,7 +91,13 @@ namespace VisionSharp.Calibration
                 throw new InvalidDataException();
             }
 
-            xyzPoint3ds.ToList().ForEach(a => a.Z = 1);
+            // Point3d 是结构体，必须按索引原地写入，ToLlist().ForEach 只会修改副本
+            for (var i = 0; i < xyzPoint3ds.Length; i++)
+            {
+                var p = xyzPoint3ds[i];
+                p.Z = 1;
+                xyzPoint3ds[i] = p;
+            }
             var dW = CvCvt.CvtToMat(xyzPoint3ds);
             var dC = CvCvt.CvtToMat(uvPoints);
             var modelRes = new Mat();
@@ -178,7 +184,13 @@ namespace VisionSharp.Calibration
                 throw new ArgumentException("Mat Size it not Correct for Current Model");
             }
 
-            wordCoord.ToList().ForEach(a => a.Z = 1);
+            // Point3d 是结构体，必须按索引原地写入，ToList().ForEach 只会修改副本
+            for (var i = 0; i < wordCoord.Length; i++)
+            {
+                var p = wordCoord[i];
+                p.Z = 1;
+                wordCoord[i] = p;
+            }
             var world = CvCvt.CvtToMat(wordCoord).Transpose();
             var uv = (transform * world).ToMat().Transpose();
             var matOut = new Mat<double>();

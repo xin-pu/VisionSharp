@@ -69,8 +69,9 @@ namespace VisionSharp.Processor
                         ? Colors[cell.Category]
                         : UnReliableScalar;
 
-                    var cate = $"{cell.Category}".Substring(0, 3);
-                    var reli = $"{cell.Reliable}".Substring(0, 3);
+                    // 枚举名短于 3 个字符时 Substring 会抛异常，安全截断
+                    var cate = $"{cell.Category}".PadRight(3).Substring(0, 3).TrimEnd();
+                    var reli = $"{cell.Reliable}".PadRight(3).Substring(0, 3).TrimEnd();
                     var info = cell.Reliable == Reliable.Reliable
                         ? $"{cate}:{cell.GetScore():F3}"
                         : $"{reli}:{cell.GetScore():F3}";

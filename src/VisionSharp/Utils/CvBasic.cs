@@ -91,7 +91,7 @@ namespace VisionSharp.Utils
         public static Size Div(Size a, Size b)
         {
             var width = a.Width / b.Width;
-            var height = a.Height / b.Width;
+            var height = a.Height / b.Height;
             return new Size(width, height);
         }
 

@@ -74,9 +74,7 @@ namespace VisionSharp.Processor.ObjectDetector
             }
 
 
-            var net = ConfigFile == null
-                ? CvDnn.ReadNetFromOnnx(ModelWeights)
-                : CvDnn.ReadNetFromDarknet(ConfigFile, ModelWeights);
+            var net = CvDnn.ReadNetFromDarknet(ConfigFile, ModelWeights);
 
             return net;
         }
@@ -107,10 +105,13 @@ namespace VisionSharp.Processor.ObjectDetector
                 true,
                 false);
 
-            Net.SetInput(inputBlob, "data");
-            var mats = new Mat[] {new(), new(), new()};
-            Net.Forward(mats, new[] {"yolo_106", "yolo_94", "yolo_82"});
-            return mats;
+            using (inputBlob)
+            {
+                Net.SetInput(inputBlob, "data");
+                var mats = new Mat[] {new(), new(), new()};
+                Net.Forward(mats, new[] {"yolo_106", "yolo_94", "yolo_82"});
+                return mats;
+            }
         }
 
 
@@ -126,7 +127,11 @@ namespace VisionSharp.Processor.ObjectDetector
 
             foreach (var mat in mats)
             {
-                mat[new Rect(4, 0, 1, mat.Height)].GetArray(out float[] confidence);
+                float[] confidence;
+                using (var confMat = mat[new Rect(4, 0, 1, mat.Height)])
+                {
+                    confMat.GetArray(out confidence);
+                }
 
                 var conList = confidence
                     .Select((c, i) => (c, i))
@@ -134,9 +139,14 @@ namespace VisionSharp.Processor.ObjectDetector
                     .Select(p => p.i)
                     .ToList();
 
-                conList.AsParallel().ToList().ForEach(i =>
+                foreach (var i in conList)
                 {
-                    var _ = mat[new Rect(0, i, mat.Width, 1)].GetArray(out float[] rowdata);
+                    float[] rowdata;
+                    using (var rowMat = mat[new Rect(0, i, mat.Width, 1)])
+                    {
+                        rowMat.GetArray(out rowdata);
+                    }
+
                     var rowInfo = rowdata.ToList();
 
                     var classify = rowInfo.Skip(5).ToList();
@@ -146,7 +156,7 @@ namespace VisionSharp.Processor.ObjectDetector
 
                     if (classProb < Confidence)
                     {
-                        return;
+                        continue;
                     }
 
                     var centerX = rowInfo[0] * size.Width;
@@ -165,7 +175,7 @@ namespace VisionSharp.Processor.ObjectDetector
                         ObjectConfidence = classProb
                     };
                     list.Add(detectRectObject);
-                });
+                }
             }
 
 
