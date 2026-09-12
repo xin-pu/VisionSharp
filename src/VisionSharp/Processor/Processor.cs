@@ -11,10 +11,10 @@ namespace VisionSharp.Processor
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
-    public abstract class Processor<T1, T2> : ObservableObject
+    public abstract class Processor<T1, T2> : ObservableObject, IDisposable
     {
         private bool _enableDrawInfo = true;
-        private bool _enableSaveMat = true;
+        private bool _enableSaveMat = false;
         private string _fileName;
         private string _name;
         private Scalar _pencolor = Scalar.OrangeRed;
@@ -60,32 +60,35 @@ namespace VisionSharp.Processor
         /// <summary>
         ///     执行处理器,并在传入MAT上绘制相关处理结果
         ///     绘制结果包含在返回的RichInfo中
+        ///     异常直接抛出，不再吞入RichInfo
         /// </summary>
         /// <param name="input">输入对象</param>
         /// <param name="mat">传入图像</param>
-        /// <param name="saveName">是否按</param>
+        /// <param name="saveName">保存文件名（EnableSaveMat 为 true 时生效）</param>
         /// <returns></returns>
         public virtual RichInfo<T2> Call(T1 input, Mat mat, string saveName = "")
         {
+            if (input == null) throw new ArgumentNullException(nameof(input));
+            if (mat == null) throw new ArgumentNullException(nameof(mat));
+
+            // Step 1 执行处理
+            var result = Process(input);
+
+            // Step 2 分析结果
+            var confi = GetReliability(result);
+
+            // Step 3 绘制输出图像（灰度图先转 BGR，转换产生的中间 Mat 用完即释放）
+            var colorMat = mat.Type() == MatType.CV_8UC3
+                ? null
+                : mat.CvtColor(ColorConversionCodes.GRAY2BGR);
             try
             {
-                /// Step 1 执行处理
-                var result = Process(input);
-
-                /// Step 2 分析结果
-                var confi = GetReliability(result);
-
-                /// Draw 3 绘制输出图像
-                var colorMat = mat.Type() == MatType.CV_8UC3
-                    ? mat
-                    : mat.CvtColor(ColorConversionCodes.GRAY2BGR);
-                var matOut = DrawMat(colorMat, result, confi, saveName);
-
+                var matOut = DrawMat(colorMat ?? mat, result, confi, saveName);
                 return new RichInfo<T2>(result, confi, matOut);
             }
-            catch (Exception ex)
+            finally
             {
-                return new RichInfo<T2>(ex.Message);
+                colorMat?.Dispose();
             }
         }
 
@@ -102,35 +105,24 @@ namespace VisionSharp.Processor
 
         internal Mat DrawMat(Mat mat, T2 result, bool reliability, string savename)
         {
-            if (!Directory.Exists(OutPutDire))
+            var canvas = mat.Clone();
+            var drawn = Draw(canvas, result, reliability);
+            if (!ReferenceEquals(drawn, canvas))
+            {
+                // Draw 返回了新 Mat（如 ImageProcessor 直接返回处理结果），释放画布
+                canvas.Dispose();
+            }
+
+            if (EnableSaveMat)
             {
                 Directory.CreateDirectory(OutPutDire);
+                FileName = savename == ""
+                    ? Path.Combine(OutPutDire, $"{DateTime.Now:MMdd HH-mm-ss} {DateTime.Now.Millisecond:D3}.png")
+                    : Path.Combine(OutPutDire, $"{savename}.png");
+                drawn.SaveImage(FileName);
             }
 
-            try
-            {
-                mat = Draw(mat.Clone(), result, reliability);
-
-                if (EnableSaveMat)
-                {
-                    if (!Directory.Exists(OutPutDire))
-                    {
-                        Directory.CreateDirectory(OutPutDire);
-                    }
-
-                    FileName = savename == ""
-                        ? Path.Combine(OutPutDire, $"{DateTime.Now:MMdd HH-mm-ss} {DateTime.Now.Millisecond:D3}.png")
-                        : Path.Combine(OutPutDire, $"{savename}.png");
-                    mat.SaveImage(FileName);
-                    return mat;
-                }
-
-                return mat;
-            }
-            catch (Exception)
-            {
-                return mat;
-            }
+            return drawn;
         }
 
 
@@ -165,6 +157,19 @@ namespace VisionSharp.Processor
             var str = new StringBuilder();
             str.AppendLine($"Processor:{Name}");
             return str.ToString();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        ///     释放处理器持有的非托管资源（如 DNN 网络）
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
         }
 
 
@@ -253,7 +258,7 @@ namespace VisionSharp.Processor
     ///     Process 返回的富信息
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class RichInfo<T> : ObservableObject
+    public class RichInfo<T> : ObservableObject, IDisposable
     {
         private bool _confidence;
         private string _errorMessage;
@@ -322,6 +327,16 @@ namespace VisionSharp.Processor
 
             strBuild.AppendLine(new string('-', 30));
             return strBuild.ToString();
+        }
+
+        /// <summary>
+        ///     OutMat 由 RichInfo 持有，用完调用 Dispose 释放
+        /// </summary>
+        public void Dispose()
+        {
+            OutMat?.Dispose();
+            OutMat = null!;
+            GC.SuppressFinalize(this);
         }
     }
 }
