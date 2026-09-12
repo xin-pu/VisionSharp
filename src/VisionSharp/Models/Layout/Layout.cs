@@ -6,6 +6,7 @@ namespace VisionSharp.Models.Layout
 {
     public class Layout<T> : ObservableObject, IEquatable<Layout<T>> where T : Enum
     {
+        private LayoutCell<T>[,] _cellMatrix;
         private int _column;
         private List<LayoutCell<T>> _layoutCells;
         private int _row;
@@ -24,10 +25,13 @@ namespace VisionSharp.Models.Layout
             Column = column;
             ScoreThreshold = scoreThreshold;
             LayoutCells = new List<LayoutCell<T>>();
+            _cellMatrix = new LayoutCell<T>[row, column];
             foreach (var r in Enumerable.Range(0, row))
             foreach (var c in Enumerable.Range(0, column))
             {
-                LayoutCells.Add(new LayoutCell<T>(r, c));
+                var cell = new LayoutCell<T>(r, c);
+                LayoutCells.Add(cell);
+                _cellMatrix[r, c] = cell;
             }
         }
 
@@ -78,8 +82,7 @@ namespace VisionSharp.Models.Layout
         /// <param name="row"></param>
         /// <param name="column"></param>
         /// <returns></returns>
-        public LayoutCell<T> this[int row, int column] =>
-            LayoutCells.FirstOrDefault(a => a.Row == row && a.Column == column);
+        public LayoutCell<T> this[int row, int column] => _cellMatrix[row, column];
 
         /// <summary>
         ///     获取布局中一行单元
@@ -87,7 +90,7 @@ namespace VisionSharp.Models.Layout
         /// <param name="row"></param>
         /// <returns></returns>
         public LayoutCell<T>[] this[int row] =>
-            LayoutCells.Where(a => a.Row == row).OrderBy(a => a.Column).ToArray();
+            Enumerable.Range(0, Column).Select(c => _cellMatrix[row, c]).ToArray();
 
         /// <summary>
         ///     判断整个预测结果是否可靠
@@ -176,7 +179,6 @@ namespace VisionSharp.Models.Layout
         ///     +,-,?标记
         /// </summary>
         /// <returns></returns>
-        /// <remarks>
         public override string ToString()
         {
             var str = new StringBuilder();
@@ -247,7 +249,14 @@ namespace VisionSharp.Models.Layout
 
         public int GetHashCode(Layout<T> obj)
         {
-            return HashCode.Combine(obj._column, obj._layoutCells, obj._row, obj._scoreThreshold);
+            unchecked
+            {
+                var hash = 17;
+                hash = hash * 31 + obj._row;
+                hash = hash * 31 + obj._column;
+                hash = hash * 31 + obj._scoreThreshold.GetHashCode();
+                return hash;
+            }
         }
 
         #endregion

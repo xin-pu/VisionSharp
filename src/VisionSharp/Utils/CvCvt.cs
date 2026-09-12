@@ -59,41 +59,6 @@ namespace VisionSharp.Utils
         #endregion
 
 
-        #region Convert bool[,]
-
-        public static string CvtToStr(bool[,] mat)
-        {
-            var row = mat.GetLength(0);
-            var column = mat.GetLength(1);
-            var strBuild = new StringBuilder();
-            Enumerable.Range(0, row)
-                .ToList()
-                .ForEach(r =>
-                {
-                    var line = Enumerable.Range(0, column)
-                        .ToList()
-                        .Select(c => mat[r, c] ? 1 : 0);
-                    strBuild.AppendLine(string.Join(",", line));
-                });
-            return strBuild.ToString();
-        }
-
-
-        public static Mat CvtToMat(bool[,] input)
-        {
-            var row = input.GetLength(0);
-            var column = input.GetLength(1);
-            var array = new double[row, column];
-            Enumerable.Range(0, row)
-                .ToList()
-                .ForEach(r => Enumerable.Range(0, column)
-                    .ToList()
-                    .ForEach(c => array[r, c] = input[r, c] ? 1 : 0));
-            return Mat.FromArray(array);
-        }
-
-        #endregion
-
         #region Conver From PointXd to PointXf
 
         public static Point2f CvtToPoint2F(Point point)

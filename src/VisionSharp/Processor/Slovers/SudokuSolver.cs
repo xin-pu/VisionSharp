@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using VisionSharp.Models.Sudoku;
+﻿using VisionSharp.Models.Sudoku;
 
 namespace VisionSharp.Processor.Slovers
 {
@@ -25,7 +24,7 @@ namespace VisionSharp.Processor.Slovers
                     var cell = input[i, j];
                     if (cell.Number != 0)
                     {
-                        var num = cell.Number - 1; // 这里是字符的减法
+                        var num = cell.Number - 1; // 数字 1-9 转为下标 0-8
                         row[i, num] = true;
                         col[j, num] = true;
                         block[i / 3 * 3 + j / 3, num] = true;
@@ -75,7 +74,6 @@ namespace VisionSharp.Processor.Slovers
                 var blockIndex = i / 3 * 3 + j / 3;
                 if (!row[i, num] && !col[j, num] && !block[blockIndex, num])
                 {
-                    // 注意，前面如果没有加char那么是有问题的就是‘1’转化为ASCII码和num相加了
                     board[i, j].Number = (byte) (1 + num);
                     row[i, num] = true;
                     col[j, num] = true;
@@ -99,18 +97,17 @@ namespace VisionSharp.Processor.Slovers
         #region Expand
 
         /// <summary>
-        ///     TOdo
+        ///     校验解题结果：用题目求解后与给定答案逐格比对
         /// </summary>
-        /// <param name="subject"></param>
-        /// <param name="answer"></param>
-        /// <returns></returns>
+        /// <param name="subject">数独题目字符串（81 位，0 代表未知）</param>
+        /// <param name="answer">标准答案字符串（81 位）</param>
+        /// <returns>解题结果与答案完全一致时为 true</returns>
         public bool Verify(string subject, string answer)
         {
-            var sub = new Sudoku(subject);
-            var answerPred = Call(sub).Answer;
+            var sudoku = new Sudoku(subject);
+            var answerPred = Call(sudoku).Answer;
             var answerTrue = Sudoku.CvtSubject(answer);
-            var res = answerTrue.Should().BeEquivalentTo(answerPred);
-            return true;
+            return answerPred.Cast<byte>().SequenceEqual(answerTrue.Cast<byte>());
         }
 
         #endregion

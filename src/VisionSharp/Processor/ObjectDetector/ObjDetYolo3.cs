@@ -46,64 +46,19 @@ namespace VisionSharp.Processor.ObjectDetector
         {
             var net = YoloModel switch
             {
-                YoloModel.DarkNet => InitialDarkNet(),
-                YoloModel.Onnx => InitialOnnx(),
-                _ => throw new Exception()
+                YoloModel.DarkNet => LoadDarkNetNet(ModelWeights, ConfigFile),
+                YoloModel.Onnx => LoadOnnxNet(ModelWeights),
+                _ => throw new ArgumentOutOfRangeException(nameof(YoloModel))
             };
-            if (net == null)
-            {
-                throw new NullReferenceException("Can't Load Net");
-            }
 
             net.SetPreferableBackend(Backend.DEFAULT);
             net.SetPreferableTarget(Target.CPU);
             return net;
         }
 
-
-        internal Net InitialDarkNet()
-        {
-            if (ModelWeights == null || ConfigFile == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (File.Exists(ModelWeights) == false || File.Exists(ConfigFile) == false)
-            {
-                throw new FileNotFoundException();
-            }
-
-
-            var net = CvDnn.ReadNetFromDarknet(ConfigFile, ModelWeights);
-
-            return net;
-        }
-
-        internal Net InitialOnnx()
-        {
-            if (ModelWeights == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (File.Exists(ModelWeights) == false)
-            {
-                throw new FileNotFoundException();
-            }
-
-            var net = CvDnn.ReadNetFromOnnx(ModelWeights);
-
-            return net;
-        }
-
         internal override Mat[] FrontNet(Net net, Mat mat)
         {
-            var inputBlob = CvDnn.BlobFromImage(mat,
-                1F / 255,
-                InputPattern,
-                new Scalar(0, 0, 0),
-                true,
-                false);
+            var inputBlob = CreateInputBlob(mat);
 
             using (inputBlob)
             {

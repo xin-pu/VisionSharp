@@ -13,7 +13,6 @@ namespace VisionSharp.Processor
     /// <typeparam name="T2"></typeparam>
     public abstract class Processor<T1, T2> : ObservableObject, IDisposable
     {
-        private bool _enableDrawInfo = true;
         private bool _enableSaveMat = false;
         private string _fileName;
         private string _name;
@@ -48,12 +47,6 @@ namespace VisionSharp.Processor
         {
             set => SetProperty(ref _enableSaveMat, value);
             get => _enableSaveMat;
-        }
-
-        public bool EnableDrawInfo
-        {
-            set => SetProperty(ref _enableDrawInfo, value);
-            get => _enableDrawInfo;
         }
 
 

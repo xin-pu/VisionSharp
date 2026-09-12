@@ -46,22 +46,7 @@ namespace VisionSharp.Processor.ObjectDetector
 
         internal sealed override Net InitialNet()
         {
-            if (ModelWeights == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (File.Exists(ModelWeights) == false)
-            {
-                throw new FileNotFoundException();
-            }
-
-
-            var darknet = CvDnn.ReadNetFromOnnx(ModelWeights);
-            if (darknet == null)
-            {
-                throw new NullReferenceException("Can't Load Net");
-            }
+            var darknet = LoadOnnxNet(ModelWeights);
 
             darknet.SetPreferableTarget(Target.CUDA);
             darknet.SetPreferableBackend(Backend.CUDA);
@@ -76,12 +61,7 @@ namespace VisionSharp.Processor.ObjectDetector
             // LetterBox.Process 内部会克隆输入，不修改调用方的 Mat
             using var matLetter = new LetterBox(InputPattern).Call(mat);
 
-            var inputBlob = CvDnn.BlobFromImage(matLetter,
-                1F / 255,
-                InputPattern,
-                new Scalar(0, 0, 0),
-                true,
-                false);
+            var inputBlob = CreateInputBlob(matLetter);
 
             using (inputBlob)
             {

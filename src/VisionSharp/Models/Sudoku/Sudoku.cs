@@ -10,22 +10,20 @@ namespace VisionSharp.Models.Sudoku
         /// <summary>
         ///     九宫数独题
         /// </summary>
-        /// <param name="subject">0,9, 0代表未知</param>
+        /// <param name="subject">9x9 的数字矩阵，0 代表未知</param>
         public Sudoku(byte[,] subject)
         {
-            Subject = subject;
-            CellList = new List<SudokuCell>();
-
-            if (RowCount != 9 && ColumnCount != 9)
+            if (subject.GetLength(0) != 9 || subject.GetLength(1) != 9)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Sudoku subject must be a 9x9 array", nameof(subject));
             }
 
+            Subject = subject;
             CellList = CvtToSudokuList(subject);
         }
 
         /// <summary>
-        ///     单行字符串,0代表位置
+        ///     单行字符串,0 代表未知
         /// </summary>
         /// <param name="subject"></param>
         public Sudoku(string subject)
