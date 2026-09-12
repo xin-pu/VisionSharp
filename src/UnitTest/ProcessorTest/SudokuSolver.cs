@@ -52,6 +52,8 @@ namespace UnitTest.ProcessorTest
             var solve = new SudokuSolver();
             var s = solve.Call(sudokuSubject);
             PrintObject(s);
+            s.Answer.Should().BeEquivalentTo(Sudoku.CvtSubject(
+                "534678912672195348198342567859761423426853791713924856961537284287419635345286179"));
         }
 
         [Fact]
@@ -76,7 +78,7 @@ namespace UnitTest.ProcessorTest
             var a = "298317645764285139153946278327168954981453726645792813539821467872634591416579382";
             var slove = new SudokuSolver();
             var res = slove.Verify(s, a);
-            PrintObject(res);
+            res.Should().BeTrue();
         }
     }
 }

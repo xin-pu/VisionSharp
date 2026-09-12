@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using OpenCvSharp;
 using VisionSharp.Processor.FeatureExtractors;
 using VisionSharp.Processor.TextDetectors;
@@ -18,18 +18,19 @@ namespace UnitTest.ProcessorTest
         public void TextDetectorTest()
         {
             var barcodeDetector = new BarcodeDetector();
-            var mat = Cv2.ImRead(@"..\..\..\..\testimages\barcode.png");
+            using var mat = Cv2.ImRead(TestImage("barcode.png"));
             mat.Should().NotBeNull();
-            var res = barcodeDetector.Call(mat, mat);
+            using var res = barcodeDetector.Call(mat, mat);
             PrintObject(res.Result);
             res.Confidence.Should().BeTrue();
         }
 
+        [Trait("Category", "RequiresLocalAssets")]
         [Fact]
         public void BarCodeTest()
         {
             var barcodeDetector = new BarcodeDetector();
-            var mat = Cv2.ImRead(
+            using var mat = Cv2.ImRead(
                 @"E:\OneDriver Core\OneDrive\Documents\ShareX\Screenshots\2023-12\OUTLOOK_c0OEMa3p2K.png");
             mat.Should().NotBeNull();
             var res = barcodeDetector.Call(mat);
@@ -38,23 +39,22 @@ namespace UnitTest.ProcessorTest
         }
 
         [Fact]
-        public void QrCodeCodeTest()
+        public void QrCodeTest()
         {
             var barcodeDetector = new BarcodeDetector();
-            var mat = Cv2.ImRead(@"..\..\..\..\testimages\qrcode.png");
+            using var mat = Cv2.ImRead(TestImage("qrcode.png"));
             mat.Should().NotBeNull();
             var res = barcodeDetector.Call(mat);
             PrintObject(res);
         }
 
+        [Trait("Category", "RequiresLocalAssets")]
         [Fact]
-        public void LRPDetectotTest()
+        public void DiameterDetectorTest()
         {
-            var image = Cv2.ImRead(@"D:\Download\MicrosoftTeams-image (2).png", ImreadModes.Unchanged);
-            var outMat = new DiameterDetector().Call(image);
-
-            Cv2.ImShow("d", outMat);
-            Cv2.WaitKey();
+            using var image = Cv2.ImRead(@"D:\Download\MicrosoftTeams-image (2).png", ImreadModes.Unchanged);
+            using var outMat = new DiameterDetector().Call(image);
+            PrintMatrix(outMat);
         }
     }
 }

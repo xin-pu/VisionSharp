@@ -7,6 +7,10 @@ using Xunit.Abstractions;
 
 namespace UnitTest
 {
+    /// <summary>
+    ///     依赖本机数据资产的实验性脚本集合，CI 中按 Category!=RequiresLocalAssets 过滤
+    /// </summary>
+    [Trait("Category", "RequiresLocalAssets")]
     public class Exp : AbstractTest
     {
         public Exp(ITestOutputHelper testOutputHelper)
@@ -81,7 +85,7 @@ namespace UnitTest
             Cv2.InRange(hsv, new Scalar(156, 43, 46), new Scalar(180, 255, 255), outmat1);
 
 
-            Cv2.ImWrite("test.jpg", outmat1);
+            Cv2.ImWrite(Path.Combine(Path.GetTempPath(), "exp-test.jpg"), outmat1);
             var element = Cv2.GetStructuringElement(
                 MorphShapes.Ellipse,
                 new Size(3, 3),
@@ -90,9 +94,6 @@ namespace UnitTest
             Cv2.MorphologyEx(outmat1, outmat1, MorphTypes.Close, element, new Point(-1, -1));
             Cv2.MorphologyEx(outmat1, outmat1, MorphTypes.Open, element, new Point(-1, -1));
 
-
-            Cv2.ImShow("ori", outmat1);
-            Cv2.WaitKey();
 
             var circleFinder = new CircleDetector
             {
@@ -107,8 +108,6 @@ namespace UnitTest
             };
             var final = circleFinder.Call(outmat1, image);
 
-            Cv2.ImShow("ori", final.OutMat);
-            Cv2.WaitKey();
         }
 
 
@@ -128,15 +127,12 @@ namespace UnitTest
                 a,
                 RetrievalModes.List,
                 ContourApproximationModes.ApproxSimple);
-            Cv2.ImShow("Hello", mat2);
             Cv2.PutText(mat2, "123", new Point(3, 4), HersheyFonts.HersheySimplex, 1, Scalar.Red, 2);
             Cv2.DrawContours(mat2, cors, -1, Scalar.Red);
 
 
             var rect = cors[190].MinAreaRect();
             PrintRotatedRects(new[] {rect});
-
-            Cv2.WaitKey();
         }
     }
 }

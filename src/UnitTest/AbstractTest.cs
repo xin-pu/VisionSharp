@@ -13,6 +13,25 @@ namespace UnitTest
             TestOutputHelper = testOutputHelper;
         }
 
+        /// <summary>
+        ///     解析仓库根目录 testimages 下的测试资产路径（与运行目录无关）
+        /// </summary>
+        public static string TestImage(string name)
+        {
+            var dir = new DirectoryInfo(AppContext.BaseDirectory);
+            while (dir != null && !Directory.Exists(Path.Combine(dir.FullName, "testimages")))
+            {
+                dir = dir.Parent;
+            }
+
+            if (dir == null)
+            {
+                throw new DirectoryNotFoundException("testimages directory not found upward from output path");
+            }
+
+            return Path.Combine(dir.FullName, "testimages", name);
+        }
+
         public virtual void PrintObject(object obj)
         {
             TestOutputHelper.WriteLine(obj.ToString());

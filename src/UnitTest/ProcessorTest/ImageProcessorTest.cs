@@ -1,4 +1,5 @@
-﻿using OpenCvSharp;
+using FluentAssertions;
+using OpenCvSharp;
 using VisionSharp.Processor.Transform;
 using Xunit.Abstractions;
 
@@ -24,19 +25,22 @@ namespace UnitTest.ProcessorTest
         [Fact]
         public void RotatedTestSave()
         {
-            var mat = Cv2.ImRead(@"..\..\..\..\testimages\barcode.png");
-            var rotated = new Rotator(RotateDeg.Deg90);
-            var r = rotated.Call(mat, mat);
+            using var mat = Cv2.ImRead(TestImage("barcode.png"));
+            var rotated = new Rotator(RotateDeg.Deg90)
+            {
+                EnableSaveMat = true
+            };
+            using var r = rotated.Call(mat, mat, "rotated");
+            r.OutMat.Should().NotBeNull();
         }
 
         [Fact]
         public void LetterBoxTest()
         {
-            var input = Cv2.ImRead(@"F:\QR\JPEGImages\0179583169.jpg");
+            using var input = Cv2.ImRead(TestImage("dog.png"));
             var letter = new LetterBox(new Size(640, 640));
-            var res = letter.Call(input);
-            Cv2.ImShow("Letter", res);
-            Cv2.WaitKey();
+            using var res = letter.Call(input);
+            res.Size().Should().Be(new Size(640, 640));
         }
     }
 }

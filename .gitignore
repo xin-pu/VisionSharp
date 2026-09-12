@@ -352,3 +352,6 @@ MigrationBackup/
 /testModels
 
 .zcode/
+
+# 大体积测试模型今后走 Git LFS 或 Release 资产，不再直接入库
+/testOnnx/*.onnx

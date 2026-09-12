@@ -1,3 +1,4 @@
+using FluentAssertions;
 ﻿using OpenCvSharp;
 using OpenCvSharp.Dnn;
 using VisionSharp.Models.Category;
@@ -6,28 +7,28 @@ using Xunit.Abstractions;
 
 namespace UnitTest.ProcessorTest.Yolo
 {
+    /// <summary>
+    ///     依赖本机模型与图像资产（F:/E: 盘），CI 中按 Category!=RequiresLocalAssets 过滤
+    /// </summary>
+    [Trait("Category", "RequiresLocalAssets")]
     public class Yolo7Test : AbstractTest
     {
+        internal string QRModelPath = @"F:\SaveModels\Yolo\qr\qr_best.onnx";
+        internal string VocModelPath = @"F:\SaveModels\Yolo\Voc\voc.onnx";
+        internal string RaccoonTinyModelPath = @"F:\SaveModels\Yolo\raccoon\raccoon.onnx";
+
         public Yolo7Test(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
         }
 
-        internal string QRModelPath = @"F:\SaveModels\Yolo\qr\qr_best.onnx";
-        internal string VocModelPath = @"F:\SaveModels\Yolo\Voc\voc.onnx";
-        internal string RaccoonTinyModelPath = @"F:\SaveModels\Yolo\raccoon\raccoon.onnx";
-
         [Fact]
-        public void ObjDetectortTest()
+        public void ObjDetectorTest()
         {
-            var net = CvDnn.ReadNetFromOnnx(QRModelPath);
+            using var net = CvDnn.ReadNetFromOnnx(QRModelPath);
+            net.Should().NotBeNull();
 
-            if (net == null)
-            {
-                return;
-            }
-
-            var layersNames = net.GetLayerNames();
+            var layersNames = net!.GetLayerNames();
 
             foreach (var layerName in layersNames)
             {
@@ -42,54 +43,45 @@ namespace UnitTest.ProcessorTest.Yolo
         }
 
         [Fact]
-        public void QrDetectortTest()
+        public void QrDetectorTest()
         {
-            var d = new ObjDetYolo7<QrCategory>(QRModelPath)
+            using var d = new ObjDetYolo7<QrCategory>(QRModelPath)
             {
                 Confidence = 0.6f,
                 IouThreshold = 0.5f
             };
             var image = @"F:\QR\JPEGImages\0179583169.jpg";
-            var mat = Cv2.ImRead(image);
-            var res = d.Call(mat, mat);
+            using var mat = Cv2.ImRead(image);
+            using var res = d.Call(mat, mat);
             PrintObject(res.Result);
-
-            Cv2.ImShow("result", res.OutMat);
-            Cv2.WaitKey();
         }
 
         [Fact]
-        public void RaccoonDetectortTest()
+        public void RaccoonDetectorTest()
         {
-            var d = new ObjDetYolo7<Raccoon>(@"E:\ObjectDetect\yolov7_pytorch\logs\best_epoch_weights.onnx")
+            using var d = new ObjDetYolo7<Raccoon>(@"E:\ObjectDetect\yolov7_pytorch\logs\best_epoch_weights.onnx")
             {
                 Confidence = 0.5f,
                 IouThreshold = 0.5f
             };
             var image = @"E:\OneDrive\Pictures\Saved Pictures\raccoon\Racccon (1).jpg";
-            var mat = Cv2.ImRead(image);
-            var res = d.Call(mat, mat);
+            using var mat = Cv2.ImRead(image);
+            using var res = d.Call(mat, mat);
             PrintObject(res.Result);
-
-            Cv2.ImShow("result", res.OutMat);
-            Cv2.WaitKey();
         }
 
         [Fact]
-        public void VocDetectortTest()
+        public void VocDetectorTest()
         {
-            var d = new ObjDetYolo7<VocCategory>(VocModelPath)
+            using var d = new ObjDetYolo7<VocCategory>(VocModelPath)
             {
                 Confidence = 0.4f,
                 IouThreshold = 0.5f
             };
             var image = @"E:\OneDrive\Pictures\Saved Pictures\voc\dog.jpg";
-            var mat = Cv2.ImRead(image);
-            var res = d.Call(mat, mat);
+            using var mat = Cv2.ImRead(image);
+            using var res = d.Call(mat, mat);
             PrintObject(res.Result);
-
-            Cv2.ImShow("result", res.OutMat);
-            Cv2.WaitKey();
         }
     }
 }

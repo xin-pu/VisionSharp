@@ -5,6 +5,10 @@ using Xunit.Abstractions;
 
 namespace UnitTest.ProcessorTest.Yolo
 {
+    /// <summary>
+    ///     依赖本机 DarkNet 模型资产（F: 盘），CI 中按 Category!=RequiresLocalAssets 过滤
+    /// </summary>
+    [Trait("Category", "RequiresLocalAssets")]
     public class Yolo3Test : AbstractTest
     {
         internal string CocoCfg = @"F:\SaveModels\DarkNet\yolov3_coco\yolov3.cfg";
@@ -21,26 +25,24 @@ namespace UnitTest.ProcessorTest.Yolo
         [Fact]
         public void CocoTest()
         {
-            var objDetector = new ObjDetYolo3<CocoCategory>(CocoWeights, CocoCfg);
+            using var objDetector = new ObjDetYolo3<CocoCategory>(CocoWeights, CocoCfg);
             PrintObject(objDetector);
 
 
-            var image = @"..\..\..\..\testimages\002341.jpg";
-            var mat = Cv2.ImRead(image);
-            var objRects = objDetector.Call(mat, mat);
+            var mat = Cv2.ImRead(TestImage("002341.jpg"));
+            using var objRects = objDetector.Call(mat, mat);
             PrintObject(objRects.Result);
         }
 
         [Fact]
         public void VocTest()
         {
-            var objDetector = new ObjDetYolo3<VocCategory>(VocWeights, VocCfg);
+            using var objDetector = new ObjDetYolo3<VocCategory>(VocWeights, VocCfg);
             PrintObject(objDetector);
 
 
-            var image = @"..\..\..\..\testimages\002341.jpg";
-            var mat = Cv2.ImRead(image);
-            var objRects = objDetector.Call(mat, mat);
+            var mat = Cv2.ImRead(TestImage("002341.jpg"));
+            using var objRects = objDetector.Call(mat, mat);
             PrintObject(objRects.Result);
         }
     }

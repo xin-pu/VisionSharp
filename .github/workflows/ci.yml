@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore src/VisionSharp.sln
+
+      - name: Build (warnings as errors)
+        run: dotnet build src/VisionSharp.sln --no-restore -warnaserror
+
+      - name: Test
+        run: >
+          dotnet test src/VisionSharp.sln --no-build
+          --filter "Category!=RequiresLocalAssets&Category!=RequiresPython&Category!=RequiresLargeAssets"

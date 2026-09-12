@@ -28,9 +28,9 @@ namespace UnitTest.ProcessorTest
         public void TestLayoutSave()
         {
             var layout = new Layout<ObjCategory>(3, 5);
-            layout.Save("save.txt");
-            var res = File.Exists("save.txt");
-            res.Should().BeTrue();
+            var savePath = Path.Combine(Path.GetTempPath(), "layout-save-test.txt");
+            layout.Save(savePath);
+            File.Exists(savePath).Should().BeTrue();
         }
 
         [Fact]
@@ -43,6 +43,7 @@ namespace UnitTest.ProcessorTest
             PrintObject(argument);
         }
 
+        [Trait("Category", "RequiresLocalAssets")]
         [Fact]
         public void TrayLayoutDetectorTest()
         {
@@ -57,6 +58,7 @@ namespace UnitTest.ProcessorTest
             PrintObject(res);
         }
 
+        [Trait("Category", "RequiresLocalAssets")]
         [Fact]
         public void MudLayoutDetectorTest()
         {
@@ -72,8 +74,8 @@ namespace UnitTest.ProcessorTest
         }
 
 
+        [Trait("Category", "RequiresLocalAssets")]
         [Fact]
-        // Mark DR8
         public void TestMultiLayout()
         {
             var onnx = @"F:\SaveModels\Yolo\dr8_9x3.onnx";

@@ -63,8 +63,8 @@ namespace VisionSharp.Utils
         /// <returns></returns>
         public static Point2f GetMeanPoint2F(RotatedRect rotatedRect)
         {
-            var rect = rotatedRect.BoundingRect();
-            return GetMeanPoint2F(rect);
+            // 旋转矩形四个顶点的均值即其几何中心，直接返回中心即可
+            return rotatedRect.Center;
         }
 
 

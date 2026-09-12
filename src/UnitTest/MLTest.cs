@@ -24,6 +24,7 @@ namespace UnitTest
             return mat;
         }
 
+        [Trait("Category", "RequiresLocalAssets")]
         [Fact]
         public void ReadData()
         {

@@ -30,6 +30,7 @@ namespace UnitTest.UtilsTest
         }
 
 
+        [Trait("Category", "RequiresPython")]
         [Fact]
         public void NumpyTestX()
         {
@@ -40,6 +41,7 @@ namespace UnitTest.UtilsTest
         }
 
 
+        [Trait("Category", "RequiresPython")]
         [Fact]
         public void NumpyTestY()
         {
