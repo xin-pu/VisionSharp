@@ -13,6 +13,8 @@ namespace VisionSharp.Processor.Analyzer
         /// <param name="diameter">目标定位圆的直径，单位pixel</param>
         /// <param name="tolerance">允许的范围</param>
         /// <param name="name"></param>
+        /// <param name="open_size"></param>
+        /// <param name="hitmissSize"></param>
         public ModuleFpFinder(
             double diameter = 28,
             double tolerance = 1,
@@ -83,6 +85,8 @@ namespace VisionSharp.Processor.Analyzer
         ///     绘制特征点
         /// </summary>
         /// <param name="mat"></param>
+        /// <param name="reliability"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
         internal override Mat Draw(Mat mat, List<KeyPoint> result, bool reliability)
         {

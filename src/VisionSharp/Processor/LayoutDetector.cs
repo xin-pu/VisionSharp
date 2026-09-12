@@ -14,7 +14,7 @@ namespace VisionSharp.Processor
         internal Scalar UnReliableScalar = new(0, 106, 255);
 
         /// <summary>
-        ///     布局检测器,输入乳香，返回布局对象
+        ///     布局检测器,输入图像，返回布局对象
         /// </summary>
         protected LayoutDetector(LayoutArgument layoutArgument)
             : base("LayoutDetector")
@@ -100,13 +100,13 @@ namespace VisionSharp.Processor
     {
         private Size _inputPattern;
         private Size _layoutPattern;
-        private double _scoreThreshoold;
+        private double _scoreThreshold;
 
-        public LayoutArgument(Size layoutPattern, Size inputPattern, double scoreThreshoold)
+        public LayoutArgument(Size layoutPattern, Size inputPattern, double scoreThreshold)
         {
             InputPattern = inputPattern;
             LayoutPattern = layoutPattern;
-            _scoreThreshoold = scoreThreshoold;
+            _scoreThreshold = scoreThreshold;
         }
 
         public Size LayoutPattern
@@ -123,8 +123,8 @@ namespace VisionSharp.Processor
 
         public double ScoreThreshold
         {
-            internal set => SetProperty(ref _scoreThreshoold, value);
-            get => _scoreThreshoold;
+            internal set => SetProperty(ref _scoreThreshold, value);
+            get => _scoreThreshold;
         }
 
         public override string ToString()

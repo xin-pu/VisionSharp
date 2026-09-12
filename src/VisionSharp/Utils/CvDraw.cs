@@ -40,15 +40,15 @@ namespace VisionSharp.Utils
         }
 
         /// <summary>
-        ///     绘制矩形框
+        ///     绘制圆
         /// </summary>
         /// <param name="mat"></param>
-        /// <param name="rect"></param>
+        /// <param name="center">圆心</param>
         /// <param name="color"></param>
-        /// <param name="size"></param>
+        /// <param name="size">半径</param>
         /// <param name="thickness"></param>
         /// <returns></returns>
-        public static Mat DraCircle(Mat mat, Point center, Scalar color, int size = 10, int thickness = 3)
+        public static Mat DrawCircle(Mat mat, Point center, Scalar color, int size = 10, int thickness = 3)
         {
             Cv2.Circle(mat, center, size, color, thickness);
             return mat;
@@ -60,7 +60,6 @@ namespace VisionSharp.Utils
         /// <param name="mat"></param>
         /// <param name="rect"></param>
         /// <param name="color"></param>
-        /// <param name="size"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
         public static Mat DrawRect(Mat mat, Rect rect, Scalar color, int thickness = 3)
@@ -78,7 +77,6 @@ namespace VisionSharp.Utils
         /// <param name="mat"></param>
         /// <param name="rect"></param>
         /// <param name="color"></param>
-        /// <param name="size"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
         public static Mat DrawRect(Mat mat, CvRect rect, Scalar color, int thickness = 3)
@@ -92,7 +90,6 @@ namespace VisionSharp.Utils
         /// <param name="mat"></param>
         /// <param name="rotatedRect"></param>
         /// <param name="color"></param>
-        /// <param name="size"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
         public static Mat DrawRotatedRect(Mat mat, RotatedRect rotatedRect, Scalar color, int thickness = 3)

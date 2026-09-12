@@ -18,7 +18,7 @@ namespace VisionSharp.Processor.Analyzer
 
         public Point2d[] MovedFeatures { set; get; }
 
-        public Point2d[] AdjustFeaturs { set; get; }
+        public Point2d[] AdjustFeatures { set; get; }
 
         public double Threshold { set; get; } = 5;
 
@@ -31,7 +31,7 @@ namespace VisionSharp.Processor.Analyzer
             var deltaY = target.Average(a => a.Y) - moved.Average(a => a.Y);
 
             var res = new Point2d(deltaX, deltaY);
-            AdjustFeaturs = MovedFeatures.Select(a => a + res).ToArray();
+            AdjustFeatures = MovedFeatures.Select(a => a + res).ToArray();
             return res;
         }
 
@@ -39,7 +39,7 @@ namespace VisionSharp.Processor.Analyzer
         {
             var temp = OriginalFeatures.ToList();
             var pair = new Dictionary<Point2d, Point2d>();
-            foreach (var point2d in AdjustFeaturs)
+            foreach (var point2d in AdjustFeatures)
             {
                 var distance = temp
                     .ToDictionary(a => CvMath.GetDistance(a, point2d), a => a);
@@ -57,7 +57,7 @@ namespace VisionSharp.Processor.Analyzer
         internal override Mat Draw(Mat mat, Point2d result, bool reliability)
         {
             var featureZip = MovedFeatures
-                .Zip(AdjustFeaturs, (a, b) => ((Point) a, (Point) b))
+                .Zip(AdjustFeatures, (a, b) => ((Point) a, (Point) b))
                 .ToList();
 
             featureZip.ForEach(valueTuple =>

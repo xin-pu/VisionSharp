@@ -165,15 +165,15 @@ namespace VisionSharp.Calibration
         }
 
         public static Point3d Predict(
-            Mat tranform,
+            Mat transform,
             Point2d imageUv,
             double z)
         {
             var bRaw = CvCvt.CvtToMat(new[] {imageUv});
             using var b = bRaw.Transpose();
             bRaw.Dispose();
-            using var m01 = tranform[0, 2, 0, 2];
-            using var m23 = tranform[0, 2, 2, 4];
+            using var m01 = transform[0, 2, 0, 2];
+            using var m23 = transform[0, 2, 2, 4];
             using var p = Mat.FromArray(new[,] {{z}, {1}});
             using var d = (b - m23 * p).ToMat();
             using var a = new Mat();

@@ -1,6 +1,6 @@
 ﻿using VisionSharp.Models.Sudoku;
 
-namespace VisionSharp.Processor.Slovers
+namespace VisionSharp.Processor.Solvers
 {
     public class SudokuSolver : Processor<Sudoku, Sudoku>
     {

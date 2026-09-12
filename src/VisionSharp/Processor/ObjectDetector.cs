@@ -80,7 +80,8 @@ namespace VisionSharp.Processor
         /// <summary>
         ///     解码获取候选预测框
         /// </summary>
-        /// <param name="mat"></param>
+        /// <param name="mats"></param>
+        /// <param name="size"></param>
         /// <returns></returns>
         internal abstract ObjRect<T>[] Decode(Mat[] mats, Size size);
 
@@ -109,6 +110,8 @@ namespace VisionSharp.Processor
         ///     绘制最终预测框
         /// </summary>
         /// <param name="mat"></param>
+        /// <param name="reliability"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
         internal override Mat Draw(Mat mat, ObjRect<T>[] result, bool reliability)
         {

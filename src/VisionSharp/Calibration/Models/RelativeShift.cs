@@ -91,46 +91,46 @@ namespace VisionSharp.Calibration
         /// <summary>
         ///     transform 2*2
         /// </summary>
-        /// <param name="tranform"></param>
-        /// <param name="imageUV"></param>
+        /// <param name="transform"></param>
+        /// <param name="cameraCoord"></param>
         /// <returns></returns>
         public static Point3d PredictWorldCoord(
-            Mat tranform,
+            Mat transform,
             Point2d cameraCoord)
         {
-            var final = PredictWorldCoord(tranform, new[] {cameraCoord});
+            var final = PredictWorldCoord(transform, new[] {cameraCoord});
             return final.First();
         }
 
 
         /// <summary>
-        ///     transform 2*3
+        ///     transform 2*2
         /// </summary>
-        /// <param name="tranform"></param>
-        /// <param name="imageUV"></param>
+        /// <param name="transform"></param>
+        /// <param name="cameraCoord"></param>
         /// <returns></returns>
         public static Point3d PredictWorldCoord(
-            Mat tranform,
+            Mat transform,
             Point2f cameraCoord)
         {
             var p = new Point2d(cameraCoord.X, cameraCoord.Y);
-            var final = PredictWorldCoord(tranform, new[] {p});
+            var final = PredictWorldCoord(transform, new[] {p});
             return final.First();
         }
 
         /// <summary>
         ///     Todo Can optimize logic, Xin.Pu
         /// </summary>
-        /// <param name="tranform"></param>
+        /// <param name="transform"></param>
         /// <param name="cameraPoint2ds"></param>
         /// <returns></returns>
-        public static Point3d[] PredictWorldCoord(Mat tranform, Point2d[] cameraPoint2ds)
+        public static Point3d[] PredictWorldCoord(Mat transform, Point2d[] cameraPoint2ds)
         {
             var row = cameraPoint2ds.Length;
             var pointN2 = CvCvt.CvtToMat(cameraPoint2ds);
 
             var point2N = pointN2.Transpose();
-            var world = (tranform.Inv() * point2N).ToMat();
+            var world = (transform.Inv() * point2N).ToMat();
 
             var size = new Size(3, row);
             var res = Mat.Zeros(size, MatType.CV_64F).ToMat();
@@ -146,8 +146,8 @@ namespace VisionSharp.Calibration
         /// <summary>
         ///     transform 2*2
         /// </summary>
-        /// <param name="tranform"></param>
-        /// <param name="imageUV"></param>
+        /// <param name="transform"></param>
+        /// <param name="wordCoord"></param>
         /// <returns></returns>
         public static Point2d[] PredictCameraCoord(Mat transform, Point3d[] wordCoord)
         {

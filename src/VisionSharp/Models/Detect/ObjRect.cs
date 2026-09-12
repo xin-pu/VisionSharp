@@ -22,6 +22,7 @@ namespace VisionSharp.Models.Detect
         ///     常用带分类的识别框
         /// </summary>
         /// <param name="rect"></param>
+        /// <param name="category"></param>
         public ObjRect(T category, Rect rect) : base(rect)
         {
             Category = category;

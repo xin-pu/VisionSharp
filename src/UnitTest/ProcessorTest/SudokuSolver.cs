@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using VisionSharp.Models.Sudoku;
-using VisionSharp.Processor.Slovers;
+using VisionSharp.Processor.Solvers;
 using Xunit.Abstractions;
 
 namespace UnitTest.ProcessorTest

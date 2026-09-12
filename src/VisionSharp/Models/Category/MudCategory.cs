@@ -17,15 +17,15 @@
     }
 
     /// <summary>
-    ///     散热泥项目分类
+    ///     二维码检测分类
     /// </summary>
     public enum QrCategory
     {
-        QrcOde
+        QrCode
     }
 
     /// <summary>
-    ///     散热泥项目分类
+    ///     浣熊检测分类（模型测试用）
     /// </summary>
     public enum Raccoon
     {

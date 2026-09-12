@@ -4,7 +4,7 @@ namespace VisionSharp.Models.Detect
 {
     public class Anchor : ObservableObject
     {
-        private float _wdith;
+        private float _width;
         private float _height;
 
 
@@ -12,16 +12,16 @@ namespace VisionSharp.Models.Detect
         {
         }
 
-        public Anchor(float wdith, float height)
+        public Anchor(float width, float height)
         {
-            Width = wdith;
+            Width = width;
             Height = height;
         }
 
         public float Width
         {
-            internal set => SetProperty(ref _wdith, value);
-            get => _wdith;
+            internal set => SetProperty(ref _width, value);
+            get => _width;
         }
 
         public float Height

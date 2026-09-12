@@ -87,17 +87,17 @@ namespace VisionSharp.Processor.ObjectDetector
             mats = mats.OrderBy(a => a.Size(2)).ToArray();
             foreach (var mat in mats)
             {
-                /// 20x20,40x40,80*80
+                // 20x20,40x40,80*80
 
                 var gridSize = new Size(mat.Size(3), mat.Size(2));
-                ///32*32,16*16,8*8
+                // 32*32,16*16,8*8
                 var strideSize = CvBasic.Div(InputPattern, gridSize);
 
 
                 var pred = CvCvt.CvtToNDarray(mat).reshape(3, -1, gridSize.Height, gridSize.Width);
                 pred = CvBasic.Sigmoid(pred.transpose(0, 2, 3, 1)); // sigmoid
 
-                /// 拆分数据
+                // 拆分数据
                 var predInfo = SplitDecodeInfo(pred);
 
                 var gridX = CvBasic.CreateGridX(gridSize, 3);
@@ -105,7 +105,10 @@ namespace VisionSharp.Processor.ObjectDetector
                 var (anchorW, anchorH) =
                     GetAnchorGridWidth(predInfo.W, predInfo.H, strideSize, gridSize, AnchorMaskLayer[i]);
 
-                ///归一化
+                // 归一化
+                // YOLO7 解码公式（输出已归一化到 0~1）：
+                //   x = (tx*2 - 0.5 + gridX) / gridW   中心点坐标，gridX 为网格坐标
+                //   w = (tw*2)^2 * anchorW / gridW     宽高按 anchor 缩放
                 var preBoxes = np.empty_like(pred[":,:,:,:4"]);
                 preBoxes[":,:,:,0"] = (predInfo.X * 2f - 0.5 + gridX) / gridSize.Width;
                 preBoxes[":,:,:,1"] = (predInfo.Y * 2f - 0.5 + gridY) / gridSize.Height;
@@ -113,11 +116,12 @@ namespace VisionSharp.Processor.ObjectDetector
                 preBoxes[":,:,:,3"] = (predInfo.H * 2).power(np.array(2)) * anchorH / gridSize.Height;
                 preBoxes = preBoxes.reshape(-1, 4);
 
-                /// 置信度 和 分类
+                // 置信度 和 分类
                 var confR = predInfo.Confidence.reshape(-1, 1);
                 var confClass = predInfo.Labels.max(new[] {-1}).reshape(-1, 1);
                 var id = predInfo.Labels.argmax(-1).reshape(-1, 1).astype(np.float32);
 
+                // 每行 = [x, y, w, h, 目标置信度, 分类置信度, 分类索引]
                 var res = np.concatenate(new[] {preBoxes, confR, confClass, id}, -1);
                 var confidencePred = res[(res[":,4"] > Confidence).where()];
 
@@ -148,8 +152,12 @@ namespace VisionSharp.Processor.ObjectDetector
         }
 
 
+        /// <summary>
+        ///     将 letterbox 输入尺寸下的归一化框逆映射回原始图像坐标
+        /// </summary>
         private Rect CorrectBoxes(float[] xywh, Size inputShape, Size orginalShape)
         {
+            // letterbox 等比缩放系数取宽高比中较小者，保证图像完整落入输入框
             var d = new[]
             {
                 1f * inputShape.Width / orginalShape.Width,
@@ -158,6 +166,7 @@ namespace VisionSharp.Processor.ObjectDetector
             var newsize = new Size(Math.Round(orginalShape.Width * d, MidpointRounding.AwayFromZero),
                 Math.Round(orginalShape.Height * d, MidpointRounding.AwayFromZero));
 
+            // letterbox 两侧补边宽度（归一化）与有效区域的相对缩放
             var offsetX = (inputShape.Width - newsize.Width) / 2f / inputShape.Width;
             var offsetY = (inputShape.Height - newsize.Height) / 2f / inputShape.Height;
 

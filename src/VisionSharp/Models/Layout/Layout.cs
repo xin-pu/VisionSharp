@@ -107,7 +107,8 @@ namespace VisionSharp.Models.Layout
         /// </summary>
         /// <param name="row"></param>
         /// <param name="column"></param>
-        /// <param name="score">sigmoid score</param>
+        /// <param name="scores">各分类的 sigmoid 分数</param>
+        /// <param name="threshold"></param>
         /// <exception cref="ArgumentException"></exception>
         public void UpdateScore(int row, int column, double[] scores, double threshold = 0.7)
         {
@@ -267,6 +268,7 @@ namespace VisionSharp.Models.Layout
         ///     从注释文件获取布局
         /// </summary>
         /// <param name="annfile">注释文件路径</param>
+        /// <param name="split"></param>
         /// <returns>平面</returns>
         /// <exception cref="FileLoadException"></exception>
         public static Layout<T> LoadFromAnnotation(string annfile, char split = ',')

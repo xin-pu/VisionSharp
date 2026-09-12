@@ -89,7 +89,7 @@ namespace VisionSharp.Utils
 
         /// <summary>
         /// </summary>
-        /// <param name="word">Mat with width=3, X,Y,Z</param>
+        /// <param name="positions">Mat with width=3, X,Y,Z</param>
         /// <returns></returns>
         public static Point3f[] CvtToPoint3Fs(IEnumerable<Point3d> positions)
         {
@@ -128,7 +128,7 @@ namespace VisionSharp.Utils
 
         /// <summary>
         /// </summary>
-        /// <param name="word">Mat with width=3, X,Y,Z</param>
+        /// <param name="positions">Mat with width=3, X,Y,Z</param>
         /// <returns></returns>
         public static Point3d[] CvtToPoint3ds(IEnumerable<Point3f> positions)
         {
@@ -167,7 +167,7 @@ namespace VisionSharp.Utils
 
         /// <summary>
         /// </summary>
-        /// <param name="word">Mat with width=3, X,Y,Z</param>
+        /// <param name="world">Mat with width=3, X,Y,Z</param>
         /// <returns></returns>
         public static Point3d[] CvtToPoint3ds(Mat<double> world)
         {
@@ -449,7 +449,7 @@ namespace VisionSharp.Utils
                                 long offsetSrc = y * srcStep;
                                 long offsetDst = y * dstStep;
                                 long bytesToCopy = w * ch;
-                                // 一列ごとにコピー
+                                // 逐列拷贝
                                 Buffer.MemoryCopy(pSrc + offsetSrc, pDst + offsetDst, bytesToCopy, bytesToCopy);
                             }
                         }

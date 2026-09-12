@@ -16,19 +16,19 @@ namespace VisionSharp.Processor
         private bool _enableSaveMat = false;
         private string _fileName;
         private string _name;
-        private Scalar _pencolor = Scalar.OrangeRed;
+        private Scalar _penColor = Scalar.OrangeRed;
 
         protected Processor(string name)
         {
             Name = name;
         }
 
-        public string OutPutDire => Path.Combine(Environment.CurrentDirectory, "Temp", Name);
+        public string OutputDirectory => Path.Combine(Environment.CurrentDirectory, "Temp", Name);
 
         public Scalar PenColor
         {
-            set => SetProperty(ref _pencolor, value);
-            get => _pencolor;
+            set => SetProperty(ref _penColor, value);
+            get => _penColor;
         }
 
         public string Name
@@ -108,10 +108,10 @@ namespace VisionSharp.Processor
 
             if (EnableSaveMat)
             {
-                Directory.CreateDirectory(OutPutDire);
+                Directory.CreateDirectory(OutputDirectory);
                 FileName = savename == ""
-                    ? Path.Combine(OutPutDire, $"{DateTime.Now:MMdd HH-mm-ss} {DateTime.Now.Millisecond:D3}.png")
-                    : Path.Combine(OutPutDire, $"{savename}.png");
+                    ? Path.Combine(OutputDirectory, $"{DateTime.Now:MMdd HH-mm-ss} {DateTime.Now.Millisecond:D3}.png")
+                    : Path.Combine(OutputDirectory, $"{savename}.png");
                 drawn.SaveImage(FileName);
             }
 
@@ -130,6 +130,8 @@ namespace VisionSharp.Processor
         ///     绘制带结果信息的图像
         /// </summary>
         /// <param name="mat"></param>
+        /// <param name="reliability"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
         internal virtual Mat Draw(Mat mat, T2 result, bool reliability)
         {
@@ -196,9 +198,9 @@ namespace VisionSharp.Processor
             return CvDraw.DrawLine(mat, pointStart, pointEnd, color, thickness);
         }
 
-        internal Mat DrawCircle(Mat mat, Point centern, int size, Scalar color, int thickness = 1)
+        internal Mat DrawCircle(Mat mat, Point center, int size, Scalar color, int thickness = 1)
         {
-            return CvDraw.DraCircle(mat, centern, color, size, thickness);
+            return CvDraw.DrawCircle(mat, center, color, size, thickness);
         }
 
         /// <summary>
@@ -207,7 +209,6 @@ namespace VisionSharp.Processor
         /// <param name="mat"></param>
         /// <param name="rect"></param>
         /// <param name="color"></param>
-        /// <param name="size"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
         internal Mat DrawRect(Mat mat, Rect rect, Scalar color, int thickness = 3)

@@ -15,6 +15,8 @@ namespace VisionSharp.Processor.Analyzer
         /// <param name="diameter">目标定位圆的直径，单位pixel</param>
         /// <param name="tolerance">允许的范围</param>
         /// <param name="name"></param>
+        /// <param name="rectHeight"></param>
+        /// <param name="rectWith"></param>
         public ModuleTemplateFinder(
             double diameter = 28,
             double tolerance = 1,
@@ -48,7 +50,7 @@ namespace VisionSharp.Processor.Analyzer
                 .Select(a => a.Pt)
                 .ToList();
 
-            var rotatedRectPoints = getRectPoint(points);
+            var rotatedRectPoints = GetRectPoint(points);
 
             var rotatedRect = Cv2.MinAreaRect(rotatedRectPoints);
 
@@ -59,7 +61,12 @@ namespace VisionSharp.Processor.Analyzer
             return new ObjRotatedrect<T>(rotatedRect, angle);
         }
 
-        private List<Point2f> getRectPoint(List<Point2f> fps)
+        /// <summary>
+        ///     由三个定位圆点求解第四个角点，还原完整矩形
+        ///     取距离最短的两点为一条边，过第三点作该边的垂线，
+        ///     两条直线方程联立求解交点即为第四点
+        /// </summary>
+        private List<Point2f> GetRectPoint(List<Point2f> fps)
         {
             var pairs = new List<(Point2f, Point2f)>();
             fps.ForEach(f1 =>

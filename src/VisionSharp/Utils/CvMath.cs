@@ -11,7 +11,7 @@ namespace VisionSharp.Utils
         /// <summary>
         ///     获取一列点的中心点
         /// </summary>
-        /// <param name="point2Fs"></param>
+        /// <param name="points"></param>
         /// <returns></returns>
         public static Point2d GetMeanPoint2F(IList<Point> points)
         {
@@ -69,9 +69,9 @@ namespace VisionSharp.Utils
 
 
         /// <summary>
-        ///     return B,K with Tuple
+        ///     最小二乘拟合直线，返回 (B, K)
         /// </summary>
-        /// <param name="keyPoints"></param>
+        /// <param name="points"></param>
         /// <returns></returns>
         public static Tuple<double, double> Linefit(IEnumerable<Point2f> points)
         {
@@ -91,6 +91,7 @@ namespace VisionSharp.Utils
         ///     Return Point By Line
         /// </summary>
         /// <param name="y"></param>
+        /// <param name="kb"></param>
         /// <returns></returns>
         public static Point GetPoint(double y, Tuple<double, double> kb)
         {
@@ -120,9 +121,9 @@ namespace VisionSharp.Utils
         /// <summary>
         ///     Distance= |A*x+ B*y +C | / Sqrt(A*A+B*B)
         /// </summary>
-        /// <param name="A"></param>
-        /// <param name="B"></param>
-        /// <param name="C"></param>
+        /// <param name="a">直线系数 A</param>
+        /// <param name="b">直线系数 B</param>
+        /// <param name="c">直线系数 C</param>
         /// <param name="point2F"></param>
         /// <returns></returns>
         public static double GetDistance(double a, double b, double c, Point2f point2F)
@@ -167,12 +168,11 @@ namespace VisionSharp.Utils
 
 
         /// <summary>
-        ///     Generate Pattern Point by top left, top right, bottom left point.
+        ///     由左上、右下两角点与阵列规模生成整列网格点
         /// </summary>
-        /// <param name="topleft"></param>
-        /// <param name="topright"></param>
-        /// <param name="bottomleft"></param>
-        /// <param name="patternSize">pattern patternSize</param>
+        /// <param name="topleft">左上角点</param>
+        /// <param name="bottomright">右下角点</param>
+        /// <param name="patternSize">阵列规模（列数 x 行数）</param>
         /// <returns></returns>
         public static List<Point2d> GetPatternPoint(
             Point2d topleft,
@@ -232,6 +232,7 @@ namespace VisionSharp.Utils
         }
 
         /// <summary>
+        ///     获取旋转矩形的长宽比
         /// </summary>
         /// <param name="rotatedRect"></param>
         /// <returns></returns>
@@ -250,10 +251,10 @@ namespace VisionSharp.Utils
         ///     象限基于图像坐标系
         ///     ----- 3 ----- | ----- 4 -----
         ///     ----- 2 ----- | ----- 1 -----
-        ///     第1象限 k>=0 0~~90
-        ///     第2象限 k<=0 90~180
-        ///     第3象限 k>=0 180~~270
-        ///     第4象限 k<=0 270~360
+        ///     第1象限 k≥0 0~~90
+        ///     第2象限 k≤0 90~180
+        ///     第3象限 k≥0 180~~270
+        ///     第4象限 k≤0 270~360
         /// </summary>
         /// <param name="startPoint"></param>
         /// <param name="endPoint"></param>

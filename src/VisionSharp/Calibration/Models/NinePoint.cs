@@ -24,7 +24,7 @@ namespace VisionSharp.Calibration
         /// <summary>
         ///     When using this model, all Z of xyz point3d should be 1.
         /// </summary>
-        /// <param name="wordPoint3ds"></param>
+        /// <param name="worldPoint3ds"></param>
         /// <param name="cameraPoint2ds"></param>
         /// <returns></returns>
         internal override Mat Calibrate(
@@ -109,16 +109,16 @@ namespace VisionSharp.Calibration
         /// <summary>
         ///     transform 2*3
         /// </summary>
-        /// <param name="tranform"></param>
-        /// <param name="imageUV"></param>
+        /// <param name="transform"></param>
+        /// <param name="cameraCoord"></param>
         /// <returns></returns>
         public static Point3d PredictWorldCoord(
-            Mat tranform,
+            Mat transform,
             Point2d cameraCoord)
         {
             var b = CvCvt.CvtToMat(new[] {cameraCoord}).Transpose();
-            var xr = tranform[new Range(0, 2), new Range(0, 2)];
-            var xt = tranform[new Range(0, 2), new Range(2, 3)];
+            var xr = transform[new Range(0, 2), new Range(0, 2)];
+            var xt = transform[new Range(0, 2), new Range(2, 3)];
 
             var d = (b - xt).ToMat();
 
@@ -129,19 +129,19 @@ namespace VisionSharp.Calibration
         }
 
         public static Point3d PredictWorldCoord(
-            Mat tranform,
+            Mat transform,
             Point2f cameraCoord)
         {
             var p = new Point2d(cameraCoord.X, cameraCoord.Y);
-            return PredictWorldCoord(tranform, p);
+            return PredictWorldCoord(transform, p);
         }
 
         /// <summary>
         ///     transform 2*3
         ///     Todo Can optimize logic, Xin.Pu
         /// </summary>
-        /// <param name="tranform"></param>
-        /// <param name="imageUV"></param>
+        /// <param name="transform"></param>
+        /// <param name="cameraCoords"></param>
         /// <returns></returns>
         public static Point3d[] PredictWorldCoords(
             Mat transform,
@@ -155,8 +155,8 @@ namespace VisionSharp.Calibration
         /// <summary>
         ///     transform 2*3
         /// </summary>
-        /// <param name="tranform"></param>
-        /// <param name="imageUV"></param>
+        /// <param name="transform"></param>
+        /// <param name="cameraCoord"></param>
         /// <returns></returns>
         public static Point3d[] PredictWorldCoords(
             Mat transform,
@@ -171,8 +171,8 @@ namespace VisionSharp.Calibration
         /// <summary>
         ///     transform 2*3
         /// </summary>
-        /// <param name="tranform"></param>
-        /// <param name="imageUV"></param>
+        /// <param name="transform"></param>
+        /// <param name="wordCoord"></param>
         /// <returns></returns>
         public static Point2d[] PredictCameraCoords(
             Mat transform,
@@ -202,8 +202,8 @@ namespace VisionSharp.Calibration
         /// <summary>
         ///     transform 2*3
         /// </summary>
-        /// <param name="tranform"></param>
-        /// <param name="imageUV"></param>
+        /// <param name="transform"></param>
+        /// <param name="wordCoord"></param>
         /// <returns></returns>
         public static Point2d[] PredictCameraCoords(
             Mat transform,
