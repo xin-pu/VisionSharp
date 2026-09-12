@@ -42,14 +42,14 @@ namespace VisionSharp.Processor.Analyzer
         /// <returns></returns>
         internal override List<KeyPoint> Process(Mat input)
         {
-            var temp = new Mat();
-            Cv2.Threshold(input.Clone(), temp, 200, 255, ThresholdTypes.Otsu);
+            using var temp = new Mat();
+            Cv2.Threshold(input, temp, 200, 255, ThresholdTypes.Otsu);
 
-            var element1 = Cv2.GetStructuringElement(MorphShapes.Ellipse,
+            using var element1 = Cv2.GetStructuringElement(MorphShapes.Ellipse,
                 new Size(HitmissSize, HitmissSize),
                 new Point(-1, -1));
 
-            var element2 = Cv2.GetStructuringElement(MorphShapes.Ellipse,
+            using var element2 = Cv2.GetStructuringElement(MorphShapes.Ellipse,
                 new Size(OpenSize, OpenSize),
                 new Point(-1, -1));
 
@@ -57,7 +57,7 @@ namespace VisionSharp.Processor.Analyzer
 
             Cv2.MorphologyEx(temp, temp, MorphTypes.Open, element2, new Point(-1, -1));
 
-            var circleFinder = new CircleDetector
+            using var circleFinder = new CircleDetector
             {
                 BlobColor = 255,
                 FilterByCircularity = true,

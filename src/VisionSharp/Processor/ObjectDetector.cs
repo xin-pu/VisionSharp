@@ -47,9 +47,20 @@ namespace VisionSharp.Processor
         internal override ObjRect<T>[] Process(Mat input)
         {
             var mats = FrontNet(Net, input);
-            var candidate = Decode(mats, input.Size());
-            var final = NonMaximalSuppression(candidate);
-            return final;
+            try
+            {
+                var candidate = Decode(mats, input.Size());
+                var final = NonMaximalSuppression(candidate);
+                return final;
+            }
+            finally
+            {
+                // FrontNet 返回的输出 Mat 由本方法负责释放
+                foreach (var m in mats)
+                {
+                    m.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -101,17 +112,27 @@ namespace VisionSharp.Processor
         /// <returns></returns>
         internal override Mat Draw(Mat mat, ObjRect<T>[] result, bool reliability)
         {
-            result
-                .ToList()
-                .ForEach(a =>
-                {
-                    var info = $"{a.Category} {a.ObjectConfidence:P2}";
-                    var color = Colors[a.Category];
-                    var fontscale = 1d * mat.Height / 600;
-                    mat = DrawRect(mat, a.Rect, color, 1);
-                    mat = DrawText(mat, a.Rect.TopLeft, info, color, fontscale);
-                });
+            foreach (var a in result)
+            {
+                var info = $"{a.Category} {a.ObjectConfidence:P2}";
+                var color = Colors[a.Category];
+                var fontscale = 1d * mat.Height / 600;
+                mat = DrawRect(mat, a.Rect, color, 1);
+                mat = DrawText(mat, a.Rect.TopLeft, info, color, fontscale);
+            }
+
             return mat;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Net?.Dispose();
+                Net = null!;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

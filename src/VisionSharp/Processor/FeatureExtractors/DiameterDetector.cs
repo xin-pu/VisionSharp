@@ -10,28 +10,29 @@ namespace VisionSharp.Processor.FeatureExtractors
 
         internal override Mat Process(Mat input)
         {
-            /// Step 1 转8bit图像
-            var image = Convert(input);
+            // Step 1 转8bit图像
+            using var image = Convert(input);
             var color = image.CvtColor(ColorConversionCodes.GRAY2RGB);
-            /// Step 2 创建Mask
-            var gray = image.MedianBlur(5);
+            // Step 2 创建Mask
+            using var gray = image.MedianBlur(5);
 
-            /// Step 3 二值化
-            var binary = gray.Threshold(50, 255, ThresholdTypes.Binary);
+            // Step 3 二值化
+            using var binary = gray.Threshold(50, 255, ThresholdTypes.Binary);
 
 
-            /// Step 5 提取轮廓
-            binary.FindContours(out var contours, new Mat(), RetrievalModes.List,
+            // Step 5 提取轮廓
+            using var hierarchy = new Mat();
+            binary.FindContours(out var contours, hierarchy, RetrievalModes.List,
                 ContourApproximationModes.ApproxSimple);
 
             foreach (var i in Enumerable.Range(0, contours.Length))
             {
-                var mask_c = Mat.Zeros(input.Size(), MatType.CV_8U).ToMat();
-                Cv2.DrawContours(mask_c, contours, i, new Scalar(255, 255, 255), -1);
+                using var maskC = Mat.Zeros(input.Size(), MatType.CV_8U).ToMat();
+                Cv2.DrawContours(maskC, contours, i, new Scalar(255, 255, 255), -1);
 
-                var loc_c = gray.Clone().BitwiseAnd(mask_c).ToMat();
+                using var locC = gray.Clone().BitwiseAnd(maskC).ToMat();
 
-                var moment = Cv2.Moments(loc_c);
+                var moment = Cv2.Moments(locC);
 
                 var cx = moment.M10 / moment.M00;
                 var cy = moment.M01 / moment.M00;
@@ -54,21 +55,26 @@ namespace VisionSharp.Processor.FeatureExtractors
 
         private Mat Convert(Mat input)
         {
-            input.GetArray(out ushort[] data);
-            var min = data.Min();
-            var max = data.Max();
-
-            for (var i = 0; i < input.Size().Height; i++)
+            // 克隆后原地归一化，不修改调用方传入的 Mat
+            var normalized = input.Clone();
+            using (normalized)
             {
-                for (var j = 0; j < input.Size().Width; j++)
-                {
-                    input.At<ushort>(i, j) = (byte) (255F * (input.At<ushort>(i, j) - min) / (max - min));
-                }
-            }
+                normalized.GetArray(out ushort[] data);
+                var min = data.Min();
+                var max = data.Max();
 
-            var outmat = new Mat();
-            input.ConvertTo(outmat, MatType.CV_8U);
-            return outmat;
+                for (var i = 0; i < normalized.Size().Height; i++)
+                {
+                    for (var j = 0; j < normalized.Size().Width; j++)
+                    {
+                        normalized.At<ushort>(i, j) = (byte) (255F * (normalized.At<ushort>(i, j) - min) / (max - min));
+                    }
+                }
+
+                var outmat = new Mat();
+                normalized.ConvertTo(outmat, MatType.CV_8U);
+                return outmat;
+            }
         }
     }
 }

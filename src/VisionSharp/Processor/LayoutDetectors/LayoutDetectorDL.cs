@@ -51,13 +51,11 @@ namespace VisionSharp.Processor.LayoutDetectors
             var res = Net.Forward();
 
 
-            var final = Decode(res);
-            inputBlob.Dispose();
-            res.Dispose();
-            GC.Collect();
-            GC.WaitForFullGCComplete();
-
-            return final;
+            using (inputBlob)
+            using (res)
+            {
+                return Decode(res);
+            }
         }
 
 
@@ -76,11 +74,11 @@ namespace VisionSharp.Processor.LayoutDetectors
             var cateCount = res.CategoryCount;
 
             var resultCh = result.Reshape(1, height * width, cateCount);
-            var array = CvCvt.CvtToArray(resultCh);
-
-            resultCh.Dispose();
-            GC.Collect();
-            GC.WaitForFullGCComplete();
+            float[,] array;
+            using (resultCh)
+            {
+                array = CvCvt.CvtToArray(resultCh);
+            }
 
 
             Enumerable.Range(0, height * width).ToList().ForEach(d =>
@@ -96,6 +94,17 @@ namespace VisionSharp.Processor.LayoutDetectors
             });
 
             return res;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Net?.Dispose();
+                Net = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

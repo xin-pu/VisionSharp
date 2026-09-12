@@ -23,20 +23,31 @@ namespace VisionSharp.Processor.LayoutDetectors
             var scoreThreshold = LayoutArgument.ScoreThreshold;
 
             var mat = GetFeatures(input);
-            var predict = mat.Select(m => Predict(m)).ToList();
-
-            var res = new Layout<T>(LayoutArgument.LayoutPattern.Height,
-                LayoutArgument.LayoutPattern.Width, 1);
-
-            Enumerable.Range(0, height * width).ToList().ForEach(d =>
+            try
             {
-                var row = d / width;
-                var col = d % width;
+                var predict = mat.Select(m => Predict(m)).ToList();
 
-                var activeScores = predict[d];
-                res.UpdateScore(row, col, activeScores, scoreThreshold);
-            });
-            return res;
+                var res = new Layout<T>(LayoutArgument.LayoutPattern.Height,
+                    LayoutArgument.LayoutPattern.Width, 1);
+
+                Enumerable.Range(0, height * width).ToList().ForEach(d =>
+                {
+                    var row = d / width;
+                    var col = d % width;
+
+                    var activeScores = predict[d];
+                    res.UpdateScore(row, col, activeScores, scoreThreshold);
+                });
+                return res;
+            }
+            finally
+            {
+                // GetFeatures 产生的 ROI 子 Mat 用完即释放
+                foreach (var m in mat)
+                {
+                    m.Dispose();
+                }
+            }
         }
 
 
@@ -68,10 +79,23 @@ namespace VisionSharp.Processor.LayoutDetectors
             var width = LayoutArgument.InputPattern.Width;
             var data = CvCvt.CvtToFloatArray(single);
             var trainFeatures = new Mat(1, height * width, MatType.CV_32F, data);
-            var detectedClass = (int) Model.Predict(trainFeatures);
-            return detectedClass == 1
-                ? new double[] {1, 0}
-                : new double[] {0, 1};
+            using (trainFeatures)
+            {
+                var detectedClass = (int) Model.Predict(trainFeatures);
+                return detectedClass == 1
+                    ? new double[] {1, 0}
+                    : new double[] {0, 1};
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Model?.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
 
         internal override Mat Draw(Mat mat, Layout<T> result, bool reliability)

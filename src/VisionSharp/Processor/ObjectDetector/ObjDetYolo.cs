@@ -39,13 +39,5 @@ namespace VisionSharp.Processor.ObjectDetector
             internal set => SetProperty(ref _inputPattern, value);
             get => _inputPattern;
         }
-
-        internal override ObjRect<T>[] Process(Mat input)
-        {
-            var mats = FrontNet(Net, input);
-            var candidate = Decode(mats, input.Size());
-            var final = NonMaximalSuppression(candidate);
-            return final;
-        }
     }
 }

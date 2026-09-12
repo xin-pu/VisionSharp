@@ -93,16 +93,21 @@ namespace VisionSharp.Processor.Analyzer
             var X = Mat.FromArray(x);
             var Y = Mat.FromArray(y);
             var modelRes = new Mat();
-            Cv2.Solve(X, Y, modelRes, DecompTypes.SVD);
-            modelRes.GetArray(out double[] p);
+            using (X)
+            using (Y)
+            using (modelRes)
+            {
+                Cv2.Solve(X, Y, modelRes, DecompTypes.SVD);
+                modelRes.GetArray(out double[] p);
 
-            var topLeft = new Point2f((float) p[0], (float) p[1]);
+                var topLeft = new Point2f((float) p[0], (float) p[1]);
 
-            var topRight = shortSides.OrderByDescending(a => CvMath.GetDistance(a, topLeft)).First();
+                var topRight = shortSides.OrderByDescending(a => CvMath.GetDistance(a, topLeft)).First();
 
-            var bottomRight = topRight + thirdSide - topLeft;
+                var bottomRight = topRight + thirdSide - topLeft;
 
-            return new List<Point2f> {topRight, topLeft, bottomRight, thirdSide};
+                return new List<Point2f> {topRight, topLeft, bottomRight, thirdSide};
+            }
         }
 
         internal override bool GetReliability(ObjRotatedrect<T> result)

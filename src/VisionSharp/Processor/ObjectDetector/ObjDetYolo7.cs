@@ -72,8 +72,9 @@ namespace VisionSharp.Processor.ObjectDetector
         internal override Mat[] FrontNet(Net net, Mat mat)
         {
             SourceSize = mat.Size();
-            var matLetter = new LetterBox(InputPattern).Call(mat.Clone());
 
+            // LetterBox.Process 内部会克隆输入，不修改调用方的 Mat
+            using var matLetter = new LetterBox(InputPattern).Call(mat);
 
             var inputBlob = CvDnn.BlobFromImage(matLetter,
                 1F / 255,
@@ -82,11 +83,14 @@ namespace VisionSharp.Processor.ObjectDetector
                 true,
                 false);
 
-            Net.SetInput(inputBlob);
-            var dd = net.GetUnconnectedOutLayersNames();
-            var mats = new Mat[] {new(), new(), new()};
-            Net.Forward(mats, dd);
-            return mats;
+            using (inputBlob)
+            {
+                Net.SetInput(inputBlob);
+                var dd = net.GetUnconnectedOutLayersNames();
+                var mats = new Mat[] {new(), new(), new()};
+                Net.Forward(mats, dd);
+                return mats;
+            }
         }
 
         /// <summary>

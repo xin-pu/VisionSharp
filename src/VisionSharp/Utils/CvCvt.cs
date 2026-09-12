@@ -29,28 +29,31 @@ namespace VisionSharp.Utils
         {
             if (mat.Type() != MatType.CV_32F)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Mat Type is not CV_32F", nameof(mat));
             }
 
             var final = new Mat<float>();
-
-            mat.ConvertTo(final, MatType.CV_32F);
-
-            return final.ToRectangularArray();
+            using (final)
+            {
+                mat.ConvertTo(final, MatType.CV_32F);
+                return final.ToRectangularArray();
+            }
         }
 
         public static float[] CvtToFloatArray(Mat mat)
         {
             if (mat.Type() != MatType.CV_8UC1)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Mat Type is not CV_8UC1", nameof(mat));
             }
 
             var final = new Mat<byte>();
-
-            mat.ConvertTo(final, MatType.CV_8UC1);
-            var res = final.ToArray().Select(a => a / 255F).ToArray();
-            return res;
+            using (final)
+            {
+                mat.ConvertTo(final, MatType.CV_8UC1);
+                var res = final.ToArray().Select(a => a / 255F).ToArray();
+                return res;
+            }
         }
 
         #endregion
@@ -591,7 +594,11 @@ namespace VisionSharp.Utils
 
             var length = dims.Aggregate(1, (a, b) => a * b);
 
-            mat.Reshape(0, length).GetArray(out float[] arr);
+            float[] arr;
+            using (var reshaped = mat.Reshape(0, length))
+            {
+                reshaped.GetArray(out arr);
+            }
 
             var singleDim = new NDarray<float>(arr);
             var final = singleDim.reshape(dims);
